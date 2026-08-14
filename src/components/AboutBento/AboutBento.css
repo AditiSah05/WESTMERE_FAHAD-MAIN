@@ -1,0 +1,581 @@
+/* ===== ABOUT BENTO SECTION ===== */
+
+.about-bento-section {
+  position: relative;
+  z-index: 10;
+  padding: 70px 1.5rem 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Badge Pill Matching Image 1 (● ABOUT US) */
+.about-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+}
+
+.about-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2563EB;
+}
+
+.about-badge-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  color: #1B2A4A;
+}
+
+/* Outer Gradient Card Container (Reversed Gradient: #F5F1ED -> #ECF1FC) */
+.about-bento-container {
+  width: 100%;
+  max-width: 1120px;
+  background: linear-gradient(135deg, #F5F1ED 0%, #ECF1FC 100%);
+  border-radius: 28px;
+  padding: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.04),
+    0 4px 14px rgba(0, 0, 0, 0.02);
+}
+
+/* Bento Grid */
+.about-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.55fr;
+  gap: 20px;
+}
+
+/* General Bento Card Styling */
+.bento-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-sizing: border-box;
+}
+
+/* Box 03: Transparent Background as requested for Image 4 */
+.bento-card.transparent-bg {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.bento-title {
+  font-family: var(--font-primary), -apple-system, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0F1B33;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+.bento-title.center {
+  text-align: center;
+}
+
+.bento-description {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: #69686E;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ===== BOX 01: CSAT CARD WITH 3D EMOJI SVGS (IMAGE 3) ===== */
+.bento-csat-card {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.csat-header {
+  margin-bottom: 24px;
+}
+
+.csat-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.csat-status-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  color: #2563EB;
+  text-transform: uppercase;
+}
+
+.csat-emojis-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.csat-emoji-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px dashed rgba(200, 200, 200, 0.4);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 6px;
+}
+
+.csat-emoji-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.1);
+}
+
+.csat-emoji-btn.active {
+  opacity: 1;
+  border: 2px dashed #2563EB;
+  background: rgba(37, 99, 235, 0.08);
+  transform: scale(1.18);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+}
+
+.emoji-3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ===== BOX 02: SHOWCASE SLIDER CARD ===== */
+.bento-showcase-card {
+  padding: 14px;
+}
+
+.showcase-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+}
+
+.showcase-thumb-wrapper {
+  width: 48%;
+  height: 220px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.showcase-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.showcase-info {
+  flex: 1;
+  padding: 8px 16px 8px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200px;
+}
+
+.showcase-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.showcase-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #F5F7FA;
+  border: 1px solid rgba(15, 27, 51, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showcase-arrows {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.showcase-arrow-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #EFEFEF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0F1B33;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.showcase-arrow-btn:hover {
+  background: #0F1B33;
+  color: #FFFFFF;
+}
+
+.showcase-text-block {
+  margin-top: auto;
+}
+
+.showcase-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0F1B33;
+  margin: 0 0 6px 0;
+}
+
+.showcase-desc {
+  font-size: 13.5px;
+  color: #69686E;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ===== BOX 03: DISCUSS YOUR PROJECT CTA (IMAGE 4) ===== */
+.bento-cta-card {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+}
+
+.cta-action-block {
+  margin: 20px 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Schedule Call CTA Button (Matching Theme Dark Navy Button) */
+.bento-schedule-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 24px;
+  background: #1B2A4A;
+  color: #FFFFFF;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 
+    0 4px 18px rgba(27, 42, 74, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.25s ease;
+  width: 100%;
+  max-width: 280px;
+}
+
+.bento-schedule-btn:hover {
+  background: #0F1B33;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 27, 51, 0.3);
+}
+
+.cta-subtext {
+  font-size: 12.5px;
+  color: rgba(15, 27, 51, 0.5);
+  margin: 0;
+}
+
+.cta-socials-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.socials-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #69686E;
+}
+
+.socials-icons-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.social-dark-pill {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #0F1B33;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 13.5px;
+  transition: all 0.2s ease;
+}
+
+.social-dark-pill:hover {
+  transform: translateY(-2px);
+  background: #2563EB;
+}
+
+/* ===== BOX 04: SEO & PERFORMANCE GAUGES CARD (IMAGE 2) ===== */
+.bento-gauges-card {
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gauges-header {
+  margin-bottom: 24px;
+}
+
+.gauges-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 28px;
+}
+
+.gauge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gauge-circle-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.05);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06);
+}
+
+.gauge-circle-wrapper.small {
+  width: 72px;
+  height: 72px;
+}
+
+.gauge-circle-wrapper.large {
+  width: 90px;
+  height: 90px;
+}
+
+.gauge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-bg-ring {
+  fill: none;
+  stroke: rgba(37, 99, 235, 0.12);
+  stroke-width: 6;
+}
+
+.gauge-progress-ring {
+  fill: none;
+  stroke: #2563EB;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.gauge-value {
+  position: absolute;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F1B33;
+}
+
+.gauge-circle-wrapper.large .gauge-value {
+  font-size: 17px;
+}
+
+.gauge-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #69686E;
+  margin-top: 10px;
+}
+
+/* ===== BOX 06: INDUSTRIES WE WORK WITH TICKER CARD ===== */
+.bento-ticker-card {
+  grid-column: 1 / -1;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Vertical Ticker Window */
+.ticker-window {
+  position: relative;
+  height: 145px;
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+.ticker-mask-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 35px;
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.ticker-mask-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35px;
+  background: linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Continuous Vertical Loop Animation */
+.ticker-track {
+  display: flex;
+  flex-direction: column;
+  animation: verticalMarquee 20s linear infinite;
+}
+
+.ticker-window:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker-item-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.ticker-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.ticker-blue-dot {
+  color: #2563EB;
+  font-size: 14px;
+}
+
+.ticker-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #2563EB;
+  text-transform: uppercase;
+}
+
+.ticker-dashed-divider {
+  width: 100%;
+  border-bottom: 1px dashed rgba(37, 99, 235, 0.2);
+  margin: 8px 0;
+}
+
+@keyframes verticalMarquee {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+/* ===== RESPONSIVE MEDIA QUERIES ===== */
+@media (max-width: 960px) {
+  .about-bento-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .bento-ticker-card {
+    grid-column: span 1;
+  }
+  .showcase-content {
+    flex-direction: column;
+  }
+  .showcase-thumb-wrapper {
+    width: 100%;
+    height: 180px;
+  }
+  .showcase-info {
+    width: 100%;
+    height: auto;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-bento-container {
+    padding: 14px;
+    border-radius: 20px;
+  }
+  .bento-card {
+    padding: 22px 16px;
+  }
+  .gauges-row {
+    gap: 14px;
+  }
+  .gauge-circle-wrapper.small {
+    width: 58px;
+    height: 58px;
+  }
+  .gauge-circle-wrapper.large {
+    width: 72px;
+    height: 72px;
+  }
+  .gauge-value {
+    font-size: 12px;
+  }
+  .gauge-circle-wrapper.large .gauge-value {
+    font-size: 14px;
+  }
+}
