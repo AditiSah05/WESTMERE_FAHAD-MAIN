@@ -3,6 +3,14 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import './Hero.css'
 
+import css3Icon from '../../assets/icons/css-3.png'
+import htmlIcon from '../../assets/icons/html.png'
+import javaIcon from '../../assets/icons/java-logo.png'
+import jsIcon from '../../assets/icons/js.png'
+import programmingIcon from '../../assets/icons/programing.png'
+import reactIcon from '../../assets/icons/react.png'
+import wordpressIcon from '../../assets/icons/wordpress-icon.png'
+
 /* ==========================================================================
    20 CUSTOM BRANDED TECH & DESIGN TOOL ICONS
    ========================================================================== */
@@ -84,79 +92,6 @@ const IconGitHub = () => (
 )
 
 /* --- Right Side 10 Design & Cloud Icons --- */
-const IconVercel = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="#000">
-    <path d="M12 1L24 22H0L12 1Z"/>
-  </svg>
-)
-
-const IconHostinger = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2L4 6v12l8 4 8-4V6l-8-4z" fill="#673DE6"/>
-    <path d="M8 8v8h3v-3h2v3h3V8h-3v3h-2V8H8z" fill="#FFF"/>
-  </svg>
-)
-
-const IconDocker = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="#2496ED">
-    <path d="M13.98 11.08h2.12v2.12h-2.12zm-3.18 0h2.12v2.12h-2.12zm-3.18 0h2.12v2.12H7.62zm-3.18 0h2.12v2.12H4.44zm6.36-3.18h2.12v2.12h-2.12zm3.18 0h2.12v2.12h-2.12zm-6.36 0h2.12v2.12H7.62zm6.36-3.18h2.12v2.12h-2.12zM2.85 14.5c.34.87 1 1.6 1.87 2.05 2.45 1.28 6.4 1.34 9.15.15 3.32-1.44 5.3-4.8 5.3-4.8s.77 1.8 2.2 2.2c1.05.3 2.63.15 2.63.15s-.45 1.65-2.1 2.55c-2.3 1.25-5.5.95-7.75.1-3.1-1.15-5.6-1.1-7.7.3-1.6 1.05-2.9.5-3.6 0z"/>
-  </svg>
-)
-
-const IconFigma = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <path d="M12 12a4 4 0 1 0 4 4V12h-4z" fill="#0ACF83"/>
-    <path d="M8 20a4 4 0 0 0 4-4v-4H8a4 4 0 1 0 0 8z" fill="#1ABCFE"/>
-    <path d="M8 12a4 4 0 1 0 0-8h4v8H8z" fill="#F24E1E"/>
-    <path d="M12 4a4 4 0 1 0 4 4V4h-4z" fill="#FF7262"/>
-    <path d="M16 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" fill="#A259FF"/>
-  </svg>
-)
-
-const IconPhotoshop = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" rx="5" fill="#001E36"/>
-    <text x="3.5" y="16.5" fontFamily="Inter, sans-serif" fontSize="12" fontWeight="800" fill="#31A8FF">Ps</text>
-  </svg>
-)
-
-const IconIllustrator = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" rx="5" fill="#330000"/>
-    <text x="4" y="16.5" fontFamily="Inter, sans-serif" fontSize="12" fontWeight="800" fill="#FF9A00">Ai</text>
-  </svg>
-)
-
-const IconPremiere = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" rx="5" fill="#000055"/>
-    <text x="4" y="16.5" fontFamily="Inter, sans-serif" fontSize="12" fontWeight="800" fill="#9999FF">Pr</text>
-  </svg>
-)
-
-const IconAfterEffects = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <rect width="24" height="24" rx="5" fill="#20003C"/>
-    <text x="4" y="16.5" fontFamily="Inter, sans-serif" fontSize="12" fontWeight="800" fill="#D655FF">Ae</text>
-  </svg>
-)
-
-const IconSearchConsole = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#4285F4"/>
-    <path d="M7 11h2v-3H7v3zm3 0h2V7h-2v4zm3 0h2V9h-2v2z" fill="#34A853"/>
-  </svg>
-)
-
-const IconAnalytics = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <rect x="3" y="14" width="4" height="7" rx="1" fill="#F9AB00"/>
-    <rect x="10" y="8" width="4" height="13" rx="1" fill="#E37400"/>
-    <circle cx="19" cy="5" r="3" fill="#E37400"/>
-    <path d="M19 5v16" stroke="#E37400" strokeWidth="3" strokeLinecap="round"/>
-  </svg>
-)
-
 /* Data Lists */
 const leftTools = [
   { name: 'VS Code', icon: <IconVSCode /> },
@@ -172,16 +107,13 @@ const leftTools = [
 ]
 
 const rightTools = [
-  { name: 'Vercel', icon: <IconVercel /> },
-  { name: 'Hostinger', icon: <IconHostinger /> },
-  { name: 'Docker', icon: <IconDocker /> },
-  { name: 'Figma', icon: <IconFigma /> },
-  { name: 'Photoshop', icon: <IconPhotoshop /> },
-  { name: 'Illustrator', icon: <IconIllustrator /> },
-  { name: 'Premiere Pro', icon: <IconPremiere /> },
-  { name: 'After Effects', icon: <IconAfterEffects /> },
-  { name: 'Search Console', icon: <IconSearchConsole /> },
-  { name: 'Google Analytics', icon: <IconAnalytics /> },
+  { name: 'React', icon: <img src={reactIcon} alt="React" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'HTML5', icon: <img src={htmlIcon} alt="HTML5" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'CSS3', icon: <img src={css3Icon} alt="CSS3" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'JavaScript', icon: <img src={jsIcon} alt="JavaScript" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'Java', icon: <img src={javaIcon} alt="Java" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'WordPress', icon: <img src={wordpressIcon} alt="WordPress" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'Programming', icon: <img src={programmingIcon} alt="Programming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
 ]
 
 /* ===== Brand Logos Component ===== */
@@ -379,7 +311,7 @@ const Hero = () => {
         {/* --- RIGHT ORBITING RING: 10 Design & Cloud Icons Orbiting Directly On Top Of Dashed ------- Track --- */}
         <div className="hero__orbit-ring hero__orbit-ring--right">
           {rightTools.map((tool, index) => {
-            const angleDeg = index * 36; // 360 / 10 = 36 deg spacing
+            const angleDeg = index * (360 / rightTools.length); // Spacing distributed over actual length
             return (
               <div
                 key={tool.name}

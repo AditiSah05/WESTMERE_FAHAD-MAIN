@@ -450,8 +450,18 @@
   height: 145px;
   width: 100%;
   max-width: 480px;
-  overflow: hidden;
+  overflow-y: auto;
   margin-top: 18px;
+  scrollbar-width: none !important; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none !important; /* Hide scrollbar for IE/Edge */
+  overscroll-behavior-y: auto;
+  scroll-behavior: smooth;
+}
+
+.ticker-window::-webkit-scrollbar {
+  display: none !important; /* Hide scrollbar Chrome/Safari */
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .ticker-mask-top {
@@ -476,15 +486,10 @@
   pointer-events: none;
 }
 
-/* Continuous Vertical Loop Animation */
+/* Continuous Vertical Loop */
 .ticker-track {
   display: flex;
   flex-direction: column;
-  animation: verticalMarquee 20s linear infinite;
-}
-
-.ticker-window:hover .ticker-track {
-  animation-play-state: paused;
 }
 
 .ticker-item-row {

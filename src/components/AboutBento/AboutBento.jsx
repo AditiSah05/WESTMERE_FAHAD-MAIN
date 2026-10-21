@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './AboutBento.css'
 
@@ -62,6 +62,90 @@ const industriesList = [
 ]
 
 const AboutBento = () => {
+  const tickerRef = useRef(null)
+  const [isHovered, setIsHovered] = useState(false)
+
+  // Smooth Auto-Scroll Loop
+  useEffect(() => {
+    const ticker = tickerRef.current
+    if (!ticker) return
+
+    let animationId
+    const scrollSpeed = 0.5 // pixels per frame
+
+    const autoScroll = () => {
+      if (!isHovered) {
+        ticker.scrollTop += scrollSpeed
+        // Infinite loop wrap when reaching halfway through duplicated list
+        if (ticker.scrollTop >= ticker.scrollHeight / 2) {
+          ticker.scrollTop = 0
+        }
+      }
+      animationId = requestAnimationFrame(autoScroll)
+    }
+
+    animationId = requestAnimationFrame(autoScroll)
+    return () => cancelAnimationFrame(animationId)
+  }, [isHovered])
+
+  // Smooth Inertial Wheel Scroll Event Handler with Chaining to Lenis / Window
+  useEffect(() => {
+    const ticker = tickerRef.current
+    if (!ticker) return
+
+    let animationFrameId = null
+    let targetScroll = ticker.scrollTop
+    let currentScroll = ticker.scrollTop
+
+    const easeScroll = () => {
+      const diff = targetScroll - currentScroll
+      if (Math.abs(diff) > 0.3) {
+        currentScroll += diff * 0.14 // Smooth lerp damping factor
+        ticker.scrollTop = currentScroll
+        animationFrameId = requestAnimationFrame(easeScroll)
+      } else {
+        ticker.scrollTop = targetScroll
+        currentScroll = targetScroll
+        animationFrameId = null
+      }
+    }
+
+    const handleWheel = (e) => {
+      const delta = e.deltaY
+      if (!delta) return
+
+      const maxScroll = ticker.scrollHeight - ticker.clientHeight
+      if (maxScroll <= 0) return
+
+      const isScrollDown = delta > 0
+      const isScrollUp = delta < 0
+
+      // Sync target & current with actual scrollTop in case auto-scroll moved it
+      currentScroll = ticker.scrollTop
+
+      const canScrollDown = isScrollDown && currentScroll < maxScroll - 2
+      const canScrollUp = isScrollUp && currentScroll > 2
+
+      if (canScrollDown || canScrollUp) {
+        e.stopPropagation()
+
+        // Accumulate target scroll with lerp target clamping
+        const baseTarget = animationFrameId ? targetScroll : currentScroll
+        targetScroll = Math.max(0, Math.min(maxScroll, baseTarget + delta * 0.85))
+
+        if (!animationFrameId) {
+          animationFrameId = requestAnimationFrame(easeScroll)
+        }
+      }
+    }
+
+    ticker.addEventListener('wheel', handleWheel, { passive: true })
+    return () => {
+      ticker.removeEventListener('wheel', handleWheel)
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+    }
+  }, [])
+
   // CSAT Rating State (0: Poor, 1: Average, 2: Good, 3: Great, 4: Excellent)
   const [csatIndex, setCsatIndex] = useState(0)
 
@@ -329,7 +413,12 @@ const AboutBento = () => {
             <h3 className="bento-title center">Industries we work with</h3>
 
             {/* Continuous Vertical Marquee / Ticker Window */}
-            <div className="ticker-window">
+            <div
+              className="ticker-window"
+              ref={tickerRef}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               {/* Fade Overlays for Infinity Scroll Illusion */}
               <div className="ticker-mask-top" />
               <div className="ticker-mask-bottom" />

@@ -71,7 +71,7 @@ const Approach = () => {
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
-                  {word}{' '}
+                  {word}
                 </motion.span>
               ))}
             </h2>
@@ -97,7 +97,7 @@ const Approach = () => {
             transition={{ duration: 0.6, delay: 0.85 }}
           >
             <motion.a
-              href="#process"
+              href="#about-process"
               className="approach-btn"
               whileHover={{ scale: 1.05, boxShadow: '0 10px 28px rgba(0, 0, 0, 0.08)' }}
               whileTap={{ scale: 0.95 }}

@@ -70,11 +70,20 @@
   margin: 0.9rem 0 0.4rem;
   letter-spacing: -0.02em;
   line-height: 1.25;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.32em;
+  row-gap: 0.15em;
 }
 
 .approach-word {
   display: inline-block;
+  margin-right: 0.28em;
   will-change: transform, opacity, filter;
+}
+
+.approach-word:last-child {
+  margin-right: 0;
 }
 
 .approach-subheading {

@@ -239,7 +239,7 @@ const Comparison = () => {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              {wordObj.text}{' '}
+              {wordObj.text}
             </motion.span>
           ))}
         </h2>

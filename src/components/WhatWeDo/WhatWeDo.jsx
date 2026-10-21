@@ -5,74 +5,56 @@ import './WhatWeDo.css'
 const servicesData = [
   {
     id: 1,
-    title: 'Digital Strategy & Growth',
-    description: 'Data-driven roadmaps aligned with real business goals and high ROI metrics.',
-    tag: 'Strategy & ROI',
+    title: 'Website',
+    description: 'Modern, lightning-fast React & Next.js websites built with premium UI/UX designs and solid SEO.',
+    tag: 'Next.js & SEO',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
+        <rect x="3" y="4" width="18" height="16" rx="2" ry="2" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+        <line x1="8" y1="20" x2="16" y2="20" />
+        <line x1="12" y1="16" x2="12" y2="20" />
       </svg>
     ),
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80',
+    image: 'https://img.freepik.com/free-photo/website-development-links-seo-webinar-cyberspace-concept_53876-120953.jpg?semt=ais_hybrid&w=740&q=80',
   },
   {
     id: 2,
-    title: 'UI/UX & Product Design',
-    description: 'User-centered web & mobile interfaces crafted for intuitive, high-converting engagement.',
-    tag: 'Figma & Systems',
+    title: 'App',
+    description: 'Sleek, responsive native mobile applications for iOS and Android platforms.',
+    tag: 'iOS & Android',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+        <line x1="12" y1="18" x2="12.01" y2="18" />
       </svg>
     ),
-    image: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=900&q=80',
+    image: 'https://cdn.dribbble.com/userupload/17268782/file/original-1a66a7680026c5313aab15ad4803d8f0.jpg?crop=0x0-3201x2401&format=webp&resize=400x300&vertical=center',
   },
   {
     id: 3,
-    title: 'Web & Android Development',
-    description: 'Scalable, high-performance websites and Android apps built for exponential growth.',
-    tag: 'React & Mobile',
+    title: 'Automation',
+    description: 'End-to-end workflow automations, custom API links, and automated cloud sync pipelines.',
+    tag: 'Zapier & Cloud APIs',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+      </svg>
+    ),
+    image: 'https://thumbs.dreamstime.com/b/modern-robot-holding-light-bulb-innovation-new-idea-artificial-intelligence-concept-vector-illustration-96419072.jpg',
+  },
+  {
+    id: 4,
+    title: 'Software',
+    description: 'Tailored backend systems, custom dashboard consoles, and secure database designs.',
+    tag: 'Custom Architectures',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
       </svg>
     ),
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    id: 4,
-    title: 'Brand Identity & Styling',
-    description: 'Memorable visual identity, logos, and comprehensive design guidelines for ambitious brands.',
-    tag: 'Identity & Logos',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <path d="m4.93 4.93 4.24 4.24" />
-        <path d="m14.83 9.17 4.24-4.24" />
-        <path d="m14.83 14.83 4.24 4.24" />
-        <path d="m9.17 14.83-4.24 4.24" />
-      </svg>
-    ),
-    image: 'https://images.unsplash.com/photo-1542744094-3a31b272c490?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    id: 5,
-    title: 'Content Creation & Media',
-    description: 'High-impact commercial photography, studio video production, and motion graphics.',
-    tag: '4K Studio Media',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7" />
-        <rect x="14" y="3" width="7" height="7" />
-        <rect x="14" y="14" width="7" height="7" />
-        <rect x="3" y="14" width="7" height="7" />
-      </svg>
-    ),
-    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl9ZUzPfcT6HxnXM2ueY60KIVZomHraqeAcNbDyKKPLqp-0s8SFpfAH075&s=10',
   },
 ]
 
@@ -93,10 +75,10 @@ const WhatWeDo = () => {
     restDelta: 0.001,
   })
 
-  // Calculate active center card index (0 to 4) as user scrolls through pinned section
+  // Calculate active center card index (0 to 3) as user scrolls through pinned section
   useEffect(() => {
     const unsubscribe = smoothProgress.on('change', (latest) => {
-      const index = Math.min(4, Math.max(0, Math.floor(latest * 4.99)))
+      const index = Math.min(3, Math.max(0, Math.floor(latest * 3.99)))
       setActiveIndex(index)
     })
     return () => unsubscribe()
