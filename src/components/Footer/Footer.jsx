@@ -1,9 +1,12 @@
+'use client'
+
+import Link from 'next/link'
 import westmereLogoImg from '../../assets/westmere-logo.png'
 import './Footer.css'
 
 const WestmereLogo = () => (
   <a href="/" className="footer__logo">
-    <img src={westmereLogoImg} alt="WESTMERE Logo" className="footer__logo-img" />
+    <img src={westmereLogoImg.src} alt="WESTMERE Logo" className="footer__logo-img" />
     <div className="footer__logo-text">
       <span>W</span>
       <span className="logo-e-bars"><span /><span /><span /></span>
@@ -39,11 +42,11 @@ const Footer = () => {
           <div className="footer-col footer-links-col">
             <h4 className="footer-col-title">QUICK LINKS</h4>
             <ul className="footer-links-list">
-              <li><a href="#home">Home</a></li>
-              <li><a href="#about">About us</a></li>
-              <li><a href="#services">Our Services</a></li>
-              <li><a href="#product">Our Product</a></li>
-              <li><a href="#contact">Contact us</a></li>
+              <li><Link href="/">Home</Link></li>
+              <li><Link href="/about">About us</Link></li>
+              <li><Link href="/services">Our Services</Link></li>
+              <li><Link href="/product">Our Product</Link></li>
+              <li><Link href="/contact">Contact us</Link></li>
             </ul>
           </div>
 

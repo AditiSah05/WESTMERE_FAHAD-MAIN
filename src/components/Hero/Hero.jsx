@@ -1,7 +1,12 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import gsap from 'gsap'
 import './Hero.css'
+
+const MotionLink = motion.create(Link)
 
 import css3Icon from '../../assets/icons/css-3.png'
 import htmlIcon from '../../assets/icons/html.png'
@@ -107,13 +112,13 @@ const leftTools = [
 ]
 
 const rightTools = [
-  { name: 'React', icon: <img src={reactIcon} alt="React" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'HTML5', icon: <img src={htmlIcon} alt="HTML5" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'CSS3', icon: <img src={css3Icon} alt="CSS3" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'JavaScript', icon: <img src={jsIcon} alt="JavaScript" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'Java', icon: <img src={javaIcon} alt="Java" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'WordPress', icon: <img src={wordpressIcon} alt="WordPress" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'Programming', icon: <img src={programmingIcon} alt="Programming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'React', icon: <img src={reactIcon.src} alt="React" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'HTML5', icon: <img src={htmlIcon.src} alt="HTML5" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'CSS3', icon: <img src={css3Icon.src} alt="CSS3" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'JavaScript', icon: <img src={jsIcon.src} alt="JavaScript" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'Java', icon: <img src={javaIcon.src} alt="Java" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'WordPress', icon: <img src={wordpressIcon.src} alt="WordPress" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'Programming', icon: <img src={programmingIcon.src} alt="Programming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
 ]
 
 /* ===== Brand Logos Component ===== */
@@ -378,8 +383,8 @@ const Hero = () => {
           </div>
 
           <div className="hero__buttons">
-            <motion.a
-              href="#contact"
+            <MotionLink
+              href="/contact"
               className="hero__btn hero__btn--primary"
               whileHover={{ scale: 1.03, boxShadow: '0 10px 30px rgba(27, 42, 74, 0.28)' }}
               whileTap={{ scale: 0.97 }}
@@ -388,10 +393,10 @@ const Hero = () => {
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M4 9H14M14 9L10 5M14 9L10 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </motion.a>
+            </MotionLink>
 
-            <motion.a
-              href="#work"
+            <MotionLink
+              href="/work"
               className="hero__btn hero__btn--secondary"
               whileHover={{ scale: 1.03, backgroundColor: '#F0F4F8' }}
               whileTap={{ scale: 0.97 }}
@@ -402,7 +407,7 @@ const Hero = () => {
                   <path d="M2.5 1.5L8.5 5L2.5 8.5V1.5Z" fill="#1B2A4A" stroke="#1B2A4A" strokeWidth="0.8"/>
                 </svg>
               </div>
-            </motion.a>
+            </MotionLink>
           </div>
         </motion.div>
 
