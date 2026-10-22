@@ -4,7 +4,7 @@ const fmt = (n: number) => (n >= 100000 ? `${(n / 100000).toFixed(1)}L` : n >= 1
 
 /** Grouped bars drawn in SVG (no chart library). */
 export default function BarChart({ labels, series, height = 240 }: Props) {
-  const max = Math.max(...series.flatMap((s) => s.values)) * 1.1
+  const max = Math.max(4, ...series.flatMap((s) => s.values)) * 1.1
   const w = 720
   const pad = { l: 44, r: 8, t: 10, b: 28 }
   const inner = { w: w - pad.l - pad.r, h: height - pad.t - pad.b }

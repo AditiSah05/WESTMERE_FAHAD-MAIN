@@ -19,7 +19,7 @@ export default function StatCard({ label, value, delta, icon: Icon, accent = 'bl
       {delta !== undefined && (
         <p className={cn('mt-2 flex items-center gap-1 text-[13px] font-semibold', up ? 'text-[#047857]' : 'text-[#b91c1c]')}>
           {up ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-          {Math.abs(delta)}% <span className="font-medium text-muted">vs last month</span>
+          {Math.abs(delta)}% <span className="font-medium text-muted">vs previous 30 days</span>
         </p>
       )}
     </Card>
