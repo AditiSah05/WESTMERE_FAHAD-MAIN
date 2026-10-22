@@ -1,6 +1,4 @@
-import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import gsap from 'gsap'
 import './Hero.css'
 
 import css3Icon from '../../assets/icons/css-3.png'
@@ -170,53 +168,23 @@ const BrandLogos = () => (
 )
 
 /* ===== Main Hero Component ===== */
-const Hero = () => {
-  const heroRef = useRef(null)
+const defaultTitle = (
+  <>
+    We Build Digital{'\n'}
+    Experiences That{'\n'}
+    <span className="hero__title-gold">Drive Real Growth.</span>
+  </>
+)
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // 1. Curtain Sweep Reveal Animation on Refresh (Left Circle sweeps in from left, Right from right)
-      gsap.fromTo(
-        '.hero__arc-container--left',
-        { x: -380, opacity: 0, scale: 0.8 },
-        {
-          x: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 2.2,
-          ease: 'power3.out',
-          delay: 0.2,
-        }
-      )
-
-      gsap.fromTo(
-        '.hero__arc-container--right',
-        { x: 380, opacity: 0, scale: 0.8 },
-        {
-          x: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 2.2,
-          ease: 'power3.out',
-          delay: 0.2,
-        }
-      )
-
-      // 2. Subtle breathing scale on static outer/inner tracks
-      gsap.to('.hero__arc-group', {
-        scale: 1.015,
-        duration: 7,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.5,
-        delay: 2.2,
-      })
-    }, heroRef)
-
-    return () => ctx.revert()
-  }, [])
-
+const Hero = ({
+  badge = 'Growth & Creative Agency',
+  title = defaultTitle,
+  subtitle = 'We combine strategy, design, and technology to help ambitious brands stand out & create meaningful digital experiences.',
+  primary = { label: 'Start Your Project', href: '#contact' },
+  secondary = { label: 'See Our Work', href: '#work' },
+  callout = 'Schedule a free call now',
+  showBrands = true,
+}) => {
   /* Framer Motion Variants */
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -239,98 +207,32 @@ const Hero = () => {
   }
 
   return (
-    <section className="hero" ref={heroRef}>
-      {/* ===== Ambient Background Glows ===== */}
-      <div className="hero__glow hero__glow--left" />
-      <div className="hero__glow hero__glow--right" />
-
-      {/* ===== LEFT CONCENTRIC ARCS & 10-TECH ORBIT SYSTEM ===== */}
-      <div className="hero__arc-container hero__arc-container--left">
-        {/* Background Arc Lines & Glass Track */}
-        <svg className="hero__arcs-svg" viewBox="0 0 500 800" fill="none">
-          <g className="hero__arc-group">
-            {/* Outer Thin Arc Line */}
-            <circle cx="-150" cy="400" r="540" stroke="rgba(74, 123, 247, 0.12)" strokeWidth="1.2" />
-
-            {/* Main Thick Glass Track */}
-            <circle cx="-150" cy="400" r="440" stroke="rgba(215, 230, 255, 0.7)" strokeWidth="70" opacity="0.35" />
-            <circle cx="-150" cy="400" r="440" stroke="rgba(255, 255, 255, 0.9)" strokeWidth="64" opacity="0.6" />
-
-            {/* Glass Track Center Dashed Radius Line (-------) */}
-            <circle cx="-150" cy="400" r="440" stroke="rgba(74, 123, 247, 0.4)" strokeWidth="1.8" strokeDasharray="6 6" />
-
-            {/* Inner Thin Arc Line */}
-            <circle cx="-150" cy="400" r="330" stroke="rgba(74, 123, 247, 0.14)" strokeWidth="1.2" />
-          </g>
-        </svg>
-
-        {/* --- LEFT ORBITING RING: 10 Tech Icons Orbiting Directly On Top Of Dashed ------- Track --- */}
-        <div className="hero__orbit-ring hero__orbit-ring--left">
-          {leftTools.map((tool, index) => {
-            const angleDeg = index * 36; // 360 / 10 = 36 deg spacing
-            return (
-              <div
-                key={tool.name}
-                className="hero__orbit-slot"
-                style={{
-                  transform: `rotate(${angleDeg}deg) translate(440px) rotate(${-angleDeg}deg)`
-                }}
-              >
-                <div className="hero__orbit-counter">
-                  <div className="hero__icon-card hero__icon-card--blue">
-                    {tool.icon}
-                    <div className="hero__card-tooltip">{tool.name}</div>
-                  </div>
-                </div>
+    <section className={`hero ${showBrands ? '' : 'hero--compact'}`}>
+      {/* ===== Background circles (3 per side) ===== */}
+      {['left', 'right'].map((side) => {
+        const tools = side === 'left' ? leftTools : rightTools
+        return [1, 2, 3].map((n) => (
+          <div key={`${side}${n}`} className={`hero__line hero__line--${side} hero__line--${n}`}>
+            <div className="hero__line-bg" />
+            {n === 1 && (
+              <div className="hero__orbit">
+                {[0, 30, 60, 90, 120, 150].map((deg, i) => {
+                  const d = deg + (side === 'left' ? -15 : 15)
+                  return (
+                    <div key={deg} className="hero__diameter" style={{ transform: `rotate(${d}deg)` }}>
+                      {[0, 1].map((end) => (
+                        <div key={end} className="hero__card-slot" style={{ transform: `rotate(${-d}deg)` }}>
+                          <div className="hero__icon-card">{tools[(i * 2 + end) % tools.length].icon}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })}
               </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* ===== RIGHT CONCENTRIC ARCS & 10-DESIGN ORBIT SYSTEM ===== */}
-      <div className="hero__arc-container hero__arc-container--right">
-        {/* Background Arc Lines & Glass Track */}
-        <svg className="hero__arcs-svg" viewBox="0 0 500 800" fill="none">
-          <g className="hero__arc-group">
-            {/* Inner Thin Arc Line */}
-            <circle cx="650" cy="400" r="330" stroke="rgba(217, 119, 6, 0.12)" strokeWidth="1.2" />
-
-            {/* Main Thick Glass Track */}
-            <circle cx="650" cy="400" r="440" stroke="rgba(255, 235, 210, 0.7)" strokeWidth="70" opacity="0.4" />
-            <circle cx="650" cy="400" r="440" stroke="rgba(255, 255, 255, 0.9)" strokeWidth="64" opacity="0.65" />
-
-            {/* Glass Track Center Dashed Radius Line (-------) */}
-            <circle cx="650" cy="400" r="440" stroke="rgba(217, 119, 6, 0.4)" strokeWidth="1.8" strokeDasharray="6 6" />
-
-            {/* Outer Thin Arc Line */}
-            <circle cx="650" cy="400" r="540" stroke="rgba(217, 119, 6, 0.14)" strokeWidth="1.2" />
-          </g>
-        </svg>
-
-        {/* --- RIGHT ORBITING RING: 10 Design & Cloud Icons Orbiting Directly On Top Of Dashed ------- Track --- */}
-        <div className="hero__orbit-ring hero__orbit-ring--right">
-          {rightTools.map((tool, index) => {
-            const angleDeg = index * (360 / rightTools.length); // Spacing distributed over actual length
-            return (
-              <div
-                key={tool.name}
-                className="hero__orbit-slot"
-                style={{
-                  transform: `rotate(${angleDeg}deg) translate(440px) rotate(${-angleDeg}deg)`
-                }}
-              >
-                <div className="hero__orbit-counter">
-                  <div className="hero__icon-card hero__icon-card--gold">
-                    {tool.icon}
-                    <div className="hero__card-tooltip">{tool.name}</div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+            )}
+          </div>
+        ))
+      })}
 
       {/* ===== CENTER HERO CONTENT ===== */}
       <motion.div
@@ -341,27 +243,25 @@ const Hero = () => {
       >
         {/* Category Pill Badge */}
         <motion.div className="hero__badge" variants={itemVariants}>
-          <span className="hero__badge-dot" />
-          <span className="hero__badge-text">GROWTH & CREATIVE AGENCY</span>
+          <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
+          <span className="hero__badge-text">{badge}</span>
+          <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
         </motion.div>
 
         {/* Hero Title */}
         <motion.h1 className="hero__title" variants={itemVariants}>
-          We Build Digital{'\n'}
-          Experiences That{'\n'}
-          <span className="hero__title-gold">Drive Real Growth.</span>
+          {title}
         </motion.h1>
 
         {/* Hero Subtitle */}
         <motion.p className="hero__subtitle" variants={itemVariants}>
-          We combine strategy, design, and technology to help
-          ambitious brands stand out & create meaningful
-          digital experiences.
+          {subtitle}
         </motion.p>
 
         {/* Action Buttons & Handwritten Callout */}
         <motion.div className="hero__buttons-wrapper" variants={itemVariants}>
           {/* Handwritten Annotation Callout (Schedule a free call now) */}
+          {callout && (
           <div className="hero__callout">
             <svg width="56" height="40" viewBox="0 0 56 40" fill="none" className="hero__callout-arrow">
               <path d="M 6 36 C 18 20, 32 10, 50 14" stroke="url(#callout-grad)" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
@@ -374,57 +274,37 @@ const Hero = () => {
                 </linearGradient>
               </defs>
             </svg>
-            <span className="hero__callout-text">Schedule a free call now</span>
+            <span className="hero__callout-text">{callout}</span>
           </div>
+          )}
 
           <div className="hero__buttons">
             <motion.a
-              href="#contact"
+              href={primary.href}
               className="hero__btn hero__btn--primary"
-              whileHover={{ scale: 1.03, boxShadow: '0 10px 30px rgba(27, 42, 74, 0.28)' }}
+              whileHover={{ scale: 1.03, boxShadow: '0 10px 30px rgba(236, 37, 36, 0.35)' }}
               whileTap={{ scale: 0.97 }}
             >
-              <span>Start Your Project</span>
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M4 9H14M14 9L10 5M14 9L10 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <span>{primary.label}</span>
             </motion.a>
 
             <motion.a
-              href="#work"
+              href={secondary.href}
               className="hero__btn hero__btn--secondary"
-              whileHover={{ scale: 1.03, backgroundColor: '#F0F4F8' }}
+              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              <span>See Our Work</span>
-              <div className="hero__btn-play">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                  <path d="M2.5 1.5L8.5 5L2.5 8.5V1.5Z" fill="#1B2A4A" stroke="#1B2A4A" strokeWidth="0.8"/>
-                </svg>
-              </div>
+              <span>{secondary.label}</span>
             </motion.a>
           </div>
         </motion.div>
 
         {/* Trusted Brand Logos */}
-        <motion.div variants={itemVariants}>
-          <BrandLogos />
-        </motion.div>
-
-        {/* Scroll Down Indicator */}
-        <motion.div
-          className="hero__scroll"
-          variants={itemVariants}
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div className="hero__scroll-circle">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3V13M8 13L4 9M8 13L12 9" stroke="#1B2A4A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="hero__scroll-text">SCROLL TO EXPLORE</span>
-        </motion.div>
+        {showBrands && (
+          <motion.div className="hero__brands-wrap" variants={itemVariants}>
+            <BrandLogos />
+          </motion.div>
+        )}
       </motion.div>
     </section>
   )

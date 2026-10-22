@@ -63,86 +63,69 @@ const industriesList = [
 
 const AboutBento = () => {
   const tickerRef = useRef(null)
-  const [isHovered, setIsHovered] = useState(false)
 
-  // Smooth Auto-Scroll Loop
+  // Ticker: time-based upward drift via transform (scrollTop rounds sub-pixel steps and stalls),
+  // centre-weighted emphasis, pause on hover, drag to move.
   useEffect(() => {
-    const ticker = tickerRef.current
-    if (!ticker) return
+    const win = tickerRef.current
+    if (!win) return
+    const track = win.querySelector('.ticker-track')
+    const rows = track.querySelectorAll('.ticker-item-row')
+    const SPEED = 24 // px per second
 
-    let animationId
-    const scrollSpeed = 0.5 // pixels per frame
+    let offset = 0
+    let hovered = false
+    let dragging = false
+    let dragY = 0
+    let dragStart = 0
+    let last = performance.now()
+    let raf
 
-    const autoScroll = () => {
-      if (!isHovered) {
-        ticker.scrollTop += scrollSpeed
-        // Infinite loop wrap when reaching halfway through duplicated list
-        if (ticker.scrollTop >= ticker.scrollHeight / 2) {
-          ticker.scrollTop = 0
-        }
-      }
-      animationId = requestAnimationFrame(autoScroll)
+    const tick = (now) => {
+      const dt = Math.min(now - last, 64) / 1000
+      last = now
+      const half = track.scrollHeight / 2
+      if (!hovered && !dragging) offset += SPEED * dt
+      offset = ((offset % half) + half) % half
+      track.style.transform = `translate3d(0, ${-offset}px, 0)`
+
+      const mid = offset + win.clientHeight / 2
+      rows.forEach((row) => {
+        const d = row.offsetTop + row.offsetHeight / 2 - mid
+        row.style.opacity = (0.05 + 0.95 * Math.exp(-(d * d) / (55 * 55))).toFixed(3)
+      })
+      raf = requestAnimationFrame(tick)
     }
 
-    animationId = requestAnimationFrame(autoScroll)
-    return () => cancelAnimationFrame(animationId)
-  }, [isHovered])
-
-  // Smooth Inertial Wheel Scroll Event Handler with Chaining to Lenis / Window
-  useEffect(() => {
-    const ticker = tickerRef.current
-    if (!ticker) return
-
-    let animationFrameId = null
-    let targetScroll = ticker.scrollTop
-    let currentScroll = ticker.scrollTop
-
-    const easeScroll = () => {
-      const diff = targetScroll - currentScroll
-      if (Math.abs(diff) > 0.3) {
-        currentScroll += diff * 0.14 // Smooth lerp damping factor
-        ticker.scrollTop = currentScroll
-        animationFrameId = requestAnimationFrame(easeScroll)
-      } else {
-        ticker.scrollTop = targetScroll
-        currentScroll = targetScroll
-        animationFrameId = null
-      }
+    const onEnter = () => { hovered = true }
+    const onLeave = () => { hovered = false }
+    const onDown = (e) => {
+      dragging = true
+      dragY = e.clientY
+      dragStart = offset
+      win.setPointerCapture(e.pointerId)
     }
-
-    const handleWheel = (e) => {
-      const delta = e.deltaY
-      if (!delta) return
-
-      const maxScroll = ticker.scrollHeight - ticker.clientHeight
-      if (maxScroll <= 0) return
-
-      const isScrollDown = delta > 0
-      const isScrollUp = delta < 0
-
-      // Sync target & current with actual scrollTop in case auto-scroll moved it
-      currentScroll = ticker.scrollTop
-
-      const canScrollDown = isScrollDown && currentScroll < maxScroll - 2
-      const canScrollUp = isScrollUp && currentScroll > 2
-
-      if (canScrollDown || canScrollUp) {
-        e.stopPropagation()
-
-        // Accumulate target scroll with lerp target clamping
-        const baseTarget = animationFrameId ? targetScroll : currentScroll
-        targetScroll = Math.max(0, Math.min(maxScroll, baseTarget + delta * 0.85))
-
-        if (!animationFrameId) {
-          animationFrameId = requestAnimationFrame(easeScroll)
-        }
-      }
+    const onMove = (e) => {
+      if (dragging) offset = dragStart - (e.clientY - dragY)
     }
+    const onUp = () => { dragging = false }
 
-    ticker.addEventListener('wheel', handleWheel, { passive: true })
+    win.addEventListener('mouseenter', onEnter)
+    win.addEventListener('mouseleave', onLeave)
+    win.addEventListener('pointerdown', onDown)
+    win.addEventListener('pointermove', onMove)
+    win.addEventListener('pointerup', onUp)
+    win.addEventListener('pointercancel', onUp)
+    raf = requestAnimationFrame(tick)
+
     return () => {
-      ticker.removeEventListener('wheel', handleWheel)
-      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+      cancelAnimationFrame(raf)
+      win.removeEventListener('mouseenter', onEnter)
+      win.removeEventListener('mouseleave', onLeave)
+      win.removeEventListener('pointerdown', onDown)
+      win.removeEventListener('pointermove', onMove)
+      win.removeEventListener('pointerup', onUp)
+      win.removeEventListener('pointercancel', onUp)
     }
   }, [])
 
@@ -172,8 +155,9 @@ const AboutBento = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <span className="about-badge-dot" />
-        <span className="about-badge-text">ABOUT US</span>
+        <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
+        <span className="about-badge-text">About us</span>
+        <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
       </motion.div>
 
       {/* Main Outer Container */}
@@ -416,13 +400,8 @@ const AboutBento = () => {
             <div
               className="ticker-window"
               ref={tickerRef}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
             >
-              {/* Fade Overlays for Infinity Scroll Illusion */}
-              <div className="ticker-mask-top" />
-              <div className="ticker-mask-bottom" />
-
+              
               <div className="ticker-track">
                 {[...industriesList, ...industriesList].map((industry, index) => (
                   <div key={index} className="ticker-item-row">
