@@ -17,7 +17,7 @@ const renderCell = (col: Column, v: Cell | undefined) => {
     case 'date': return shortDate(v)
     case 'status': return <StatusBadge value={v} />
     case 'tag': return <span className="rounded bg-sky px-2 py-0.5 text-xs font-semibold text-blue-accent">{String(v)}</span>
-    case 'mono': return <code className="rounded bg-paper px-1.5 py-0.5 font-mono text-[12.5px] text-navy">{String(v)}</code>
+    case 'mono': return <code className="whitespace-nowrap rounded bg-paper px-1.5 py-0.5 font-mono text-[12.5px] text-navy">{String(v)}</code>
     case 'bool': return <StatusBadge value={v ? 'Yes' : 'No'} tone={v ? 'green' : 'gray'} />
     default: return String(v)
   }
