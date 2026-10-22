@@ -48,3 +48,10 @@ export async function destroyCustomerSession() {
   if (token) await (await db()).query(`DELETE FROM shop_sessions WHERE token_hash = $1`, [sha(token)])
   jar.delete(CUSTOMER_COOKIE)
 }
+
+/** For server actions: re-check the session, never trust the UI. */
+export async function assertCustomer(): Promise<Customer> {
+  const c = await getCustomer()
+  if (!c) throw new Error('UNAUTHORIZED')
+  return c
+}

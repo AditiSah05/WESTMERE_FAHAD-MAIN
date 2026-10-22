@@ -41,6 +41,40 @@ const statements = [
     last_seen_at timestamptz NOT NULL DEFAULT now(),
     expires_at timestamptz NOT NULL
   )`,
+  `CREATE TABLE IF NOT EXISTS shop_products (
+    id text PRIMARY KEY,
+    name text NOT NULL,
+    category text NOT NULL,
+    kind text NOT NULL,
+    price integer NOT NULL,
+    rating text NOT NULL DEFAULT '',
+    tag text NOT NULL DEFAULT ''
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_orders (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    amount integer NOT NULL,
+    payment_status text NOT NULL,
+    fulfilment text NOT NULL,
+    method text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_wishlist (
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    PRIMARY KEY (user_id, product_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_tickets (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    subject text NOT NULL,
+    type text NOT NULL,
+    priority text NOT NULL,
+    message text NOT NULL,
+    status text NOT NULL DEFAULT 'Open',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
   `CREATE TABLE IF NOT EXISTS login_attempts (
     id bigserial PRIMARY KEY,
     email text NOT NULL,
