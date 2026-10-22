@@ -3,11 +3,10 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FlaskConical } from 'lucide-react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
-export default function AdminShell({ children }: { children: ReactNode }) {
+export default function AdminShell({ children, email }: { children: ReactNode; email: string }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -25,11 +24,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       </AnimatePresence>
 
       <div className="min-[1025px]:pl-[264px]">
-        <Topbar onMenu={() => setOpen(true)} />
-        <div className="flex items-center gap-2 border-b border-gold/20 bg-gold/10 px-4 py-2 text-[13px] font-medium text-[#8a6420] min-[1025px]:px-8">
-          <FlaskConical size={14} />
-          Demo mode: sample data saved in this browser only. Not connected to a backend or authentication yet.
-        </div>
+        <Topbar onMenu={() => setOpen(true)} email={email} />
         <main className="mx-auto w-full max-w-[1280px] px-4 py-8 min-[1025px]:px-8">{children}</main>
       </div>
     </div>
