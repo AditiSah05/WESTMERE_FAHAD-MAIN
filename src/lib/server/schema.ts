@@ -75,6 +75,35 @@ const statements = [
     status text NOT NULL DEFAULT 'Open',
     created_at timestamptz NOT NULL DEFAULT now()
   )`,
+  `CREATE TABLE IF NOT EXISTS shop_profiles (
+    user_id uuid PRIMARY KEY REFERENCES shop_users(id) ON DELETE CASCADE,
+    phone text NOT NULL DEFAULT '',
+    company text NOT NULL DEFAULT '',
+    address text NOT NULL DEFAULT '',
+    country text NOT NULL DEFAULT 'India',
+    state text NOT NULL DEFAULT '',
+    postal text NOT NULL DEFAULT '',
+    gstin text NOT NULL DEFAULT '',
+    notify_email boolean NOT NULL DEFAULT true,
+    marketing boolean NOT NULL DEFAULT false
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_requests (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    order_id bigint NOT NULL REFERENCES shop_orders(id),
+    kind text NOT NULL,
+    reason text NOT NULL,
+    status text NOT NULL DEFAULT 'Requested',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_reviews (
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    rating integer NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    feedback text NOT NULL DEFAULT '',
+    status text NOT NULL DEFAULT 'Pending',
+    PRIMARY KEY (user_id, product_id)
+  )`,
   `CREATE TABLE IF NOT EXISTS login_attempts (
     id bigserial PRIMARY KEY,
     email text NOT NULL,
