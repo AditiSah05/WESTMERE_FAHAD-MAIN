@@ -1,4 +1,7 @@
+'use client'
+
 import { useEffect } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import './AboutPage.css'
 
@@ -168,7 +171,7 @@ const AboutPage = () => {
                   high-converting UX with hyper-optimized development, we translate bold visions into
                   measurable business growth.
                 </p>
-                <a className="about-hero2__btn" href="#contact">Start a project</a>
+                <Link className="about-hero2__btn" href="/contact">Start a project</Link>
               </div>
             </div>
 

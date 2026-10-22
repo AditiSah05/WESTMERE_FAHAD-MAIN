@@ -1,3 +1,5 @@
+'use client'
+
 import { motion } from 'framer-motion'
 import './Hero.css'
 
@@ -8,6 +10,9 @@ import jsIcon from '../../assets/icons/js.png'
 import programmingIcon from '../../assets/icons/programing.png'
 import reactIcon from '../../assets/icons/react.png'
 import wordpressIcon from '../../assets/icons/wordpress-icon.png'
+
+import Link from 'next/link'
+const MotionLink = motion.create(Link)
 
 /* ==========================================================================
    20 CUSTOM BRANDED TECH & DESIGN TOOL ICONS
@@ -105,13 +110,13 @@ const leftTools = [
 ]
 
 const rightTools = [
-  { name: 'React', icon: <img src={reactIcon} alt="React" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'HTML5', icon: <img src={htmlIcon} alt="HTML5" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'CSS3', icon: <img src={css3Icon} alt="CSS3" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'JavaScript', icon: <img src={jsIcon} alt="JavaScript" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'Java', icon: <img src={javaIcon} alt="Java" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'WordPress', icon: <img src={wordpressIcon} alt="WordPress" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
-  { name: 'Programming', icon: <img src={programmingIcon} alt="Programming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'React', icon: <img src={reactIcon.src} alt="React" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'HTML5', icon: <img src={htmlIcon.src} alt="HTML5" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'CSS3', icon: <img src={css3Icon.src} alt="CSS3" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'JavaScript', icon: <img src={jsIcon.src} alt="JavaScript" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'Java', icon: <img src={javaIcon.src} alt="Java" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'WordPress', icon: <img src={wordpressIcon.src} alt="WordPress" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
+  { name: 'Programming', icon: <img src={programmingIcon.src} alt="Programming" style={{ width: '22px', height: '22px', objectFit: 'contain' }} /> },
 ]
 
 /* ===== Brand Logos Component ===== */
@@ -180,8 +185,8 @@ const Hero = ({
   badge = 'Growth & Creative Agency',
   title = defaultTitle,
   subtitle = 'We combine strategy, design, and technology to help ambitious brands stand out & create meaningful digital experiences.',
-  primary = { label: 'Start Your Project', href: '#contact' },
-  secondary = { label: 'See Our Work', href: '#work' },
+  primary = { label: 'Start Your Project', href: '/contact' },
+  secondary = { label: 'See Our Work', href: '/work' },
   callout = 'Schedule a free call now',
   showBrands = true,
 }) => {
@@ -279,23 +284,23 @@ const Hero = ({
           )}
 
           <div className="hero__buttons">
-            <motion.a
+            <MotionLink
               href={primary.href}
               className="hero__btn hero__btn--primary"
               whileHover={{ scale: 1.03, boxShadow: '0 10px 30px rgba(236, 37, 36, 0.35)' }}
               whileTap={{ scale: 0.97 }}
             >
               <span>{primary.label}</span>
-            </motion.a>
+            </MotionLink>
 
-            <motion.a
+            <MotionLink
               href={secondary.href}
               className="hero__btn hero__btn--secondary"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
               <span>{secondary.label}</span>
-            </motion.a>
+            </MotionLink>
           </div>
         </motion.div>
 
