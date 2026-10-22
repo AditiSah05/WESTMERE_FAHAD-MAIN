@@ -1,7 +1,11 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import './ServicesPage.css'
 
 const ServicesPage = () => {
+  const router = useRouter()
   const fadeIn = {
     initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
@@ -10,7 +14,7 @@ const ServicesPage = () => {
   }
 
   const handleContactRedirect = () => {
-    window.location.hash = '#contact'
+    router.push('/contact')
   }
 
   const servicesList = [

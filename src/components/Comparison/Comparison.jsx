@@ -1,3 +1,6 @@
+'use client'
+
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './Comparison.css'
@@ -224,7 +227,7 @@ const Comparison = () => {
         </motion.div>
 
         <motion.div className="comparison-proof-banner" {...fadeUp}>
-          <a href="#story" className="proof-story-btn">Read our story</a>
+          <Link href="/about" className="proof-story-btn">Read our story</Link>
           <InteractiveProofAvatars />
           <div className="proof-rating-box">
             <div className="rating-stars-row">

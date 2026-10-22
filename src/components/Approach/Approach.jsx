@@ -1,8 +1,13 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import westmereLogoImg from '../../assets/westmere-logo.png'
 import './Approach.css'
+
+import Link from 'next/link'
+const MotionLink = motion.create(Link)
 
 const headlineWords = ['Strategy.', 'Design.', 'Technology.']
 
@@ -96,8 +101,8 @@ const Approach = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.85 }}
           >
-            <motion.a
-              href="#about-process"
+            <MotionLink
+              href="/about#process"
               className="approach-btn"
               whileHover={{ scale: 1.05, boxShadow: '0 10px 28px rgba(0, 0, 0, 0.08)' }}
               whileTap={{ scale: 0.95 }}
@@ -106,7 +111,7 @@ const Approach = () => {
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </motion.a>
+            </MotionLink>
           </motion.div>
 
           {/* Right Emblem Orbital Graphic (Matching User Image 2 & 3) */}
@@ -125,7 +130,7 @@ const Approach = () => {
 
               {/* Center Westmere Emblem Sphere */}
               <div className="approach-logo-sphere">
-                <img src={westmereLogoImg} alt="WESTMERE Logo" className="approach-logo-img" />
+                <img src={westmereLogoImg.src} alt="WESTMERE Logo" className="approach-logo-img" />
               </div>
             </div>
           </div>

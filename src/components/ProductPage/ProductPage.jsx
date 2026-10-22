@@ -1,8 +1,12 @@
+'use client'
+
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import './ProductPage.css'
 
 const ProductPage = () => {
+  const router = useRouter()
   // Simulator States
   const [fileUploaded, setFileUploaded] = useState(false)
   const [fileName, setFileName] = useState('')
@@ -58,7 +62,7 @@ const ProductPage = () => {
   }
 
   const handleContactRedirect = () => {
-    window.location.hash = '#contact'
+    router.push('/contact')
   }
 
   return (
