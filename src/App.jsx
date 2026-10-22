@@ -4,6 +4,7 @@ import 'lenis/dist/lenis.css'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import Process from './components/Process'
 import Stats from './components/Stats'
 import Approach from './components/Approach'
 import Comparison from './components/Comparison'
@@ -107,6 +108,7 @@ function App() {
               <Approach />
               <Comparison />
               <AboutBento />
+              <Process />
               <WhatWeDo />
             </motion.div>
           )}
