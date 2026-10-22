@@ -4,6 +4,7 @@ import { isModule, type ModuleKey } from '@/lib/admin/permissions'
 import { assertModule } from '@/lib/server/auth'
 import { db } from '@/lib/server/schema'
 import { audit } from '@/lib/server/session'
+import { clearRows, replaceRows, selectRows, tableFor } from '@/lib/server/tables'
 import type { Row } from '@/lib/admin/types'
 
 const KEY = /^[a-z0-9-]{1,40}:[a-z0-9-]{1,40}$/
@@ -47,26 +48,22 @@ function sanitize(rows: unknown): Row[] {
 /** Stored rows for a screen, or null when nothing was saved yet (caller shows its seed data). */
 export async function loadRecords(key: string): Promise<Row[] | null> {
   await assertModule(moduleOf(key), 'read')
-  const { query } = await db()
-  const rows = await query<{ data: Row }>(`SELECT data FROM admin_records WHERE key = $1 ORDER BY position`, [key])
-  return rows.length ? rows.map((r) => r.data) : null
+  const rows = await selectRows(await tableFor(key))
+  return rows.length ? rows : null
 }
 
-/** Replaces all rows of a screen atomically. */
+/** Replaces all rows of a screen atomically, in that screen's own table. */
 export async function writeRecords(key: string, rows: Row[]): Promise<void> {
   const admin = await assertModule(moduleOf(key), 'write')
   const clean = sanitize(rows)
+  const table = await tableFor(key)
   const { tx } = await db()
-  await tx(async (q) => {
-    await q(`DELETE FROM admin_records WHERE key = $1`, [key])
-    for (const [i, r] of clean.entries()) await q(`INSERT INTO admin_records (key, id, position, data) VALUES ($1, $2, $3, $4)`, [key, r.id, i, JSON.stringify(r)])
-  })
+  await tx((q) => replaceRows(q, table, clean))
   await audit(admin.userId, 'records_saved', `${key} (${clean.length})`)
 }
 
 export async function resetRecords(key: string): Promise<void> {
   const admin = await assertModule(moduleOf(key), 'write')
-  const { query } = await db()
-  await query(`DELETE FROM admin_records WHERE key = $1`, [key])
+  await clearRows(await tableFor(key))
   await audit(admin.userId, 'records_reset', key)
 }
