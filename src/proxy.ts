@@ -1,19 +1,23 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-const COOKIES = ['__Host-wm_admin', 'wm_admin']
+const ADMIN = ['__Host-wm_admin', 'wm_admin']
+const CUSTOMER = ['__Host-wm_customer', 'wm_customer']
 
 /**
- * Runs before every admin request:
+ * Runs before every admin and account request:
  *  - optimistic redirect when there is no session cookie (the real check is the database lookup in the
  *    admin layout and in every server action, never this file alone)
  *  - per-request CSP nonce, no-store caching and clickjacking protection for admin pages
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const hasCookie = COOKIES.some((c) => request.cookies.has(c))
-  const open = pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
+  const area = pathname.startsWith('/account') ? 'account' : 'admin'
+  const hasCookie = (area === 'account' ? CUSTOMER : ADMIN).some((c) => request.cookies.has(c))
+  const open = area === 'account'
+    ? pathname === '/account/login' || pathname === '/account/signup'
+    : pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
   if (!open && !hasCookie) {
-    return NextResponse.redirect(new URL('/admin/login', request.url))
+    return NextResponse.redirect(new URL(`/${area}/login`, request.url))
   }
 
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
@@ -42,4 +46,4 @@ export function proxy(request: NextRequest) {
   return response
 }
 
-export const config = { matcher: '/admin/:path*' }
+export const config = { matcher: ['/admin/:path*', '/account/:path*'] }

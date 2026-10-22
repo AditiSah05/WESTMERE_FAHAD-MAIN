@@ -9,10 +9,10 @@ import RecordDrawer from './RecordDrawer'
 import DataTable from './ui/DataTable'
 import { btn } from './ui/PageHeader'
 
-type Props = { module: string; tab: TabConfig; canWrite: boolean }
+type Props = { module: string; tab: TabConfig; canWrite: boolean; local?: boolean }
 
-export default function TabPanel({ module, tab, canWrite }: Props) {
-  const { rows, save, remove, reset, error } = useRecords(`${module}:${tab.source ?? tab.key}`, tab.rows)
+export default function TabPanel({ module, tab, canWrite, local }: Props) {
+  const { rows, save, remove, reset, error } = useRecords(`${module}:${tab.source ?? tab.key}`, tab.rows, local)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Row | null>(null)
   const [isNew, setIsNew] = useState(false)

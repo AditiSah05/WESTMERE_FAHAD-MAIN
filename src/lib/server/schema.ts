@@ -26,6 +26,21 @@ const statements = [
     ip text,
     user_agent text
   )`,
+  `CREATE TABLE IF NOT EXISTS shop_users (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    email text NOT NULL UNIQUE,
+    name text NOT NULL DEFAULT '',
+    password_hash text NOT NULL,
+    status text NOT NULL DEFAULT 'active',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_sessions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    token_hash text NOT NULL UNIQUE,
+    last_seen_at timestamptz NOT NULL DEFAULT now(),
+    expires_at timestamptz NOT NULL
+  )`,
   `CREATE TABLE IF NOT EXISTS login_attempts (
     id bigserial PRIMARY KEY,
     email text NOT NULL,
