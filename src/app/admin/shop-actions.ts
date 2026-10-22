@@ -53,3 +53,25 @@ export async function setReviewStatus(form: FormData) {
   await audit(me.userId, 'review_status', `${productId}: ${status}`)
   done()
 }
+
+const CATEGORIES = ['Websites', 'Applications', 'Software & Tools', 'Custom development']
+const KINDS = ['website', 'software', 'service']
+
+/** Create or update a catalogue product. Price changes apply to new orders only; old orders keep what was paid. */
+export async function saveProduct(form: FormData) {
+  const me = await assertModule('products', 'write')
+  const name = s(form, 'name', 80).trim(), category = s(form, 'category'), kind = s(form, 'kind'), tag = s(form, 'tag', 20).trim()
+  const price = Number(s(form, 'price', 9)), active = s(form, 'status') !== 'Hidden'
+  if (!name || !CATEGORIES.includes(category) || !KINDS.includes(kind) || !Number.isInteger(price) || price < 0 || price > 1_000_000) throw new Error('Invalid')
+  const { query } = await db()
+  const id = s(form, 'id', 60)
+  if (id) {
+    await query(`UPDATE shop_products SET name = $1, category = $2, kind = $3, price = $4, tag = $5, active = $6 WHERE id = $7`, [name, category, kind, price, tag, active, id])
+  } else {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'product'
+    await query(`INSERT INTO shop_products (id, name, category, kind, price, tag, active) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (id) DO NOTHING`, [`${slug}-${Date.now().toString(36)}`, name, category, kind, price, tag, active])
+  }
+  await audit(me.userId, id ? 'product_updated' : 'product_created', name)
+  revalidatePath('/admin/shop', 'layout')
+  revalidatePath('/account', 'layout')
+}

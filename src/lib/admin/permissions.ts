@@ -47,4 +47,4 @@ export const moduleForPath = (path: string): ModuleKey | null => {
 }
 
 /** Staff screens over customer data (/admin/shop/<kind>) reuse the matching module's permissions. */
-export const shopModule: Record<string, ModuleKey> = { orders: 'orders', requests: 'orders', tickets: 'support', reviews: 'reviews', customers: 'customers' }
+export const shopModule: Record<string, ModuleKey> = { products: 'products', orders: 'orders', requests: 'orders', tickets: 'support', reviews: 'reviews', customers: 'customers' }
