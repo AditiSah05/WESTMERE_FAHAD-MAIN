@@ -1,21 +1,25 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import westmereLogoImg from '../../assets/westmere-logo.png'
 import './Navbar.css'
 
 /* Exactly 5 Links (Matching User Page Requests) */
 const drawerLinks = [
-  { label: 'Home', href: '#home', value: 'home' },
-  { label: 'About Us', href: '#about', value: 'about' },
-  { label: 'Services', href: '#services', value: 'services' },
-  { label: 'Product', href: '#product', value: 'product' },
-  { label: 'Contact Us', href: '#contact', value: 'contact' },
+  { label: 'Home', href: '/', value: 'home' },
+  { label: 'About Us', href: '/about', value: 'about' },
+  { label: 'Services', href: '/services', value: 'services' },
+  { label: 'Product', href: '/product', value: 'product' },
+  { label: 'Contact Us', href: '/contact', value: 'contact' },
 ]
 
 /* ===== WESTMERE Official Logo with User Uploaded Logo Image ===== */
 const WestmereLogo = () => (
   <a href="/" className="navbar__logo">
-    <img src={westmereLogoImg} alt="WESTMERE Logo" className="navbar__logo-img" />
+    <img src={westmereLogoImg.src} alt="WESTMERE Logo" className="navbar__logo-img" />
     <div className="navbar__logo-text">
       <span>W</span>
       <span className="logo-e-bars"><span /><span /><span /></span>
@@ -29,7 +33,9 @@ const WestmereLogo = () => (
   </a>
 )
 
-const Navbar = ({ currentRoute }) => {
+const Navbar = () => {
+  const pathname = usePathname()
+  const currentRoute = pathname === '/' ? 'home' : pathname.slice(1)
   const [isOpen, setIsOpen] = useState(false)
 
   // Prevent background scroll when menu is open
@@ -129,13 +135,13 @@ const Navbar = ({ currentRoute }) => {
               <div className="drawer-links-container">
                 {drawerLinks.map((link) => (
                   <div key={link.label} className="drawer-link-wrapper">
-                    <a
+                    <Link
                       href={link.href}
                       className={`drawer-compact-link ${currentRoute === link.value ? 'drawer-compact-link--active' : ''}`}
                       onClick={() => setIsOpen(false)}
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </div>
                 ))}
               </div>

@@ -1,7 +1,12 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 import westmereLogoImg from '../../assets/westmere-logo.png'
 import './Comparison.css'
+
+const MotionLink = motion.create(Link)
 
 /* Center Floating Badge Icons (Matching User Image 1) */
 const IconTarget = () => (
@@ -346,7 +351,7 @@ const Comparison = () => {
             <div className="comparison-col-header">
               {/* Official Navbar Logo Mark Image inside Circle */}
               <div className={`our-agency-logo-circle ${isToggleOn ? 'our-logo--on' : 'our-logo--off'}`}>
-                <img src={westmereLogoImg} alt="WESTMERE Logo" className="our-agency-logo-img" />
+                <img src={westmereLogoImg.src} alt="WESTMERE Logo" className="our-agency-logo-img" />
               </div>
               <h3 className={isToggleOn ? 'text-white' : 'text-dark'}>Our Agency</h3>
             </div>
@@ -411,8 +416,8 @@ const Comparison = () => {
           transition={{ duration: 0.75, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* Read our story Button */}
-          <motion.a
-            href="#story"
+          <MotionLink
+            href="/about"
             className="proof-story-btn"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
@@ -421,7 +426,7 @@ const Comparison = () => {
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
               <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </motion.a>
+          </MotionLink>
 
           {/* Interactive Shuffling Avatars + Rolling Counter (+50 -> +55) */}
           <InteractiveProofAvatars />
