@@ -34,7 +34,10 @@ Protected by real authentication:
 - 5 failed sign-ins per email (20 per IP) lock logins for 15 minutes; errors are generic and timing-equalised.
 - Every admin page and every server action re-checks the session against the database. `proxy.ts` only does an
   optimistic redirect and adds a per-request CSP nonce, `no-store` and anti-clickjacking headers.
-- Admin data is stored in Postgres through authenticated server actions, with input validation and an audit log.
+- Admin data is stored in Postgres through authenticated server actions, with input validation and an audit log. Each screen has its own typed table (`rec_<module>_<screen>`), created from the screen config on first use.
+- Two-factor login (authenticator app + one-time recovery codes) is enabled per user in Settings → Security. Secrets are AES-256-GCM encrypted with `AUTH_ENCRYPTION_KEY`.
+- Team & Permissions: owner / admin / editor / support / finance roles, enforced on the server; invite members by single-use link.
+- Login attempts are throttled per account and per client IP (only a trusted IP header is used).
 
 ### Setup
 
