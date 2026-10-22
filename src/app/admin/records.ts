@@ -1,6 +1,7 @@
 'use server'
 
-import { assertAdmin } from '@/lib/server/auth'
+import { isModule, type ModuleKey } from '@/lib/admin/permissions'
+import { assertModule } from '@/lib/server/auth'
 import { db } from '@/lib/server/schema'
 import { audit } from '@/lib/server/session'
 import type { Row } from '@/lib/admin/types'
@@ -11,6 +12,14 @@ const MAX_BYTES = 500_000
 
 function validKey(key: unknown): key is string {
   return typeof key === 'string' && KEY.test(key)
+}
+
+/** The screen a storage key belongs to ("orders:all" -> orders); unknown screens are rejected. */
+function moduleOf(key: unknown): ModuleKey {
+  if (!validKey(key)) throw new Error('Invalid key')
+  const m = key.split(':')[0]
+  if (!isModule(m)) throw new Error('Invalid key')
+  return m
 }
 
 function sanitize(rows: unknown): Row[] {
@@ -37,8 +46,7 @@ function sanitize(rows: unknown): Row[] {
 
 /** Stored rows for a screen, or null when nothing was saved yet (caller shows its seed data). */
 export async function loadRecords(key: string): Promise<Row[] | null> {
-  await assertAdmin()
-  if (!validKey(key)) throw new Error('Invalid key')
+  await assertModule(moduleOf(key), 'read')
   const { query } = await db()
   const rows = await query<{ data: Row }>(`SELECT data FROM admin_records WHERE key = $1 ORDER BY position`, [key])
   return rows.length ? rows.map((r) => r.data) : null
@@ -46,8 +54,7 @@ export async function loadRecords(key: string): Promise<Row[] | null> {
 
 /** Replaces all rows of a screen atomically. */
 export async function writeRecords(key: string, rows: Row[]): Promise<void> {
-  const admin = await assertAdmin()
-  if (!validKey(key)) throw new Error('Invalid key')
+  const admin = await assertModule(moduleOf(key), 'write')
   const clean = sanitize(rows)
   const { tx } = await db()
   await tx(async (q) => {
@@ -58,8 +65,7 @@ export async function writeRecords(key: string, rows: Row[]): Promise<void> {
 }
 
 export async function resetRecords(key: string): Promise<void> {
-  const admin = await assertAdmin()
-  if (!validKey(key)) throw new Error('Invalid key')
+  const admin = await assertModule(moduleOf(key), 'write')
   const { query } = await db()
   await query(`DELETE FROM admin_records WHERE key = $1`, [key])
   await audit(admin.userId, 'records_reset', key)

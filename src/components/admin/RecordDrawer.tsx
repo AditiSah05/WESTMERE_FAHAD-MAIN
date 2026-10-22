@@ -7,14 +7,14 @@ import Drawer from './ui/Drawer'
 import { btn } from './ui/PageHeader'
 import RecordForm from './ui/RecordForm'
 
-type Props = { tab: TabConfig; row: Row | null; isNew: boolean; onClose: () => void; onSave: (r: Row) => void; onDelete: (id: string) => void }
+type Props = { tab: TabConfig; canWrite: boolean; row: Row | null; isNew: boolean; onClose: () => void; onSave: (r: Row) => void; onDelete: (id: string) => void }
 
 /** Edit form when the tab defines fields, otherwise a read-only detail sheet. */
-export default function RecordDrawer({ tab, row, isNew, onClose, onSave, onDelete }: Props) {
+export default function RecordDrawer({ tab, canWrite, row, isNew, onClose, onSave, onDelete }: Props) {
   const [draft, setDraft] = useState<Row | null>(row)
   useEffect(() => setDraft(row), [row])
 
-  const editable = !!tab.fields
+  const editable = !!tab.fields && canWrite
   const titleKeys = ['name', 'title', 'orderId', 'code', 'key', 'ticket', 'invoice', 'customer', 'product', 'from', 'email']
   const found = draft && titleKeys.find((k) => draft[k])
   const heading = isNew ? (tab.addLabel ?? 'New record') : String((draft && found && draft[found]) || 'Details')

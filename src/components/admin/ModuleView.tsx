@@ -7,10 +7,10 @@ import Tabs from './ui/Tabs'
 import TabPanel from './TabPanel'
 import type { TabConfig } from '@/lib/admin/types'
 
-type Props = { module: string; title: string; subtitle?: string; tabs: TabConfig[]; stats?: { label: string; value: string }[] }
+type Props = { module: string; title: string; subtitle?: string; tabs: TabConfig[]; stats?: { label: string; value: string }[]; canWrite?: boolean }
 
 /** Generic admin screen: header + tab pills; each tab renders a searchable table with detail/edit drawer. */
-export default function ModuleView({ module, title, subtitle, tabs, stats }: Props) {
+export default function ModuleView({ module, title, subtitle, tabs, stats, canWrite = true }: Props) {
   const [active, setActive] = useState(tabs[0].key)
   const tab = tabs.find((t) => t.key === active) ?? tabs[0]
 
@@ -28,7 +28,7 @@ export default function ModuleView({ module, title, subtitle, tabs, stats }: Pro
         </div>
       )}
       <Tabs tabs={tabs} active={tab.key} onChange={setActive} />
-      <TabPanel key={tab.key} module={module} tab={tab} />
+      <TabPanel key={tab.key} module={module} tab={tab} canWrite={canWrite} />
     </>
   )
 }

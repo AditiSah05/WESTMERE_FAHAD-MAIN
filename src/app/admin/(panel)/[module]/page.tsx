@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ModuleView from '@/components/admin/ModuleView'
+import { can, isModule } from '@/lib/admin/permissions'
 import { modules } from '@/lib/admin/modules'
+import { requireModule } from '@/lib/server/auth'
 
 type Params = { params: Promise<{ module: string }> }
 
@@ -16,6 +18,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function Page({ params }: Params) {
   const { module } = await params
   const config = modules[module]
-  if (!config) notFound()
-  return <ModuleView module={module} {...config} />
+  if (!config || !isModule(module)) notFound()
+  const admin = await requireModule(module)
+  return <ModuleView module={module} {...config} canWrite={can(admin.role, module, 'write')} />
 }

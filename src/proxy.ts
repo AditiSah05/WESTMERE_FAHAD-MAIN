@@ -11,7 +11,8 @@ const COOKIES = ['__Host-wm_admin', 'wm_admin']
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const hasCookie = COOKIES.some((c) => request.cookies.has(c))
-  if (pathname !== '/admin/login' && !hasCookie) {
+  const open = pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
+  if (!open && !hasCookie) {
     return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 

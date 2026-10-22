@@ -9,6 +9,7 @@ import PageHeader, { btn } from '../ui/PageHeader'
 import RecordForm from '../ui/RecordForm'
 import Tabs from '../ui/Tabs'
 import PasswordForm from './PasswordForm'
+import TwoFactor from './TwoFactor'
 
 const tabs = [...settingsSections.map((s) => ({ key: s.key, label: s.label })), { key: 'password', label: 'Security & password' }]
 
@@ -43,13 +44,13 @@ function Section({ keyName }: { keyName: string }) {
   )
 }
 
-export default function SettingsView() {
+export default function SettingsView({ totpEnabled, recoveryLeft }: { totpEnabled: boolean; recoveryLeft: number }) {
   const [active, setActive] = useState(tabs[0].key)
   return (
     <>
       <PageHeader title="Settings" subtitle="Company, billing, security and system configuration." />
       <Tabs tabs={tabs} active={active} onChange={setActive} />
-      {active === 'password' ? <PasswordForm /> : <Section key={active} keyName={active} />}
+      {active === 'password' ? <><PasswordForm /><TwoFactor enabled={totpEnabled} remaining={recoveryLeft} /></> : <Section key={active} keyName={active} />}
     </>
   )
 }

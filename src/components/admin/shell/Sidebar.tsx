@@ -4,9 +4,10 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/cn'
 import Logo from '@/components/ui/Logo'
+import { can, moduleForPath, type Role } from '@/lib/admin/permissions'
 import { navGroups } from './nav'
 
-export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+export default function Sidebar({ role, onNavigate }: { role: Role; onNavigate?: () => void }) {
   const path = usePathname()
   const isActive = (href: string) => (href === '/admin' ? path === '/admin' : path.startsWith(href))
 
@@ -16,7 +17,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <Logo />
       </div>
       <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-4" aria-label="Admin">
-        {navGroups.map((g) => (
+        {navGroups.map((g) => ({ ...g, items: g.items.filter((i) => { const m = moduleForPath(i.href); return m && can(role, m) }) })).filter((g) => g.items.length).map((g) => (
           <div key={g.title} className="mb-5">
             <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#94a3b8]">{g.title}</p>
             {g.items.map(({ href, label, icon: Icon }) => (

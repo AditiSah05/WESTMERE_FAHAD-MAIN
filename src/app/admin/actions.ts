@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { assertAdmin } from '@/lib/server/auth'
 import { fakeVerify, hashPassword, passwordProblem, verifyPassword } from '@/lib/server/password'
 import { db } from '@/lib/server/schema'
+import { startChallenge } from '@/lib/server/mfa'
 import { audit, clientInfo, createSession, destroySession, revokeOtherSessions } from '@/lib/server/session'
 import { isLocked, recordAttempt } from '@/lib/server/throttle'
 
@@ -24,12 +25,16 @@ export async function login(_prev: FormState, form: FormData): Promise<FormState
   }
 
   const { query } = await db()
-  const [user] = await query<{ id: string; password_hash: string }>(`SELECT id, password_hash FROM admin_users WHERE email = $1`, [email])
+  const [user] = await query<{ id: string; password_hash: string; status: string; totp_enabled: boolean }>(`SELECT id, password_hash, status, totp_enabled FROM admin_users WHERE email = $1 AND status = 'active'`, [email])
   const valid = user ? await verifyPassword(password, user.password_hash) : (await fakeVerify(password), false)
 
   await recordAttempt(email, ip, valid)
   if (!valid || !user) return { error: GENERIC }
 
+  if (user.totp_enabled) {
+    await startChallenge(user.id)
+    redirect('/admin/login/verify')
+  }
   await createSession(user.id)
   await audit(user.id, 'login')
   redirect('/admin')
