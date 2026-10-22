@@ -1,0 +1,59 @@
+/* Keyframes referenced by Tailwind arbitrary animation classes (animate-[name_...]). */
+
+@keyframes aboutRingCW { to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes aboutRingCCW { to { transform: translate(-50%, -50%) rotate(-360deg); } }
+@keyframes aboutTileCW {
+  from { transform: rotate(calc(var(--a) * -1)); }
+  to { transform: rotate(calc(var(--a) * -1 - 360deg)); }
+}
+@keyframes aboutTileCCW {
+  from { transform: rotate(calc(var(--a) * -1)); }
+  to { transform: rotate(calc(var(--a) * -1 + 360deg)); }
+}
+
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes approachFloat { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+@keyframes approachPulse { from { transform: scale(1); } to { transform: scale(1.3); } }
+
+/* keyframes for bento (Tailwind v4 reads @keyframes from CSS) */
+
+/* keyframes for comparison (Tailwind v4 reads @keyframes from CSS) */
+
+@keyframes mapPulse {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes strokeCircle { to { stroke-dashoffset: 0; } }
+@keyframes strokeCheck { to { stroke-dashoffset: 0; } }
+@keyframes fillCheck { to { box-shadow: inset 0 0 0 45px rgba(16, 185, 129, 0.05); } }
+@keyframes scaleCheck { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+
+@keyframes footerDiscIn {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes footerOrbit { to { transform: rotate(360deg); } }
+@keyframes footerOrbitCounter { to { transform: rotate(-360deg); } }
+@keyframes footerPointerFloat {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-8px, -10px); }
+}
+
+@keyframes heroLineIn {
+  from { opacity: 0; transform: translateX(var(--dx)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes heroOrbit { to { transform: rotate(360deg); } }
+@keyframes heroCounter { to { transform: rotate(-360deg); } }
+
+/* keyframes for navbar (Tailwind v4 reads @keyframes from CSS) */
+
+/* keyframes for process (Tailwind v4 reads @keyframes from CSS) */
+
+@keyframes pulseBlink { from { opacity: 0.6; } to { opacity: 1; } }
+
+/* keyframes for services (Tailwind v4 reads @keyframes from CSS) */
+
+/* keyframes for whatwedo (Tailwind v4 reads @keyframes from CSS) */
+
+/* keyframes for work (Tailwind v4 reads @keyframes from CSS) */

@@ -44,7 +44,7 @@ export default function AboutHero() {
                 We are a creative engineering agency built to help ambitious brands scale. By merging high-converting UX
                 with hyper-optimized development, we translate bold visions into measurable business growth.
               </p>
-              <ButtonLink href="/contact" className="py-[11px] px-[26px]">Start a project</ButtonLink>
+              <ButtonLink href="/contact">Start a project</ButtonLink>
             </div>
           </div>
 

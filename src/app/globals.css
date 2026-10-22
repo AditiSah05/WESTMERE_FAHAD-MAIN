@@ -1,17 +1,5 @@
 @import 'tailwindcss';
-@import '../styles/anim/hero.css';
-@import '../styles/anim/navbar.css';
-@import '../styles/anim/comparison.css';
-@import '../styles/anim/process.css';
-@import '../styles/anim/approach.css';
-@import '../styles/anim/whatwedo.css';
-@import '../styles/anim/bento.css';
-@import '../styles/anim/about.css';
-@import '../styles/anim/footer.css';
-@import '../styles/anim/contact.css';
-@import '../styles/anim/services.css';
-@import '../styles/anim/product.css';
-@import '../styles/anim/work.css';
+@import '../styles/animations.css';
 
 @theme {
   --font-sans: var(--font-geist), var(--font-inter), system-ui, sans-serif;

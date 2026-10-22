@@ -1,3 +1,0 @@
-@keyframes spinSlow { to { transform: rotate(360deg); } }
-@keyframes approachFloat { from { transform: translateY(0); } to { transform: translateY(-10px); } }
-@keyframes approachPulse { from { transform: scale(1); } to { transform: scale(1.3); } }

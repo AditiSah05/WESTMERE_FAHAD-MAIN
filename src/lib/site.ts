@@ -6,6 +6,6 @@ export const siteConfig = {
   keywords: [
     'creative agency', 'growth agency', 'web design', 'mobile app development', 'React', 'Next.js',
     'Figma design system', 'Westmere', 'SEO optimization', 'high-converting UX', 'Pune digital agency',
-  ],
+  ] as string[],
   routes: ['', '/about', '/services', '/product', '/work', '/contact'],
-} as const
+}
