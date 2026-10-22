@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, ExternalLink, Menu } from 'lucide-react'
+import { Bell, ExternalLink, LogOut, Menu } from 'lucide-react'
+import { logout } from '@/app/admin/actions'
 import { flatNav } from './nav'
 
-export default function Topbar({ onMenu }: { onMenu: () => void }) {
+export default function Topbar({ onMenu, email }: { onMenu: () => void; email: string }) {
   const path = usePathname()
   const current = [...flatNav].reverse().find((n) => (n.href === '/admin' ? path === '/admin' : path.startsWith(n.href)))
 
@@ -25,9 +26,12 @@ export default function Topbar({ onMenu }: { onMenu: () => void }) {
           <span className="absolute right-2 top-2 size-2 rounded-full bg-gold" />
         </Link>
         <div className="flex items-center gap-2.5 rounded-lg border border-line py-1 pl-1 pr-3">
-          <span className="flex size-7 items-center justify-center rounded-md bg-navy-deep text-xs font-bold text-white">WA</span>
-          <span className="hidden text-[13px] font-semibold text-navy-deep sm:block">Westmere Admin</span>
+          <span className="flex size-7 items-center justify-center rounded-md bg-navy-deep text-xs font-bold text-white">{email.slice(0, 2).toUpperCase()}</span>
+          <span className="hidden max-w-[180px] truncate text-[13px] font-semibold text-navy-deep sm:block">{email}</span>
         </div>
+        <form action={logout}>
+          <button type="submit" aria-label="Sign out" title="Sign out" className="flex size-9 items-center justify-center rounded-lg border border-line text-slate hover:bg-paper"><LogOut size={16} /></button>
+        </form>
       </div>
     </header>
   )

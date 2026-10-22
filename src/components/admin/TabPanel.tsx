@@ -12,7 +12,7 @@ import { btn } from './ui/PageHeader'
 type Props = { module: string; tab: TabConfig }
 
 export default function TabPanel({ module, tab }: Props) {
-  const { rows, save, remove, reset } = useRecords(`westmere-admin:${module}:${tab.source ?? tab.key}`, tab.rows)
+  const { rows, save, remove, reset, error } = useRecords(`${module}:${tab.source ?? tab.key}`, tab.rows)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Row | null>(null)
   const [isNew, setIsNew] = useState(false)
@@ -40,6 +40,7 @@ export default function TabPanel({ module, tab }: Props) {
           )}
         </div>
       </div>
+      {error && <p role="alert" className="mb-3 rounded-lg bg-[#ef4444]/10 px-3 py-2 text-sm font-medium text-[#b91c1c]">{error}</p>}
       <DataTable columns={tab.columns} rows={visible} onRowClick={(r) => { setSelected(r); setIsNew(false) }} />
       <RecordDrawer
         tab={tab}
