@@ -5,7 +5,7 @@ const icons: LucideIcon[] = [Lightbulb, Zap, Code, Layers, BarChart3, MessageSqu
 const spokes = [0, 1, 2, 3, 4, 5, 6, 7]
 
 const disc =
-  'pointer-events-none absolute left-1/2 z-0 flex aspect-square items-center justify-center rounded-full bg-sky select-none ' +
+  'pointer-events-none absolute left-1/2 z-0 -translate-x-1/2 flex aspect-square items-center justify-center rounded-full bg-sky select-none ' +
   'shadow-[inset_0_0_6px_rgba(27,42,74,0.14)] animate-[footerDiscIn_0.9s_cubic-bezier(0.44,0,0.56,1)_both] motion-reduce:animate-none'
 
 const Inner = () => <div className="h-full w-px flex-[1_0_0] rounded-full border border-white bg-paper" />
