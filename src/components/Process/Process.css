@@ -4,7 +4,7 @@
   --ring: 1200px;
   position: relative;
   height: 420vh;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
 }
 
 .process__sticky {

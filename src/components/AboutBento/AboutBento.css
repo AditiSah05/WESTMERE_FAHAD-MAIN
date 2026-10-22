@@ -590,7 +590,7 @@
 .about-bento-section {
   padding: 60px 1.5rem;
   gap: 40px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
 }
 
 .about-badge-pill {
@@ -643,7 +643,7 @@
 .bento-card.transparent-bg { background: transparent; border: none; box-shadow: none; }
 
 .bento-title {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: 24px;
   font-weight: 500;
   line-height: 1.2;
