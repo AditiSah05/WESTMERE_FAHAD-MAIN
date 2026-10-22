@@ -6,7 +6,6 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import SmoothScroll from '@/components/SmoothScroll'
 import './globals.css'
-import '../styles/index.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),

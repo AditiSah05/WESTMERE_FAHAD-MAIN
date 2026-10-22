@@ -1,6 +1,0 @@
-@keyframes heroLineIn {
-  from { opacity: 0; transform: translateX(var(--dx)); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes heroOrbit { to { transform: rotate(360deg); } }
-@keyframes heroCounter { to { transform: rotate(-360deg); } }

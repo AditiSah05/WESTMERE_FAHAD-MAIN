@@ -1,4 +1,4 @@
-import ContactPage from '../../components/ContactPage/ContactPage'
+import ContactPage from '@/components/ContactPage/ContactPage'
 
 export const metadata = {
   title: 'Contact Us | Westmere - Pune, Kasarwadi Office',

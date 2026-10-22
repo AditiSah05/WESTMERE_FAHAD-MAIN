@@ -1,4 +1,4 @@
-import ProductPage from '../../components/ProductPage/ProductPage'
+import ProductPage from '@/components/ProductPage/ProductPage'
 
 export const metadata = {
   title: 'Our Products | Westmere - Boilerplates & Estimates',

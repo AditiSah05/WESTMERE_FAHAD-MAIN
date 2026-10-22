@@ -1,4 +1,4 @@
-import AboutPage from '../../components/AboutPage/AboutPage'
+import AboutPage from '@/components/AboutPage/AboutPage'
 
 export const metadata = {
   title: 'About Us | Westmere - Creative Lab & Engineering',

@@ -1,4 +1,4 @@
-import WorkPage from '../../components/WorkPage/WorkPage'
+import WorkPage from '@/components/WorkPage/WorkPage'
 
 export const metadata = {
   title: 'Our Work | Westmere - Live Portfolio & Projects',

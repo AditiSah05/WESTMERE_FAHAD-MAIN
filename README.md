@@ -1,17 +1,24 @@
-# React + Vite
+# Westmere
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Marketing site for Westmere, built with **Next.js (App Router)**, **TypeScript**, **Tailwind CSS v4**,
+Framer Motion, Lucide icons, and `next/font` / `next/image`.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm run dev     # http://localhost:3000
+npm run build   # production build (type-checks too)
+npm run start
+npm run lint
+```
 
-## React Compiler
+## Layout
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/app` – routes (`/`, `/about`, `/services`, `/product`, `/work`, `/contact`), metadata, `sitemap.ts`, `robots.ts`, OG image.
+- `src/components/<Section>` – one folder per section; files stay under 150 lines. Static parts are Server Components,
+  interactive leaves are `'use client'`.
+- `src/components/ui` – shared building blocks (Logo, ChevronBadge, GradientText, Reveal, buttons, social icons).
+- `src/lib` – fonts, site config, motion presets, `cn` helper.
+- `src/styles/animations.css` – keyframes used by Tailwind `animate-[...]` classes.
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
-# WESTMERE_FAHAD-MAIN
+The contact form posts to Web3Forms; set `NEXT_PUBLIC_WEB3FORMS_KEY` to override the default key.
