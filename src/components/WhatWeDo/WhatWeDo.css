@@ -130,7 +130,7 @@
 }
 
 .callout-text {
-  font-family: 'Caveat', cursive;
+  font-family: var(--font-caveat), cursive;
   font-size: 22px;
   font-weight: 700;
   color: #2563EB;

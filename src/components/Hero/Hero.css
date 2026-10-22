@@ -1,7 +1,3 @@
-@font-face { font-family: "Geist"; src: url("/fonts/geist/gyBhhwUxId8gMGYQMKR3pzfaWI_RnOM4mJPby1QNtA.woff2") format("woff2"); font-display: swap; font-weight: 400; }
-@font-face { font-family: "Geist"; src: url("/fonts/geist/gyBhhwUxId8gMGYQMKR3pzfaWI_RruM4mJPby1QNtA.woff2") format("woff2"); font-display: swap; font-weight: 500; }
-@font-face { font-family: "Geist"; src: url("/fonts/geist/gyBhhwUxId8gMGYQMKR3pzfaWI_RQuQ4mJPby1QNtA.woff2") format("woff2"); font-display: swap; font-weight: 600; }
-@font-face { font-family: "Geist"; src: url("/fonts/geist/gyBhhwUxId8gMGYQMKR3pzfaWI_Re-Q4mJPby1QNtA.woff2") format("woff2"); font-display: swap; font-weight: 700; }
 
 /* ===== HERO SECTION ===== */
 
@@ -128,7 +124,7 @@
 
 /* ===== MAIN CENTER CONTENT ===== */
 .hero {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
 }
 
 .hero__content {
@@ -167,7 +163,7 @@
 }
 
 .hero__badge-text {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
@@ -178,7 +174,7 @@
 }
 
 .hero__title {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: clamp(36px, min(4.1vw, 7.6vh), 70px);
   font-weight: 500;
   line-height: 1.1;
@@ -198,7 +194,7 @@
 }
 
 .hero__subtitle {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.4;
@@ -229,7 +225,7 @@
 }
 
 .hero__callout-text {
-  font-family: 'Caveat', cursive;
+  font-family: var(--font-caveat), cursive;
   font-size: 20px;
   font-weight: 400;
   background: linear-gradient(135deg, #2563EB 0%, #1B2A4A 45%, #C4943D 100%);
@@ -257,7 +253,7 @@
   justify-content: center;
   padding: 10px 22px;
   border-radius: 8px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.2;
@@ -292,7 +288,7 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 1;

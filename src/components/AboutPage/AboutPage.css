@@ -604,7 +604,7 @@
 
 
 /* ===== REFERENCE-STYLE RESTYLE (shared look with the home page) ===== */
-.about-page { padding-top: 0; font-family: 'Geist', 'Inter', sans-serif; }
+.about-page { padding-top: 0; font-family: var(--font-geist), var(--font-inter), sans-serif; }
 
 .about-badge-pill {
   gap: 6px;
@@ -627,7 +627,7 @@
 }
 
 .about-section-heading {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: clamp(32px, 4.4vw, 52px);
   font-weight: 500;
   line-height: 1.2;
@@ -644,7 +644,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
-.about-stat-number { font-family: 'Geist', 'Inter', sans-serif; font-weight: 500; letter-spacing: -0.03em; }
+.about-stat-number { font-family: var(--font-geist), var(--font-inter), sans-serif; font-weight: 500; letter-spacing: -0.03em; }
 .about-stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; }
 .about-value-title { font-size: 22px; font-weight: 500; letter-spacing: -0.03em; }
 .about-value-desc { font-size: 16px; font-weight: 500; line-height: 1.4; }
@@ -688,7 +688,7 @@
 }
 
 .about-hero2__title {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: clamp(44px, 6vw, 70px);
   font-weight: 500;
   line-height: 1.1;

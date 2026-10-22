@@ -6,7 +6,7 @@
   padding: 60px 0;
   display: flex;
   justify-content: center;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
 }
 
 .comparison-container {
@@ -59,7 +59,7 @@
 
 .comparison-heading,
 .comparison-subheading {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-geist), var(--font-inter), sans-serif;
   font-size: 32px;
   font-weight: 500;
   line-height: 1.2;
