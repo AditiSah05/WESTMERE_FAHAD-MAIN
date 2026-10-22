@@ -1,6 +1,6 @@
 import {
   BarChart3, FolderTree, KeyRound, LayoutDashboard, LifeBuoy, Mail, Package, PanelsTopLeft,
-  Plug, Repeat, Settings, ShieldCheck, ShoppingCart, Star, Tag, Users, Wallet, type LucideIcon,
+  Plug, RefreshCcw, Repeat, Settings, ShieldCheck, ShoppingCart, Star, Tag, Users, Wallet, type LucideIcon,
 } from 'lucide-react'
 
 export type NavItem = { href: string; label: string; icon: LucideIcon }
@@ -20,6 +20,9 @@ export const navGroups: NavGroup[] = [
     title: 'Sales',
     items: [
       { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+      { href: '/admin/shop/orders', label: 'Customer orders', icon: ShoppingCart },
+      { href: '/admin/shop/requests', label: 'Refund requests', icon: RefreshCcw },
+      { href: '/admin/shop/customers', label: 'Shop customers', icon: Users },
       { href: '/admin/customers', label: 'Customers / CRM', icon: Users },
       { href: '/admin/payments', label: 'Payments & Finance', icon: Wallet },
       { href: '/admin/subscriptions', label: 'Subscriptions', icon: Repeat },
@@ -31,6 +34,8 @@ export const navGroups: NavGroup[] = [
     items: [
       { href: '/admin/cms', label: 'Website / CMS', icon: PanelsTopLeft },
       { href: '/admin/reviews', label: 'Reviews & Ratings', icon: Star },
+      { href: '/admin/shop/reviews', label: 'Review queue', icon: Star },
+      { href: '/admin/shop/tickets', label: 'Customer tickets', icon: LifeBuoy },
       { href: '/admin/support', label: 'Support & Projects', icon: LifeBuoy },
       { href: '/admin/notifications', label: 'Notifications & Emails', icon: Mail },
     ],
