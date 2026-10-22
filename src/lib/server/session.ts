@@ -2,6 +2,8 @@ import 'server-only'
 import { createHash, randomBytes } from 'node:crypto'
 import { cookies, headers } from 'next/headers'
 import { cache } from 'react'
+import { isRole, type Role } from '@/lib/admin/permissions'
+import { trustedIp } from './ip'
 import { db } from './schema'
 
 const PROD = process.env.NODE_ENV === 'production'
@@ -15,8 +17,7 @@ const sha = (s: string) => createHash('sha256').update(s).digest('hex')
 
 export async function clientInfo() {
   const h = await headers()
-  const ip = (h.get('x-forwarded-for')?.split(',')[0] ?? h.get('x-real-ip') ?? 'unknown').trim().slice(0, 64)
-  return { ip, ua: (h.get('user-agent') ?? '').slice(0, 200) }
+  return { ip: trustedIp(h), ua: (h.get('user-agent') ?? '').slice(0, 200) }
 }
 
 /** New opaque session. Only the SHA-256 of the token is stored, so a DB leak cannot be replayed. */
@@ -28,22 +29,22 @@ export async function createSession(userId: string) {
   ;(await cookies()).set(COOKIE, token, { httpOnly: true, secure: PROD, sameSite: 'strict', path: '/', maxAge: ABSOLUTE_MS / 1000 })
 }
 
-export type Admin = { userId: string; email: string; sessionId: string }
+export type Admin = { userId: string; email: string; sessionId: string; role: Role; name: string; totpEnabled: boolean }
 
 /** Validates the cookie against the database on every call (cached per request). */
 export const getAdmin = cache(async (): Promise<Admin | null> => {
   const token = (await cookies()).get(COOKIE)?.value
   if (!token || token.length > 100) return null
   const { query } = await db()
-  const rows = await query<{ id: string; user_id: string; email: string; last_seen_at: Date }>(
-    `SELECT s.id, s.user_id, u.email, s.last_seen_at FROM admin_sessions s JOIN admin_users u ON u.id = s.user_id
-     WHERE s.token_hash = $1 AND s.expires_at > now() AND s.last_seen_at > now() - $2 * interval '1 millisecond'`,
+  const rows = await query<{ id: string; user_id: string; email: string; last_seen_at: Date; role: string; name: string; totp_enabled: boolean }>(
+    `SELECT s.id, s.user_id, u.email, u.role, u.name, u.totp_enabled, s.last_seen_at FROM admin_sessions s JOIN admin_users u ON u.id = s.user_id
+     WHERE s.token_hash = $1 AND s.expires_at > now() AND s.last_seen_at > now() - $2 * interval '1 millisecond' AND u.status = 'active'`,
     [sha(token), IDLE_MS],
   )
   const row = rows[0]
-  if (!row) return null
+  if (!row || !isRole(row.role)) return null
   if (Date.now() - new Date(row.last_seen_at).getTime() > 60_000) await query(`UPDATE admin_sessions SET last_seen_at = now() WHERE id = $1`, [row.id])
-  return { userId: row.user_id, email: row.email, sessionId: row.id }
+  return { userId: row.user_id, email: row.email, sessionId: row.id, role: row.role, name: row.name, totpEnabled: row.totp_enabled }
 })
 
 export async function destroySession() {

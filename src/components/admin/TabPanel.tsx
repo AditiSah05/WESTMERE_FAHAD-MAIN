@@ -9,9 +9,9 @@ import RecordDrawer from './RecordDrawer'
 import DataTable from './ui/DataTable'
 import { btn } from './ui/PageHeader'
 
-type Props = { module: string; tab: TabConfig }
+type Props = { module: string; tab: TabConfig; canWrite: boolean }
 
-export default function TabPanel({ module, tab }: Props) {
+export default function TabPanel({ module, tab, canWrite }: Props) {
   const { rows, save, remove, reset, error } = useRecords(`${module}:${tab.source ?? tab.key}`, tab.rows)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Row | null>(null)
@@ -33,9 +33,9 @@ export default function TabPanel({ module, tab }: Props) {
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search…" className="w-full rounded-[10px] border border-line bg-white py-2.5 pl-9 pr-3 text-sm font-medium outline-none focus:border-blue-accent" />
         </label>
         <div className="flex gap-2">
-          <button type="button" className={btn.ghost} onClick={reset} title="Restore demo data"><RotateCcw size={15} /></button>
+          {canWrite && <button type="button" className={btn.ghost} onClick={reset} title="Restore sample data"><RotateCcw size={15} /></button>}
           <button type="button" className={btn.ghost} onClick={() => downloadCsv(`${module}-${tab.key}`, tab.columns, visible)}><Download size={15} />Export</button>
-          {tab.fields && (
+          {tab.fields && canWrite && (
             <button type="button" className={btn.gold} onClick={() => { setSelected(blank()); setIsNew(true) }}><Plus size={16} />{tab.addLabel ?? 'Add new'}</button>
           )}
         </div>
@@ -44,6 +44,7 @@ export default function TabPanel({ module, tab }: Props) {
       <DataTable columns={tab.columns} rows={visible} onRowClick={(r) => { setSelected(r); setIsNew(false) }} />
       <RecordDrawer
         tab={tab}
+        canWrite={canWrite}
         row={selected}
         isNew={isNew}
         onClose={() => setSelected(null)}

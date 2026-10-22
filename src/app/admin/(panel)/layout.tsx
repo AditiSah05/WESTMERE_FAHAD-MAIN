@@ -7,5 +7,5 @@ export const dynamic = 'force-dynamic'
 
 export default async function PanelLayout({ children }: { children: ReactNode }) {
   const admin = await requireAdmin()
-  return <AdminShell email={admin.email}>{children}</AdminShell>
+  return <AdminShell email={admin.email} role={admin.role}>{children}</AdminShell>
 }
