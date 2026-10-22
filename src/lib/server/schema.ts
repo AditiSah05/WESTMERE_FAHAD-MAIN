@@ -50,6 +50,7 @@ const statements = [
     rating text NOT NULL DEFAULT '',
     tag text NOT NULL DEFAULT ''
   )`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true`,
   `CREATE TABLE IF NOT EXISTS shop_orders (
     id bigserial PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,

@@ -26,7 +26,7 @@ async function ready() {
 
 export async function products(): Promise<Product[]> {
   const { query } = await ready()
-  return query<Product>(`SELECT id, name, category, kind, price, rating, tag FROM shop_products ORDER BY price`)
+  return query<Product>(`SELECT id, name, category, kind, price, rating, tag FROM shop_products WHERE active ORDER BY price`)
 }
 
 export const wishlistIds = async (userId: string) => (await (await ready()).query<{ product_id: string }>(`SELECT product_id FROM shop_wishlist WHERE user_id = $1`, [userId])).map((r) => r.product_id)
@@ -36,7 +36,7 @@ export const PAYMENT = ['Pending', 'Paid', 'Failed', 'Partially Refunded', 'Refu
 /** Server decides price and statuses. Test mode: no gateway, `fail` simulates a declined payment. */
 export async function createOrder(userId: string, productId: string, method: string, fail: boolean) {
   const { query } = await ready()
-  const [p] = await query<Product>(`SELECT * FROM shop_products WHERE id = $1`, [productId])
+  const [p] = await query<Product>(`SELECT * FROM shop_products WHERE id = $1 AND active`, [productId])
   if (!p) throw new Error('Unknown product')
   const payment = fail ? 'Failed' : 'Paid'
   // Protected access only after a verified payment; custom projects need scoping first.

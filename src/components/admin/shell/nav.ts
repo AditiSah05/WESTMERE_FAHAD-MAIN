@@ -11,7 +11,7 @@ export const navGroups: NavGroup[] = [
   {
     title: 'Catalogue',
     items: [
-      { href: '/admin/products', label: 'Products', icon: Package },
+      { href: '/admin/shop/products', label: 'Products', icon: Package },
       { href: '/admin/categories', label: 'Categories & Collections', icon: FolderTree },
       { href: '/admin/licenses', label: 'Licenses & Downloads', icon: KeyRound },
     ],
