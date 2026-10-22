@@ -41,6 +41,10 @@ export const accessOf = (role: Role, module: ModuleKey): Access | null => grants
 
 /** `/admin/<segment>` -> module key (dashboard for /admin). */
 export const moduleForPath = (path: string): ModuleKey | null => {
-  const seg = path.replace(/^\/admin\/?/, '').split('/')[0] || 'dashboard'
-  return isModule(seg) ? seg : null
+  const [seg = 'dashboard', sub] = path.replace(/^\/admin\/?/, '').split('/')
+  if (seg === 'shop') return shopModule[sub ?? ''] ?? null
+  return isModule(seg || 'dashboard') ? ((seg || 'dashboard') as ModuleKey) : null
 }
+
+/** Staff screens over customer data (/admin/shop/<kind>) reuse the matching module's permissions. */
+export const shopModule: Record<string, ModuleKey> = { orders: 'orders', requests: 'orders', tickets: 'support', reviews: 'reviews', customers: 'customers' }
