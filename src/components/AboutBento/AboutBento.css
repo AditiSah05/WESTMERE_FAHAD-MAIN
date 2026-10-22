@@ -584,3 +584,224 @@
     font-size: 14px;
   }
 }
+
+
+/* ===== REFERENCE-STYLE OVERRIDES (pixelpalmedia.com bento) ===== */
+.about-bento-section {
+  padding: 60px 1.5rem;
+  gap: 40px;
+  font-family: 'Geist', 'Inter', sans-serif;
+}
+
+.about-badge-pill {
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 5px rgba(27, 42, 74, 0.08);
+  margin-bottom: 0;
+}
+
+.about-badge-pill svg { width: 6px; height: 10px; }
+.about-badge-pill svg:last-child { transform: scaleX(-1); }
+
+.about-badge-text {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #52607A;
+}
+
+.about-bento-container {
+  max-width: 1000px;
+  background: linear-gradient(135deg, #F5F1ED 0%, #ECF1FC 100%);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: none;
+}
+
+.about-bento-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.bento-csat-card { grid-column: span 3; }
+.bento-showcase-card { grid-column: span 9; }
+.bento-cta-card { grid-column: span 6; }
+.bento-gauges-card { grid-column: span 6; }
+.bento-ticker-card { grid-column: 1 / -1; }
+
+.bento-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.bento-card.transparent-bg { background: transparent; border: none; box-shadow: none; }
+
+.bento-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: #0F1B33;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.bento-description,
+.showcase-desc,
+.cta-subtext {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.0025em;
+  color: #69686E;
+}
+
+.cta-subtext { color: #52607A; }
+
+.gauges-header { text-align: center; }
+
+/* CSAT */
+.bento-csat-card { padding: 24px 16px; }
+.csat-status-label { color: #2563EB; font-size: 13px; letter-spacing: 0.15em; font-weight: 600; }
+.csat-emoji-btn.active {
+  border: 2px dashed #2563EB;
+  background: rgba(37, 99, 235, 0.08);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+}
+
+/* Showcase */
+.bento-showcase-card { padding: 24px; }
+.showcase-content {
+  gap: 0;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 220px;
+}
+.showcase-thumb-wrapper { width: 46%; height: 100%; min-height: 220px; border-radius: 0; align-self: stretch; }
+.showcase-info { padding: 22px 24px; height: auto; align-self: stretch; }
+.showcase-title { font-size: 24px; font-weight: 500; letter-spacing: -0.03em; }
+.showcase-icon-badge { border-radius: 8px; background: #FFFFFF; border: 1px solid #E2E8F0; box-shadow: 0 2px 4px rgba(27, 42, 74, 0.06); }
+.showcase-arrow-btn { background: #F1F5F9; border-radius: 4px; width: 32px; height: 32px; }
+
+/* CTA */
+.bento-cta-card { padding: 28px 24px; }
+.bento-schedule-btn {
+  width: auto;
+  max-width: none;
+  padding: 12px 30px;
+  background: #1B2A4A;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 18px rgba(27, 42, 74, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.bento-schedule-btn:hover { background: #0F1B33; transform: none; }
+.socials-label { font-size: 13px; font-weight: 600; letter-spacing: 0.15em; color: #52607A; }
+.social-dark-pill { border-radius: 8px; width: 38px; height: 38px; background: #0F1B33; }
+.social-dark-pill:hover { background: #2563EB; }
+
+/* Gauges */
+.bento-gauges-card { padding: 28px 24px 24px; }
+.gauges-row { gap: 28px; }
+.gauge-circle-wrapper { background: rgba(37, 99, 235, 0.05); box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06); }
+.gauge-circle-wrapper.small { width: 86px; height: 86px; }
+.gauge-circle-wrapper.large { width: 124px; height: 124px; }
+.gauge-bg-ring { stroke: rgba(37, 99, 235, 0.12); stroke-width: 9; }
+.gauge-progress-ring { stroke: #2563EB; stroke-width: 9; }
+.gauge-value { font-size: 17px; font-weight: 500; }
+.gauge-circle-wrapper.large .gauge-value { font-size: 24px; }
+.gauge-label { font-size: 13px; font-weight: 600; letter-spacing: 0.15em; color: #52607A; margin-top: 14px; }
+
+/* Industries ticker */
+.bento-ticker-card { padding: 28px 24px; }
+.ticker-blue-dot { color: #2563EB; font-size: 12px; }
+.ticker-text { font-size: 13px; font-weight: 600; letter-spacing: 0.15em; color: #2563EB; }
+.ticker-dashed-divider { border-bottom-color: rgba(37, 99, 235, 0.2); }
+
+@media (max-width: 960px) {
+  .about-bento-grid { grid-template-columns: 1fr; }
+  .bento-csat-card,
+  .bento-showcase-card,
+  .bento-cta-card,
+  .bento-gauges-card,
+  .bento-ticker-card { grid-column: 1 / -1; }
+  .showcase-content { flex-direction: column; }
+  .showcase-thumb-wrapper { width: 100%; min-height: 180px; height: 180px; }
+}
+
+.csat-emojis-row { gap: 6px; }
+.csat-emoji-btn { width: 34px; height: 34px; padding: 4px; }
+.csat-emoji-btn.active { transform: scale(1.15); }
+
+
+/* ===== INDUSTRIES TICKER (reference-style: centre-weighted emphasis) ===== */
+.ticker-window {
+  height: 190px;
+  max-width: 560px;
+  margin-top: 8px;
+  cursor: ns-resize;
+  touch-action: pan-x;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ticker-item-content { gap: 16px; padding: 18px 0; }
+.ticker-blue-dot { display: inline-block; flex: none; font-size: 0; width: 4px; height: 4px; border-radius: 50%; background: #2563EB; }
+.ticker-text { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; }
+
+.ticker-dashed-divider {
+  margin: 0;
+  border-bottom: 1px dashed #2563EB;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+
+
+/* ===== SIZE MATCH TO REFERENCE (measured in CSS px) ===== */
+.about-bento-container { border-radius: 24px; padding: 18px; }
+.about-bento-grid { gap: 20px; }
+
+.bento-title,
+.showcase-title { font-size: 22px; font-weight: 500; }
+
+/* CSAT */
+.bento-csat-card { padding: 24px 20px; }
+.csat-emoji-btn { width: 28px; height: 28px; padding: 3px; }
+.csat-emojis-row { gap: 8px; }
+.csat-status-label { font-size: 12px; }
+
+/* Showcase */
+.showcase-thumb-wrapper { width: 50%; min-height: 250px; }
+.showcase-info { padding: 22px 28px; }
+
+/* CTA */
+.bento-schedule-btn { padding: 10px 32px; font-size: 16px; }
+.cta-action-block { gap: 12px; margin: 28px 0 40px; }
+.socials-label { font-size: 12px; }
+.social-dark-pill { width: 28px; height: 28px; border-radius: 6px; }
+.social-dark-pill svg { width: 16px; height: 16px; }
+
+/* Gauges */
+.gauge-circle-wrapper.small { width: 78px; height: 78px; }
+.gauge-circle-wrapper.large { width: 110px; height: 110px; }
+.gauge-value { font-size: 16px; }
+.gauge-circle-wrapper.large .gauge-value { font-size: 22px; }
+.gauge-label { font-size: 12px; margin-top: 12px; }
+.gauges-row { gap: 40px; }
+
+/* Industries ticker: 37px row pitch, 4 rows visible */
+.bento-ticker-card { padding: 28px 24px 24px; }
+.ticker-window { height: 160px; max-width: 680px; margin-top: 28px; }
+.ticker-item-content { padding: 11px 0; gap: 16px; }
+.ticker-text { font-size: 12px; }
+
+.ticker-window { overflow: hidden; }
+.ticker-track { will-change: transform; }

@@ -2,7 +2,17 @@
 
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import './AboutPage.css'
+
+const ringIcons = [
+  'M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V17h6v-.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z',
+  'M13 2L3 14h8l-1 8 10-12h-8l1-8z',
+  'M8 6l-6 6 6 6M16 6l6 6-6 6',
+  'M12 2l10 5-10 5L2 7l10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+  'M18 20V10M12 20V4M6 20v-6',
+  'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+]
 
 const AboutPage = () => {
   const fadeIn = {
@@ -111,38 +121,69 @@ const AboutPage = () => {
 
   return (
     <div className="about-page">
-      {/* 1. HERO SECTION */}
-      <section className="about-hero">
-        <div className="about-hero-grid-bg"></div>
-        <div className="container">
-          <motion.div 
-            className="about-badge-pill"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="about-badge-dot" />
-            <span className="about-badge-text">WHO WE ARE</span>
+      {/* 1. HERO (layout from pixelpalmedia.com About page) */}
+      <section className="about-hero2">
+        {[
+          { n: 1, angles: [0, 60, 120, 180, 240, 300] },
+          { n: 2, angles: [30, 90, 150, 210, 270, 330] },
+          { n: 3, angles: [0, 45, 90, 135, 180, 225, 270, 315] },
+        ].map(({ n, angles }) => (
+          <div key={n} className={`about-hero2__ring about-hero2__ring--${n}`}>
+            {angles.map((a, i) => (
+              <div key={a} className="about-hero2__spoke" style={{ transform: `rotate(${a}deg)` }}>
+                <span className="about-hero2__tile" style={{ '--a': `${a}deg` }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={ringIcons[(i + n) % ringIcons.length]} />
+                  </svg>
+                </span>
+              </div>
+            ))}
+          </div>
+        ))}
+
+        <div className="about-hero2__inner">
+          <motion.div className="about-badge-pill" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
+            <span className="about-badge-text">About us</span>
+            <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
           </motion.div>
-          <motion.h1 
-            className="about-hero-title"
-            initial={{ opacity: 0, y: 30 }}
+
+          <motion.h1
+            className="about-hero2__title"
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            Sovereign ideas. <br />
-            <span className="about-title-gradient">Stellar execution.</span>
+            Who <span className="about-title-gradient">we are</span>
           </motion.h1>
-          <motion.p 
-            className="about-hero-subtitle"
-            initial={{ opacity: 0, y: 20 }}
+
+          <motion.div
+            className="about-hero2__frame"
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.25 }}
+            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
           >
-            We are a creative engineering agency built to help ambitious brands scale. 
-            By merging high-converting UX with hyper-optimized development, we translate 
-            bold visions into measurable business growth.
-          </motion.p>
+            <div className="about-hero2__card">
+              <h2 className="about-hero2__card-title">A team built on clarity, craft and commitment</h2>
+              <div className="about-hero2__card-bottom">
+                <p>
+                  We are a creative engineering agency built to help ambitious brands scale. By merging
+                  high-converting UX with hyper-optimized development, we translate bold visions into
+                  measurable business growth.
+                </p>
+                <Link className="about-hero2__btn" href="/contact">Start a project</Link>
+              </div>
+            </div>
+
+            <div className="about-hero2__art" aria-hidden="true">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className={`about-hero2__col ${i % 2 ? 'about-hero2__col--b' : 'about-hero2__col--a'}`}>
+                  <span className="about-hero2__block about-hero2__block--tall" />
+                  <span className="about-hero2__block about-hero2__block--short" />
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -226,8 +267,9 @@ const AboutPage = () => {
         <div className="container">
           <motion.div className="about-center-header" {...fadeIn}>
             <div className="about-badge-pill">
-              <span className="about-badge-dot" style={{ backgroundColor: 'var(--color-gold)' }} />
-              <span className="about-badge-text" style={{ color: 'var(--color-gold)' }}>METHODOLOGY</span>
+              <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
+              <span className="about-badge-text">Methodology</span>
+              <svg viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="#52607A" strokeWidth="1.2" /></svg>
             </div>
             <h2 className="about-section-heading center">Our Process</h2>
             <p className="about-section-subheading">

@@ -1,8 +1,8 @@
-/* ===== FLOATING NAVBAR HEADER ===== */
+/* ===== FLOATING NAVBAR HEADER (pixelpalmedia.com style) ===== */
 
 .navbar-header {
   position: fixed;
-  top: 20px;
+  top: 32px;
   left: 0;
   right: 0;
   display: flex;
@@ -12,60 +12,52 @@
   padding: 0 1rem;
 }
 
-/* Floating Pill Card Container (Matching User Image 1) */
 .navbar-pill {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.06),
-    0 2px 8px rgba(0, 0, 0, 0.03);
-  height: 58px;
-  min-width: 680px;
-  padding: 0 8px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  border: 2px solid #E8EFF9;
+  outline: 1px solid rgba(27, 42, 74, 0.05);
+  box-shadow: 0 2px 3px rgba(27, 42, 74, 0.05), 0 14px 20px rgba(27, 42, 74, 0.05);
+  height: 54px;
+  min-width: 480px;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* Navbar Sections - flex: 1 on Left & Right locks the center = button to DEAD CENTER */
 .navbar__section {
   display: flex;
   align-items: center;
-  height: 100%;
+  align-self: stretch;
 }
 
 .navbar__section--logo {
-  flex: 1;
-  display: flex;
-  align-items: center;
+  flex: 1 0 auto;
   justify-content: flex-start;
-  padding: 0 24px 0 16px;
+  padding: 12px;
 }
 
 .navbar__section--toggle {
-  display: flex;
-  align-items: center;
+  flex: none;
+  width: 70px;
   justify-content: center;
-  padding: 0 28px;
+  padding: 12px;
 }
 
 .navbar__section--cta {
-  flex: 1;
-  display: flex;
-  align-items: center;
+  flex: 1 0 0;
+  min-width: 140px;
   justify-content: flex-end;
-  padding: 0 8px 0 20px;
+  padding: 12px;
 }
 
-/* Vertical Dividers between sections */
+/* 2px full-height dividers */
 .navbar__divider {
-  width: 1px;
-  height: 32px;
-  background: #E2E8F0;
+  width: 2px;
+  align-self: stretch;
+  background: #E8EFF9;
 }
 
 /* ===== OFFICIAL WESTMERE LOGO (Exact Image Uploaded by User) ===== */
@@ -115,7 +107,9 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 0;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,8 +117,8 @@
 }
 
 .menu-lines {
-  width: 24px;
-  height: 10px;
+  width: 20px;
+  height: 9px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -133,9 +127,8 @@
 
 .menu-line {
   width: 100%;
-  height: 2px;
+  height: 1px;
   background: #0F1B33;
-  border-radius: 2px;
   transform-origin: center;
 }
 
@@ -143,28 +136,25 @@
 .navbar__cta-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  padding: 8px 14px;
   background: #0F1B33;
   color: #FFFFFF;
-  border-radius: 10px;
-  font-size: 13.5px;
-  font-weight: 600;
+  border-radius: 4px;
+  box-shadow: inset 0 1.4px 1px rgba(255, 255, 255, 0.08), 0 0 0 1.4px #2F4166;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
   text-decoration: none;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
 }
 
 .navbar__cta-btn svg {
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: none;
 }
 
 .navbar__cta-btn:hover {
   background: #1B2A4A;
-  box-shadow: 0 4px 14px rgba(15, 27, 51, 0.25);
-}
-
-.navbar__cta-btn:hover svg {
-  transform: scale(1.35) translateX(3px);
 }
 
 /* ===== ANIMATED MENU DRAWER (COMPACT CARD MATCHING USER IMAGE 2) ===== */
@@ -285,23 +275,6 @@
 }
 
 /* ===== RESPONSIVE MEDIA QUERIES ===== */
-@media (max-width: 1440px) {
-  .navbar-pill {
-    min-width: 620px;
-    height: 54px;
-  }
-  .navbar__logo-img {
-    height: 25px;
-  }
-  .navbar__logo-text {
-    font-size: 14px;
-  }
-  .navbar__cta-btn {
-    padding: 9px 16px;
-    font-size: 13px;
-  }
-}
-
 @media (max-width: 768px) {
   .navbar-header {
     top: 10px;
@@ -312,12 +285,11 @@
     width: 100%;
     max-width: 100%;
     height: 50px;
-    padding: 0 4px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    padding: 0;
   }
   .navbar__section--logo {
-    padding: 0 6px;
-    flex: initial;
+    padding: 8px;
+    flex: 1 1 auto;
   }
   .navbar__logo {
     gap: 6px;
@@ -334,28 +306,21 @@
     height: 9px;
   }
   .navbar__section--toggle {
-    padding: 0 8px;
-  }
-  .menu-lines {
-    width: 20px;
-    height: 9px;
+    width: 56px;
+    padding: 8px;
   }
   .navbar__section--cta {
-    padding: 0 4px;
-    flex: initial;
+    padding: 8px;
+    flex: 0 0 auto;
+    min-width: 0;
   }
   .navbar__cta-btn {
     padding: 7px 11px;
-    font-size: 11.5px;
-    border-radius: 8px;
-    gap: 4px;
+    font-size: 12.5px;
   }
   .navbar__cta-btn svg {
     width: 12px;
     height: 12px;
-  }
-  .navbar__divider {
-    height: 22px;
   }
   .drawer-backdrop {
     padding-top: 72px;
