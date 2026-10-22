@@ -4,7 +4,7 @@ type Props = { labels: string[]; values: number[]; color?: string; height?: numb
 export default function LineChart({ labels, values, color = '#2563eb', height = 200 }: Props) {
   const w = 720
   const pad = { l: 8, r: 8, t: 14, b: 26 }
-  const max = Math.max(...values) * 1.1
+  const max = Math.max(4, ...values) * 1.1
   const min = Math.min(...values) * 0.9
   const x = (i: number) => pad.l + ((w - pad.l - pad.r) * i) / (values.length - 1)
   const y = (v: number) => pad.t + (height - pad.t - pad.b) * (1 - (v - min) / (max - min))
