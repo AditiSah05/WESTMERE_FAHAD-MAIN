@@ -2,9 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { geist, inter, playfair, caveat } from '@/lib/fonts'
 import { siteConfig } from '@/lib/site'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import SmoothScroll from '@/components/SmoothScroll'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -31,12 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const fonts = [geist, inter, playfair, caveat].map((f) => f.variable).join(' ')
   return (
     <html lang="en" className={fonts}>
-      <body>
-        <SmoothScroll />
-        <Navbar />
-        <main className="flex min-h-screen flex-col">{children}</main>
-        <Footer />
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
