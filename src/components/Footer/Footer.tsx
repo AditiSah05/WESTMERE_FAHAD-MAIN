@@ -7,7 +7,7 @@ export default function Footer() {
   const legal = 'text-[13px] font-medium text-slate transition-colors hover:text-gold'
 
   return (
-    <footer className="relative z-10 w-full overflow-hidden bg-paper pb-7 pt-12 font-sans leading-[1.2] min-[601px]:pb-10 min-[601px]:pt-20">
+    <footer className="relative z-10 w-full overflow-hidden bg-paper pb-7 pt-6 font-sans leading-[1.2] min-[601px]:pb-10 min-[601px]:pt-8">
       <FooterDiscs />
       <div className="relative z-[2] mx-auto flex max-w-[1060px] flex-col gap-14 px-5 min-[601px]:gap-[100px] min-[601px]:px-[30px]">
         <FooterCta />
