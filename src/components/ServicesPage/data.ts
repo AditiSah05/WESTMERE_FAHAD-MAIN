@@ -1,5 +1,8 @@
+import { Code2, Monitor, Smartphone, Workflow, type LucideIcon } from 'lucide-react'
+
 export type Service = {
   id: 'website' | 'app' | 'automation' | 'software'
+  icon: LucideIcon
   badge: string
   title: string
   headline: string
@@ -11,6 +14,7 @@ export type Service = {
 export const services: Service[] = [
   {
     id: 'website',
+    icon: Monitor,
     badge: 'WEB ENGINEERING',
     title: 'Website Development',
     headline: 'Ultra-fast, responsive web interfaces built for high conversions.',
@@ -25,6 +29,7 @@ export const services: Service[] = [
   },
   {
     id: 'app',
+    icon: Smartphone,
     badge: 'MOBILE ENGINEERING',
     title: 'Mobile Applications',
     headline: 'Sleek, native mobile experiences for iOS and Android platforms.',
@@ -39,6 +44,7 @@ export const services: Service[] = [
   },
   {
     id: 'automation',
+    icon: Workflow,
     badge: 'INTEGRATIONS',
     title: 'Workflow Automation',
     headline: 'Connected cloud systems that eliminate manual data entries.',
@@ -53,6 +59,7 @@ export const services: Service[] = [
   },
   {
     id: 'software',
+    icon: Code2,
     badge: 'CORE ENGINEERING',
     title: 'Custom Software Systems',
     headline: 'Bespoke admin dashboards, databases, and secure core systems.',
