@@ -18,9 +18,8 @@ export default function ProductHero() {
     <section className="mb-[90px]">
       <div className="grid grid-cols-1 items-center gap-[50px] min-[1025px]:grid-cols-[1.15fr_0.85fr] min-[1025px]:gap-[60px]">
         <motion.div className="flex flex-col items-start" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
-          <div className="mb-[25px] flex items-center gap-2.5">
-            <MailoraLogo />
-            <span className="font-body text-[15px] font-extrabold tracking-[2px] text-navy">MAILORA</span>
+          <div className="mb-[25px]">
+            <MailoraLogo variant="full" height={104} />
           </div>
           <h1 className="mb-[22px] font-display text-[2.6rem] font-bold leading-[1.12] tracking-[-1.2px] text-navy-deep min-[769px]:text-[3rem] min-[1025px]:text-[3.8rem]">
             Upload Once. <br />

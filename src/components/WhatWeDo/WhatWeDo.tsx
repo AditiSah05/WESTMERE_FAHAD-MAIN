@@ -1,17 +1,24 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { cn } from '@/lib/cn'
 import GradientText from '@/components/ui/GradientText'
 import DeckCard from './DeckCard'
 import { services } from './data'
-import { useDeckProgress } from './useDeckProgress'
+import { useCarousel } from './useCarousel'
+import SwipeLayer from './SwipeLayer'
+
+/** Shortest signed distance around the loop, e.g. 3 of 4 -> -1. */
+const wrap = (d: number, n: number) => ((((d + n / 2) % n) + n) % n) - n / 2
 
 export default function WhatWeDo() {
-  const { ref, active, setActive } = useDeckProgress(services.length)
+  const [paused, setPaused] = useState(false)
+  const { active, setActive } = useCarousel(services.length, paused)
 
   return (
-    <section ref={ref} id="services" className="relative h-[270vh] bg-[linear-gradient(180deg,#f8fafc_0%,#f5f1ed_100%)] min-[769px]:h-[340vh]">
-      <div className="sticky top-0 flex h-screen w-full flex-col justify-between overflow-hidden pb-[30px] pt-6 min-[769px]:pb-[45px] min-[769px]:pt-10">
+    <section id="services" className="relative overflow-hidden bg-[linear-gradient(180deg,#f8fafc_0%,#f5f1ed_100%)] py-14 min-[769px]:py-20">
+      <div className="flex w-full flex-col gap-10">
         <div className="z-40 flex flex-col items-center px-6 text-center">
           <motion.span
             className="mb-3.5 inline-flex items-center gap-2 rounded-full border border-line/90 bg-white px-4 py-1.5 text-[11px] font-bold tracking-[2.2px] text-navy shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
@@ -47,12 +54,19 @@ export default function WhatWeDo() {
           </div>
         </div>
 
-        <div className="relative flex h-[510px] w-full items-center justify-center">
+        <div className="relative flex h-[510px] w-full items-center justify-center" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <div className="relative flex h-full w-full max-w-[1200px] items-center justify-center">
             {services.map((card, i) => (
-              <DeckCard key={card.id} card={card} offset={i - active} onSelect={() => setActive(i)} />
+              <DeckCard key={card.id} card={card} offset={wrap(i - active, services.length)} />
             ))}
           </div>
+          <SwipeLayer active={active} count={services.length} onChange={setActive} />
+        </div>
+
+        <div className="flex justify-center gap-2" role="tablist" aria-label="Services">
+          {services.map((card, i) => (
+            <button key={card.id} type="button" role="tab" aria-selected={i === active} aria-label={card.title} onClick={() => setActive(i)} className={cn('h-2 rounded-full transition-all', i === active ? 'w-7 bg-navy' : 'w-2 bg-navy/25 hover:bg-navy/45')} />
+          ))}
         </div>
       </div>
     </section>

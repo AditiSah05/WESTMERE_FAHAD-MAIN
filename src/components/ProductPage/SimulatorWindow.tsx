@@ -34,7 +34,7 @@ export default function SimulatorWindow() {
       <div className="flex flex-col gap-6 rounded-b-xl border border-line bg-white p-[30px] shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-between border-b-[1.5px] border-[#f1f5f9] pb-3.5">
           <div className="flex items-center gap-2">
-            <MailoraLogo size={18} inner="#000000" />
+            <MailoraLogo height={14} />
             <span className="font-body text-sm font-extrabold tracking-[1.2px] text-black">Mailora</span>
           </div>
           <span className="text-lg leading-none text-[#94a3b8]">—&nbsp;&nbsp;×</span>

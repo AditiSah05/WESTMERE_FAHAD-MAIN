@@ -3,19 +3,18 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from '@/lib/cn'
 import type { Service } from './data'
 
-type Props = { card: Service; offset: number; onSelect: () => void }
+type Props = { card: Service; offset: number }
 
-/** One card of the 5-slot deck; only the centre card shows its text panel. */
-export default function DeckCard({ card, offset, onSelect }: Props) {
+/** One card of the looping deck; only the centre card shows its text panel. */
+export default function DeckCard({ card, offset }: Props) {
   const center = offset === 0
   const far = Math.abs(offset) > 1
   const Icon = card.icon
 
   return (
     <motion.div
-      onClick={onSelect}
       className={cn(
-        'absolute flex cursor-pointer flex-col overflow-hidden rounded-3xl border bg-white will-change-[transform,opacity]',
+        'absolute flex flex-col overflow-hidden rounded-3xl border bg-white will-change-[transform,opacity]',
         center
           ? 'h-[410px] w-[290px] border-[1.5px] border-blue/35 shadow-[0_26px_55px_rgba(0,0,0,0.12),0_4px_18px_rgba(0,0,0,0.04)] min-[769px]:h-[490px] min-[769px]:w-[370px]'
           : 'h-[300px] w-[210px] border-line/80 shadow-[0_18px_40px_rgba(0,0,0,0.06),0_2px_10px_rgba(0,0,0,0.02)] min-[769px]:h-[360px] min-[769px]:w-[270px]',
@@ -23,7 +22,7 @@ export default function DeckCard({ card, offset, onSelect }: Props) {
       animate={{
         x: offset * 290,
         scale: center ? 1.08 : far ? 0.68 : 0.85,
-        opacity: Math.abs(offset) > 2 ? 0 : center ? 1 : far ? 0.4 : 0.78,
+        opacity: Math.abs(offset) >= 2 ? 0 : center ? 1 : 0.78,
         zIndex: center ? 30 : 20 - Math.abs(offset) * 5,
       }}
       transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}

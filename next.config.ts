@@ -10,6 +10,8 @@ const securityHeaders = [
 
 const config: NextConfig = {
   poweredByHeader: false,
+  // Hides the round "N" dev-only badge; compile and runtime errors still show.
+  devIndicators: false,
   serverExternalPackages: ['@electric-sql/pglite', 'pg'],
   images: {
     remotePatterns: [
