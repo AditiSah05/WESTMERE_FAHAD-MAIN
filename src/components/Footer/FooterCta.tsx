@@ -9,7 +9,7 @@ const arc = 'pointer-events-none absolute z-0 size-[520px] rounded-full border-[
 export default function FooterCta() {
   return (
     <div className="flex flex-col gap-[3px]">
-      <div className="flex items-center justify-center gap-3" aria-hidden>
+      <div data-footer-arrows className="flex items-center justify-center gap-3" aria-hidden>
         <span className="h-px w-[290px] flex-none bg-gradient-to-r from-transparent to-navy-deep/35" />
         <span className={chip}><ChevronLeft size={14} /></span>
         <span className={chip}><ChevronRight size={14} /></span>
