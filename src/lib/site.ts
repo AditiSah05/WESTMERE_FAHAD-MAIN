@@ -7,5 +7,5 @@ export const siteConfig = {
     'creative agency', 'growth agency', 'web design', 'mobile app development', 'React', 'Next.js',
     'Figma design system', 'Westmere', 'SEO optimization', 'high-converting UX', 'Pune digital agency',
   ] as string[],
-  routes: ['', '/about', '/services', '/product', '/work', '/contact'],
+  routes: ['', '/about', '/services', '/product', '/product/mailora', '/work', '/contact'],
 }

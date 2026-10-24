@@ -5,7 +5,7 @@ import { db } from './schema'
 
 export type Product = { id: string; name: string; category: string; kind: 'website' | 'software' | 'service'; price: number; rating: string; tag: string }
 
-const seed: Product[] = [
+export const catalogueSeed: Product[] = [
   { id: 'agency-starter', name: 'Agency Starter Website', category: 'Websites', kind: 'website', price: 1999, rating: '4.8', tag: 'Bestseller' },
   { id: 'mailora', name: 'Mailora Chrome Extension', category: 'Software & Tools', kind: 'software', price: 499, rating: '4.9', tag: 'Featured' },
   { id: 'seo-dashboard', name: 'SEO Dashboard App', category: 'Applications', kind: 'software', price: 1999, rating: '4.6', tag: 'New' },
@@ -18,7 +18,7 @@ let seeded = false
 async function ready() {
   const d = await db()
   if (!seeded) {
-    for (const p of seed) await d.query(`INSERT INTO shop_products (id, name, category, kind, price, rating, tag) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (id) DO NOTHING`, [p.id, p.name, p.category, p.kind, p.price, p.rating, p.tag])
+    for (const p of catalogueSeed) await d.query(`INSERT INTO shop_products (id, name, category, kind, price, rating, tag) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (id) DO NOTHING`, [p.id, p.name, p.category, p.kind, p.price, p.rating, p.tag])
     seeded = true
   }
   return d
