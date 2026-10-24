@@ -3,9 +3,9 @@ import { LifeBuoy, Puzzle, Zap, type LucideIcon } from 'lucide-react'
 const photo = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`
 
 export const slides: { image: string; title: string; description: string; icon: LucideIcon }[] = [
-  { image: photo('photo-1531403009284-440f080d1e12'), title: 'Strategy that matters', description: 'Thoughtful direction aligned with real business goals.', icon: Puzzle },
-  { image: photo('photo-1522071820081-009f0129c71c'), title: 'Design that converts', description: 'User-centered interfaces built for maximum engagement.', icon: LifeBuoy },
-  { image: photo('photo-1460925895917-afdab827c52f'), title: 'Speed & Scale', description: 'Blazing fast engineering optimized for global growth.', icon: Zap },
+  { image: '/images/about/strategy.jpg', title: 'Strategy that matters', description: 'Thoughtful direction aligned with real business goals.', icon: Puzzle },
+  { image: '/images/about/design.jpg', title: 'Design that converts', description: 'User-centered interfaces built for maximum engagement.', icon: LifeBuoy },
+  { image: '/images/about/scale.jpg', title: 'Speed & Scale', description: 'Blazing fast engineering optimized for global growth.', icon: Zap },
 ]
 
 export const csatLabels = ['POOR', 'AVERAGE', 'GOOD', 'GREAT', 'EXCELLENT'] as const

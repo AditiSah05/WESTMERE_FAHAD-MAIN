@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -12,12 +12,25 @@ const arrow = 'flex size-8 items-center justify-center rounded bg-[#f1f5f9] text
 
 export default function ShowcaseCard() {
   const [i, setI] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
   const slide = slides[i]
   const Icon = slide.icon
 
+  useEffect(() => {
+    if (isPaused) return
+    const timer = setInterval(() => {
+      setI((prev) => (prev + 1) % slides.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [isPaused])
+
   return (
     <BentoCard delay={0.2} className="p-6 min-[961px]:col-span-9">
-      <div className="flex min-h-[220px] flex-col overflow-hidden rounded-lg border border-line min-[961px]:flex-row min-[961px]:items-stretch">
+      <div
+        className="flex min-h-[220px] flex-col overflow-hidden rounded-lg border border-line min-[961px]:flex-row min-[961px]:items-stretch"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
         <div className="relative h-[180px] w-full flex-none min-[961px]:h-auto min-[961px]:min-h-[250px] min-[961px]:w-1/2">
           <AnimatePresence mode="wait">
             <motion.div
