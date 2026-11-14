@@ -5,10 +5,10 @@ import CountUp from './CountUp'
 import { statsFor, type CatalogueProduct } from './data'
 
 /** Glass stat cards: lift on hover, icon tile fills in, soft glow in the corner. */
-export default function CatalogueStats({ items }: { items: CatalogueProduct[] }) {
+export default function CatalogueStats({ items, rating }: { items: CatalogueProduct[]; rating: number | null }) {
   return (
     <div className="mb-10 grid grid-cols-2 gap-3 min-[769px]:grid-cols-4 min-[769px]:gap-6 min-[769px]:mb-20">
-      {statsFor(items).map(({ icon: Icon, label, ...count }, i) => (
+      {statsFor(items, rating).map(({ icon: Icon, label, ...count }, i) => (
         <motion.div
           key={label}
           initial={{ opacity: 0, y: 20 }}

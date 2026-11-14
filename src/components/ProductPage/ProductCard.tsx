@@ -22,7 +22,7 @@ export default function ProductCard({ product: p, index, onCategory }: Props) {
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/40 shadow-[0_8px_32px_rgba(27,42,74,0.05)] backdrop-blur-md transition-all duration-500 hover:border-white/80 hover:bg-white/65 hover:shadow-[0_20px_50px_rgba(27,42,74,0.12)] min-[769px]:rounded-3xl"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
-        <ProductCover />
+        <ProductCover product={p} />
         <div className="absolute inset-0 flex items-end bg-gradient-to-t from-navy-deep/80 via-transparent to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100 min-[769px]:p-8">
           <Link href={`/product/${p.id}`} className="flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-navy-deep shadow-2xl transition hover:bg-white/90 min-[769px]:h-14 min-[769px]:px-8">
             See how it works <ArrowUpRight size={16} />
@@ -44,7 +44,7 @@ export default function ProductCard({ product: p, index, onCategory }: Props) {
 
         <div className="mb-6 flex flex-col gap-3 min-[769px]:flex-row">
           <Link href={`/product/${p.id}`} className={`${btn} border border-navy/20 text-navy-deep hover:bg-navy/5`}>Learn more</Link>
-          <Link href="/contact" className={`${btn} bg-navy-deep text-white hover:bg-gold`}>Get Mailora · ₹{p.price.toLocaleString('en-IN')} <ArrowUpRight size={14} /></Link>
+          <Link href="/contact" className={`${btn} bg-navy-deep text-white hover:bg-gold`}>Get {p.title.split(' ')[0]} · ₹{p.price.toLocaleString('en-IN')} <ArrowUpRight size={14} /></Link>
         </div>
 
         <div className="mt-auto flex items-center justify-between border-t border-mist pt-4 min-[769px]:pt-6">
