@@ -14,7 +14,7 @@ export default function Sidebar({ role, onNavigate }: { role: Role; onNavigate?:
   return (
     <div className="flex h-full flex-col border-r border-line bg-white">
       <div className="flex h-16 flex-none items-center border-b border-line px-5">
-        <Logo />
+        <span className="admin-logo"><Logo /></span>
       </div>
       <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-4" aria-label="Admin">
         {navGroups.map((g) => ({ ...g, items: g.items.filter((i) => { const m = moduleForPath(i.href); return m && can(role, m) }) })).filter((g) => g.items.length).map((g) => (

@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, ExternalLink, LogOut, Menu } from 'lucide-react'
+import { Bell, ExternalLink, LogOut, Menu, Moon, Sun } from 'lucide-react'
 import { logout } from '@/app/admin/actions'
 import { flatNav } from './nav'
 
-export default function Topbar({ onMenu, email }: { onMenu: () => void; email: string }) {
+export default function Topbar({ onMenu, email, theme, onToggleTheme }: { onMenu: () => void; email: string; theme: 'light' | 'dark'; onToggleTheme: () => void }) {
   const path = usePathname()
   const current = [...flatNav].reverse().find((n) => (n.href === '/admin' ? path === '/admin' : path.startsWith(n.href)))
 
@@ -21,6 +21,7 @@ export default function Topbar({ onMenu, email }: { onMenu: () => void; email: s
         <Link href="/" target="_blank" className="hidden items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-[13px] font-medium text-slate hover:bg-paper sm:flex">
           View site <ExternalLink size={13} />
         </Link>
+        <button type="button" onClick={onToggleTheme} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Light mode' : 'Dark mode'} className="flex size-9 items-center justify-center rounded-lg border border-line text-slate hover:bg-paper">{theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}</button>
         <Link href="/admin/notifications" aria-label="Notifications" className="relative flex size-9 items-center justify-center rounded-lg border border-line text-slate hover:bg-paper">
           <Bell size={17} />
           <span className="absolute right-2 top-2 size-2 rounded-full bg-gold" />

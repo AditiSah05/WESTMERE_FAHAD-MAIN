@@ -7,11 +7,19 @@ import type { Role } from '@/lib/admin/permissions'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
-export default function AdminShell({ children, email, role }: { children: ReactNode; email: string; role: Role }) {
+export type Theme = 'light' | 'dark'
+
+export default function AdminShell({ children, email, role, theme: initial }: { children: ReactNode; email: string; role: Role; theme: Theme }) {
   const [open, setOpen] = useState(false)
+  const [theme, setTheme] = useState<Theme>(initial)
+  const toggleTheme = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    document.cookie = `wm_admin_theme=${next}; path=/admin; max-age=31536000; samesite=lax`
+  }
 
   return (
-    <div className="min-h-screen bg-paper font-sans text-[#4a5568]">
+    <div data-admin-theme={theme} className="min-h-screen bg-paper font-sans text-[#4a5568]">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] min-[1025px]:block"><Sidebar role={role} /></aside>
       <AnimatePresence>
         {open && (
@@ -25,7 +33,7 @@ export default function AdminShell({ children, email, role }: { children: ReactN
       </AnimatePresence>
 
       <div className="min-[1025px]:pl-[264px]">
-        <Topbar onMenu={() => setOpen(true)} email={email} />
+        <Topbar onMenu={() => setOpen(true)} email={email} theme={theme} onToggleTheme={toggleTheme} />
         <main className="mx-auto w-full max-w-[1280px] px-4 py-8 min-[1025px]:px-8">{children}</main>
       </div>
     </div>

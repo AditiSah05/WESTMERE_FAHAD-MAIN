@@ -1,0 +1,35 @@
+/*
+ * Admin-only dark theme. Everything is scoped to [data-admin-theme='dark'], which only AdminShell sets, so the
+ * public site and the sign-in pages are never affected. Theme tokens are remapped; the few fixed light colours the
+ * admin screens use are overridden by class.
+ */
+[data-admin-theme='dark'] {
+  color-scheme: dark;
+  --color-paper: #0a1222;
+  --color-line: #263250;
+  --color-muted: #93a3c1;
+  --color-slate: #a9b8d4;
+  --color-mist: #17213b;
+  --color-sky: #16254a;
+  color: #c4d0e6;
+}
+[data-admin-theme='dark'] .bg-white { background-color: #111b32; }
+[data-admin-theme='dark'] .bg-white\/85 { background-color: rgba(10, 18, 34, 0.85); }
+[data-admin-theme='dark'] .text-navy-deep,
+[data-admin-theme='dark'] .text-navy { color: #e8eefa; }
+[data-admin-theme='dark'] .text-\[\#4a5568\] { color: #c4d0e6; }
+[data-admin-theme='dark'] .text-\[\#718096\] { color: #93a3c1; }
+[data-admin-theme='dark'] .text-\[\#b91c1c\] { color: #fca5a5; }
+[data-admin-theme='dark'] .text-\[\#047857\] { color: #6ee7b7; }
+[data-admin-theme='dark'] .text-\[\#8a6420\] { color: #e8bd6e; }
+[data-admin-theme='dark'] .bg-\[\#fafbfe\],
+[data-admin-theme='dark'] .focus\:bg-white:focus { background-color: #0d172d; }
+[data-admin-theme='dark'] .placeholder\:text-\[\#a0aec0\]::placeholder { color: #64748b; }
+[data-admin-theme='dark'] .hover\:bg-paper:hover { background-color: #17213b; }
+/* Dark navy buttons and avatars would vanish on a dark page: give them an edge. */
+[data-admin-theme='dark'] .bg-navy-deep { box-shadow: 0 0 0 1px #34456b; }
+/* Chart marks drawn in navy. */
+[data-admin-theme='dark'] svg [fill='#1b2a4a'] { fill: #7da2f8; }
+[data-admin-theme='dark'] svg [stroke='#1b2a4a'] { stroke: #7da2f8; }
+/* The wordmark is dark ink: sit it on a light pill so it stays readable. */
+[data-admin-theme='dark'] .admin-logo { display: inline-flex; border-radius: 10px; background: #e8eefa; padding: 4px 10px; }
