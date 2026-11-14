@@ -15,25 +15,10 @@ export const support: ModuleConfig = {
   tabs: [tab({ key: 'tickets', label: 'My tickets', columns: [c('id', 'Ticket', 'mono'), c('subject', 'Subject'), c('type', 'Type'), c('priority', 'Priority', 'status'), c('status', 'Status', 'status'), c('updated', 'Updated', 'date')], rows: [{ id: 'T-2041', subject: 'Install error on hosting', type: 'Installation help', priority: 'High', status: 'Open', updated: '2026-10-22' }, { id: 'T-2018', subject: 'Invoice GST number', type: 'Billing', priority: 'Low', status: 'Resolved', updated: '2026-10-14' }] })],
 }
 
-export const projects: ModuleConfig = {
-  title: 'My Projects',
-  subtitle: 'Custom website and app orders: milestones, revisions and delivery.',
-  tabs: [
-    tab({ key: 'active', label: 'Projects', columns: [c('project', 'Project'), c('team', 'Assigned team'), c('progress', 'Progress'), c('status', 'Status', 'status'), c('deadline', 'Deadline', 'date')], rows: [{ project: 'Custom Website Build', team: 'Fahad, Aditi', progress: '60%', status: 'In progress', deadline: '2026-11-20' }] }),
-    tab({ key: 'milestones', label: 'Milestones', columns: [c('milestone', 'Milestone'), c('amount', 'Payment', 'money', 'right'), c('status', 'Status', 'status')], rows: [{ milestone: 'Design approval', amount: 8000, status: 'Paid' }, { milestone: 'Development complete', amount: 10000, status: 'Pending' }, { milestone: 'Final delivery', amount: 7000, status: 'Pending' }] }),
-  ],
-}
-
 export const wishlist: ModuleConfig = {
   title: 'Wishlist',
   subtitle: 'Saved products.',
   tabs: [tab({ key: 'saved', label: 'Saved', columns: [c('name', 'Product'), c('price', 'Current price', 'money', 'right'), c('availability', 'Availability', 'status')], rows: [{ name: 'E-commerce Storefront Kit', price: 2000, availability: 'Available' }, { name: 'Workflow Automation Pack', price: 1499, availability: 'Available' }] })],
-}
-
-export const reviews: ModuleConfig = {
-  title: 'My Reviews',
-  subtitle: 'Reviews of products you purchased.',
-  tabs: [tab({ key: 'mine', label: 'Reviews', columns: [c('product', 'Product'), c('rating', 'Rating'), c('feedback', 'Feedback'), c('status', 'Status', 'status')], rows: [{ product: 'Mailora Chrome Extension', rating: '5 / 5', feedback: 'Saves me hours every week.', status: 'Published' }, { product: 'SEO Dashboard App', rating: '4 / 5', feedback: 'Great, wants more exports.', status: 'Pending' }] })],
 }
 
 export const notifications: ModuleConfig = {

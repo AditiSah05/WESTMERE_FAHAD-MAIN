@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { cleanPhone } from '@/lib/phone'
 import { createCustomerSession, destroyCustomerSession } from '@/lib/server/customer'
 import { fakeVerify, hashPassword, passwordProblem, verifyPassword } from '@/lib/server/password'
 import { db } from '@/lib/server/schema'
@@ -39,7 +40,9 @@ export async function customerSignup(_p: AuthState, form: FormData): Promise<Aut
   const name = text(form.get('name'), 80).trim()
   const email = text(form.get('email'), 254).trim().toLowerCase()
   const password = text(form.get('password'), 256)
+  const phone = cleanPhone(text(form.get('phone'), 30))
   if (!name || !EMAIL.test(email)) return { error: 'Enter your name and a valid email.' }
+  if (!phone) return { error: 'Enter a valid mobile number (10 to 15 digits). We use it for order confirmations.' }
   const problem = passwordProblem(password, email)
   if (problem) return { error: problem }
 
@@ -52,6 +55,7 @@ export async function customerSignup(_p: AuthState, form: FormData): Promise<Aut
   const [created] = await query<{ id: string }>(`INSERT INTO shop_users (email, name, password_hash) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING RETURNING id`, [email, name, await hashPassword(password)])
   // Same message either way would be ideal; an existing address is only revealed to the person typing it.
   if (!created) return { error: 'An account with this email already exists. Try signing in.' }
+  await query(`INSERT INTO shop_profiles (user_id, phone) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET phone = $2`, [created.id, phone])
   await createCustomerSession(created.id)
   redirect('/account')
 }

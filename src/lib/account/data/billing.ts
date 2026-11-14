@@ -19,14 +19,7 @@ export const subscriptions: ModuleConfig = {
   ],
 }
 
-export const coupons: ModuleConfig = {
-  title: 'Coupons & Offers',
-  subtitle: 'Discounts you can use on your next order.',
-  tabs: [tab({ key: 'available', label: 'Available', columns: [c('code', 'Code', 'mono'), c('offer', 'Offer'), c('applies', 'Applies to'), c('status', 'Status', 'status'), c('expires', 'Expires', 'date')], rows: [{ code: 'WELCOME10', offer: '10% off first order', applies: 'All products', status: 'Active', expires: '2026-12-31' }, { code: 'RENEW15', offer: '15% off renewals', applies: 'Subscriptions', status: 'Active', expires: '2026-11-30' }, { code: 'DIWALI25', offer: '25% off websites', applies: 'Websites', status: 'Expired', expires: '2026-10-20' }] })],
-}
-
 export const profileDetails = {
   profile: { title: 'My Profile', subtitle: 'Your personal details, sign-in and sessions.', groups: [{ heading: 'Personal', items: [['Mobile number', '+91 98xxx xxxxx'], ['Company', '—']] }, { heading: 'Security', items: [['Password', 'Last changed 12 days ago'], ['Two-factor authentication', 'Not enabled'], ['Active sessions', '1 (this device)']] }] },
-  company: { title: 'Billing & Company Details', subtitle: 'Used on your invoices.', groups: [{ heading: 'Billing address', items: [['Address', '—'], ['Country', 'India'], ['State', '—'], ['Postal code', '—']] }, { heading: 'Company', items: [['Company name', '—'], ['GSTIN', 'Not provided']] }] },
   settings: { title: 'Account Settings', subtitle: 'Preferences, privacy and your data.', groups: [{ heading: 'Preferences', items: [['Email preferences', 'Order and billing emails'], ['Notification preferences', 'Email'], ['Marketing consent', 'Not subscribed']] }, { heading: 'Privacy & data', items: [['Data export', 'Available on request'], ['Account deletion', 'Request via support']] }] },
 }

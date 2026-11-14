@@ -21,6 +21,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
           <p className="mb-6 text-[15px] font-medium text-muted">{signup ? 'Track orders, downloads and licences in one place.' : 'Sign in to your Westmere account.'}</p>
           <div className="flex flex-col gap-4">
             {signup && <label className="flex flex-col gap-1.5"><span className={labelCls}>Name</span><input name="name" required autoComplete="name" maxLength={80} className={input} /></label>}
+            {signup && <label className="flex flex-col gap-1.5"><span className={labelCls}>Mobile number</span><input name="phone" type="tel" required autoComplete="tel" maxLength={30} placeholder="+91 98765 43210" className={input} /></label>}
             <label className="flex flex-col gap-1.5"><span className={labelCls}>Email</span><input name="email" type="email" required autoComplete="username" maxLength={254} className={input} /></label>
             <label className="flex flex-col gap-1.5"><span className={labelCls}>Password</span><input name="password" type="password" required autoComplete={signup ? 'new-password' : 'current-password'} maxLength={256} className={input} /></label>
             {state?.error && <p role="alert" className="rounded-lg bg-[#ef4444]/10 px-3 py-2.5 text-sm font-medium text-[#b91c1c]">{state.error}</p>}

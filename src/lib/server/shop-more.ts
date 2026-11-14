@@ -41,9 +41,6 @@ export async function loadMore(slug: string, userId: string): Promise<Record<str
       refunds: os.filter((o) => o.payment_status.includes('Refunded')).map((o) => ({ id: o.id, order: `#WM-${o.id}`, amount: o.amount, status: o.payment_status, date: o.date })),
     }
   }
-  if (slug === 'reviews') {
-    return { mine: await query<Row>(`SELECT p.id, p.name AS product, r.rating || ' / 5' AS rating, r.feedback, r.status FROM shop_reviews r JOIN shop_products p ON p.id = r.product_id WHERE r.user_id = $1`, [userId]) }
-  }
   if (slug === 'notifications') {
     const items: (Row & { at: string })[] = []
     for (const o of await orders(userId)) {

@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { cleanPhone } from '@/lib/phone'
 import { columnsFor, profileGroups } from '@/lib/account/profile-fields'
 import { assertCustomer } from '@/lib/server/customer'
 import { db } from '@/lib/server/schema'
@@ -21,7 +22,12 @@ export async function saveProfile(slug: string, _p: FState, form: FormData): Pro
   }
   // Column names come from our own whitelist, never from the form.
   for (const f of columnsFor(slug)) {
-    const value = f.toggle ? form.get(f.name) === 'on' : str(form.get(f.name), f.multiline ? 300 : 80)
+    let value: string | boolean = f.toggle ? form.get(f.name) === 'on' : str(form.get(f.name), f.multiline ? 300 : 80)
+    if (f.name === 'phone') {
+      const phone = cleanPhone(String(value))
+      if (!phone) return { error: 'Enter a valid mobile number (10 to 15 digits).' }
+      value = phone
+    }
     await query(`UPDATE shop_profiles SET ${f.name} = $1 WHERE user_id = $2`, [value, me.userId])
   }
   revalidatePath('/account', 'layout')

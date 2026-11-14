@@ -7,7 +7,7 @@ import { useState, type ReactNode } from 'react'
 import { customerLogout } from '@/app/account/actions'
 import Logo from '@/components/ui/Logo'
 import { cn } from '@/lib/cn'
-import { sections } from '@/lib/account/sections'
+import { PRIMARY_END, sections } from '@/lib/account/sections'
 
 const href = (slug: string) => (slug ? `/account/${slug}` : '/account')
 
@@ -15,12 +15,15 @@ function Nav({ onNavigate }: { onNavigate?: () => void }) {
   const path = usePathname()
   return (
     <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-4" aria-label="Account">
-      {sections.map(({ slug, label, icon: Icon }) => {
+      {sections.map(({ slug, label, icon: Icon }, i) => {
         const active = slug ? path.startsWith(href(slug)) : path === '/account'
         return (
-          <Link key={slug} href={href(slug)} onClick={onNavigate} className={cn('flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors', active ? 'bg-[linear-gradient(135deg,#1b2a4a_0%,#2f4166_60%,#c4943d_100%)] text-white' : 'text-slate hover:bg-paper hover:text-navy-deep')}>
-            <Icon size={17} strokeWidth={1.9} />{label}
-          </Link>
+          <div key={slug}>
+            {sections[i - 1]?.slug === PRIMARY_END && <hr className="mx-3 my-3 border-line" />}
+            <Link href={href(slug)} onClick={onNavigate} className={cn('flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors', active ? 'bg-[linear-gradient(135deg,#1b2a4a_0%,#2f4166_60%,#c4943d_100%)] text-white' : 'text-slate hover:bg-paper hover:text-navy-deep')}>
+              <Icon size={17} strokeWidth={1.9} />{label}
+            </Link>
+          </div>
         )
       })}
     </nav>
