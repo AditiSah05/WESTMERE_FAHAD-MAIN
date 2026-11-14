@@ -1,8 +1,10 @@
 import FooterColumns from './FooterColumns'
 import FooterCta from './FooterCta'
 import FooterDiscs from './FooterDiscs'
+import { getSiteSettings } from '@/lib/server/site-settings'
 
-export default function Footer() {
+export default async function Footer() {
+  const { socials } = await getSiteSettings()
   const year = new Date().getFullYear()
   const legal = 'text-[13px] font-medium text-slate transition-colors hover:text-gold'
 
@@ -11,7 +13,7 @@ export default function Footer() {
       <FooterDiscs />
       <div className="relative z-[2] mx-auto flex max-w-[1060px] flex-col gap-14 px-5 min-[601px]:gap-[100px] min-[601px]:px-[30px]">
         <FooterCta />
-        <FooterColumns />
+        <FooterColumns socials={socials} />
         <div className="flex flex-col items-start gap-3.5 border-t border-dashed border-[#cbd5e1] pt-6 min-[601px]:-mt-10 min-[601px]:flex-row min-[601px]:items-center min-[601px]:justify-between">
           <span className={legal}>© {year} Westmere. All rights reserved.</span>
           <div className="flex items-center gap-2.5">

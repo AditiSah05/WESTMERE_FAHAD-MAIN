@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import { Check } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/cn'
 import { brandGradient, steps } from './data'
@@ -9,18 +10,25 @@ const pad = (n: number) => String(n).padStart(2, '0')
 export default function ProcessCopy({ step, onSelect }: Props) {
   const current = steps[step]
   return (
-    <div className="absolute left-1/2 top-[clamp(120px,18vh,160px)] z-[2] flex w-full max-w-[360px] -translate-x-1/2 flex-col items-center gap-5 px-5 text-center min-[810px]:top-[clamp(130px,20vh,190px)]">
+    <div className="absolute left-1/2 top-[clamp(120px,18vh,160px)] z-[2] flex w-full max-w-[440px] -translate-x-1/2 flex-col items-center gap-5 px-5 text-center min-[810px]:top-[clamp(130px,20vh,190px)]">
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
-          className="flex min-h-[112px] flex-col items-center gap-1.5"
+          className="flex min-h-[190px] flex-col items-center gap-1.5"
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -14 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
           <h3 className="text-[28px] font-medium leading-[1.2] tracking-[-0.03em] text-navy-deep">{current.title}</h3>
-          <p className="text-base font-medium leading-[1.4] text-slate">{current.text}</p>
+          <p className="max-w-[360px] text-base font-medium leading-[1.4] text-slate">{current.text}</p>
+          <ul className="mt-3 flex flex-wrap justify-center gap-2">
+            {current.points.map((pt) => (
+              <li key={pt} className="flex items-center gap-1.5 rounded-full border border-white bg-white/80 px-3 py-1.5 text-[13px] font-semibold text-navy-deep shadow-[0_2px_8px_rgba(27,42,74,0.06)]">
+                <Check size={13} strokeWidth={3} className="text-gold" />{pt}
+              </li>
+            ))}
+          </ul>
         </motion.div>
       </AnimatePresence>
       <Link

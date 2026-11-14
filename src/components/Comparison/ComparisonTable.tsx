@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import GradientText from '@/components/ui/GradientText'
 import { cn } from '@/lib/cn'
 import { fadeUp } from '@/lib/motion'
-import { comparisonRows } from './data'
+import type { ComparisonRow } from '@/lib/site-defaults'
 
 const heading = 'text-left text-[26px] font-medium leading-[1.2] tracking-[-0.03em] text-navy-deep text-balance min-[641px]:text-[32px]'
 const cell = 'px-5 min-[641px]:px-[30px]'
@@ -17,7 +17,7 @@ const Chevron = ({ className }: { className?: string }) => (
 )
 
 /** Headline with the on/off toggle, plus the two-column comparison. */
-export default function ComparisonTable() {
+export default function ComparisonTable({ rows }: { rows: ComparisonRow[] }) {
   const [on, setOn] = useState(true)
 
   return (
@@ -50,8 +50,8 @@ export default function ComparisonTable() {
           <h3 className={cn(cell, 'border-b border-line py-5 text-[22px] font-medium leading-[1.2] tracking-[-0.03em] text-navy-deep')}>
             Other agencies
           </h3>
-          {comparisonRows.map((r) => (
-            <div key={r.other} className={cn(cell, 'flex items-start gap-2 border-b border-dashed border-line py-5 last:border-b-0')}>
+          {rows.map((r, i) => (
+            <div key={`o${i}`} className={cn(cell, 'flex items-start gap-2 border-b border-dashed border-line py-5 last:border-b-0')}>
               <Chevron className="text-navy-deep" />
               <p className="text-[15px] font-medium leading-[1.3] tracking-[0.0025em] text-slate">{r.other}</p>
             </div>
@@ -65,8 +65,8 @@ export default function ComparisonTable() {
           <h3 className={cn(cell, 'border-b py-5 text-[22px] font-medium leading-[1.2] tracking-[-0.03em]', on ? 'border-white/15 text-white' : 'border-line text-navy-deep')}>
             Our Agency
           </h3>
-          {comparisonRows.map((r) => (
-            <div key={r.ours} className={cn(cell, 'flex items-start gap-2 border-b border-dashed py-5 last:border-b-0', on ? 'border-white/15' : 'border-line')}>
+          {rows.map((r, i) => (
+            <div key={`u${i}`} className={cn(cell, 'flex items-start gap-2 border-b border-dashed py-5 last:border-b-0', on ? 'border-white/15' : 'border-line')}>
               <Chevron className={on ? 'text-gold' : 'text-navy-deep'} />
               <p className={cn('text-[15px] font-medium leading-[1.3] tracking-[0.0025em]', on ? 'text-white' : 'text-slate')}>{r.ours}</p>
             </div>

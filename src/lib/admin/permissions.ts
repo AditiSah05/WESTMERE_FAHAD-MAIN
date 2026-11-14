@@ -43,6 +43,7 @@ export const accessOf = (role: Role, module: ModuleKey): Access | null => grants
 export const moduleForPath = (path: string): ModuleKey | null => {
   const [seg = 'dashboard', sub] = path.replace(/^\/admin\/?/, '').split('/')
   if (seg === 'shop') return shopModule[sub ?? ''] ?? null
+  if (seg === 'site') return 'cms' // /admin/site and /admin/site/reviews: editable website content
   return isModule(seg || 'dashboard') ? ((seg || 'dashboard') as ModuleKey) : null
 }
 

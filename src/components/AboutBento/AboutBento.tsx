@@ -5,8 +5,10 @@ import CtaCard from './CtaCard'
 import GaugesCard from './GaugesCard'
 import IndustriesCard from './IndustriesCard'
 import ShowcaseCard from './ShowcaseCard'
+import { getSiteSettings } from '@/lib/server/site-settings'
 
-export default function AboutBento() {
+export default async function AboutBento() {
+  const { socials, bookingUrl } = await getSiteSettings()
   return (
     <section id="about" className="relative z-10 flex flex-col items-center gap-10 px-6 py-[60px] font-sans">
       <Reveal><ChevronBadge>About us</ChevronBadge></Reveal>
@@ -14,7 +16,7 @@ export default function AboutBento() {
         <div className="grid grid-cols-1 gap-5 min-[961px]:grid-cols-12">
           <CsatCard />
           <ShowcaseCard />
-          <CtaCard />
+          <CtaCard socials={socials} bookingUrl={bookingUrl} />
           <GaugesCard />
           <IndustriesCard />
         </div>

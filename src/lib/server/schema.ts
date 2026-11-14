@@ -51,6 +51,14 @@ const statements = [
     tag text NOT NULL DEFAULT ''
   )`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS listed boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS description text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS categories text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS tech text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS audience text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS type_label text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS image_url text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS qr_url text NOT NULL DEFAULT ''`,
   `CREATE TABLE IF NOT EXISTS shop_orders (
     id bigserial PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
@@ -104,6 +112,22 @@ const statements = [
     feedback text NOT NULL DEFAULT '',
     status text NOT NULL DEFAULT 'Pending',
     PRIMARY KEY (user_id, product_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS site_settings (
+    key text PRIMARY KEY,
+    value jsonb NOT NULL,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS site_reviews (
+    id bigserial PRIMARY KEY,
+    name text NOT NULL,
+    role text NOT NULL DEFAULT '',
+    rating integer NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    body text NOT NULL,
+    photo_url text NOT NULL DEFAULT '',
+    source text NOT NULL DEFAULT 'Manual',
+    status text NOT NULL DEFAULT 'Pending',
+    created_at timestamptz NOT NULL DEFAULT now()
   )`,
   `CREATE TABLE IF NOT EXISTS login_attempts (
     id bigserial PRIMARY KEY,

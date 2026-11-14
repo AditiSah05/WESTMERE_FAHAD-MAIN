@@ -1,6 +1,6 @@
 import {
   BarChart3, FolderTree, KeyRound, LayoutDashboard, LifeBuoy, Mail, Package, PanelsTopLeft,
-  Plug, RefreshCcw, Repeat, Settings, ShieldCheck, ShoppingCart, Star, Tag, Users, Wallet, type LucideIcon,
+  Globe, MessageSquareQuote, Plug, RefreshCcw, Repeat, Settings, ShieldCheck, ShoppingCart, Star, Tag, Users, Wallet, type LucideIcon,
 } from 'lucide-react'
 
 export type NavItem = { href: string; label: string; icon: LucideIcon }
@@ -33,6 +33,8 @@ export const navGroups: NavGroup[] = [
     title: 'Engagement',
     items: [
       { href: '/admin/cms', label: 'Website / CMS', icon: PanelsTopLeft },
+      { href: '/admin/site', label: 'Site content', icon: Globe },
+      { href: '/admin/site/reviews', label: 'Site reviews', icon: MessageSquareQuote },
       { href: '/admin/reviews', label: 'Reviews & Ratings', icon: Star },
       { href: '/admin/shop/reviews', label: 'Review queue', icon: Star },
       { href: '/admin/shop/tickets', label: 'Customer tickets', icon: LifeBuoy },
