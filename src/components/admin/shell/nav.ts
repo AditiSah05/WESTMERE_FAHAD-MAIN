@@ -35,6 +35,7 @@ export const navGroups: NavGroup[] = [
       { href: '/admin/cms', label: 'Website / CMS', icon: PanelsTopLeft },
       { href: '/admin/reviews', label: 'Reviews & Ratings', icon: Star },
       { href: '/admin/shop/reviews', label: 'Review queue', icon: Star },
+      { href: '/admin/shop/google', label: 'Google reviews', icon: Star },
       { href: '/admin/shop/tickets', label: 'Customer tickets', icon: LifeBuoy },
       { href: '/admin/support', label: 'Support & Projects', icon: LifeBuoy },
       { href: '/admin/notifications', label: 'Notifications & Emails', icon: Mail },
