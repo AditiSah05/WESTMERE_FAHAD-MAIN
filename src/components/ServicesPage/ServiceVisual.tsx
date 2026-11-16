@@ -28,10 +28,10 @@ function Website() {
   )
 }
 
-/** Phone with notification cards sliding in one after another. */
+/** Two phones: notification cards sliding in on one, a growth chart on the other. */
 function App() {
   return (
-    <div className="absolute inset-0 flex items-end justify-center">
+    <div className="absolute inset-0 flex items-end justify-center gap-3">
       <div className="relative h-[128px] w-[84px] rounded-t-[22px] border-[3px] border-b-0 border-white/70 bg-navy-deep px-2 pt-4">
         <span className="absolute left-1/2 top-1.5 h-1 w-7 -translate-x-1/2 rounded-full bg-white/40" />
         {[0, 1, 2].map((i) => (
@@ -40,6 +40,13 @@ function App() {
             <span className="h-1.5 flex-1 rounded bg-[#cbd5e1]" />
           </div>
         ))}
+      </div>
+      <div className="relative h-[108px] w-[70px] origin-bottom rotate-6 rounded-t-[20px] border-[3px] border-b-0 border-white/40 bg-navy-deep/80 px-2 pt-4">
+        <span className="absolute left-1/2 top-1.5 h-1 w-6 -translate-x-1/2 rounded-full bg-white/30" />
+        <div className="mb-2 h-5 rounded-md bg-gold/90" />
+        <div className="flex h-9 items-end gap-1">
+          {[40, 65, 50, 90].map((h, i) => <span key={i} className="flex-1 rounded-sm bg-white/70" style={{ height: `${h}%` }} />)}
+        </div>
       </div>
     </div>
   )
