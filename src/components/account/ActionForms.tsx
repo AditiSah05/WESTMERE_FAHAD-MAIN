@@ -35,10 +35,12 @@ export function OrderRequestForm({ options }: { options: { id: string; label: st
 
 export function ReviewForm({ products }: { products: { id: string; name: string }[] }) {
   const [state, action, pending] = useActionState(submitReview, undefined)
+  // Stays mounted after the last product is reviewed so the confirmation can show; nothing to review otherwise.
+  if (!products.length && !state?.ok) return null
   return (
     <Card className="mb-6 p-6">
       <h2 className="mb-4 text-lg font-medium tracking-[-0.02em] text-navy-deep">Write a review</h2>
-      {!products.length ? <p className="text-sm font-medium text-muted">Reviews open once you have received a product.</p> : (
+      {!products.length ? <Msg s={state} /> : (
         <form action={action} className="grid gap-4 min-[769px]:grid-cols-2">
           <label className="flex flex-col gap-1.5"><span className={label}>Product</span><select name="productId" className={input}>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
           <label className="flex flex-col gap-1.5"><span className={label}>Rating</span><select name="rating" defaultValue="5" className={input}>{[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} / 5</option>)}</select></label>

@@ -20,10 +20,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: bySlug((await params).section)?.label ?? 'My account' }
 }
 
-/** Review form for received, not-yet-reviewed products; renders nothing once there is nothing left to review. */
+/** Review form for received, not-yet-reviewed products (hides itself once none are left). */
 async function ReviewsOpen({ userId }: { userId: string }) {
-  const products = await reviewable(userId)
-  return products.length ? <ReviewForm products={products} /> : null
+  return <ReviewForm products={await reviewable(userId)} />
 }
 
 export default async function Page({ params }: Params) {
