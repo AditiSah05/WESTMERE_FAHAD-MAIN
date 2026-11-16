@@ -1,6 +1,6 @@
 import Approach from '@/components/Approach'
 import Comparison from '@/components/legacy/Comparison'
-import Hero from '@/components/legacy/Hero'
+import Hero from '@/components/Hero'
 import '@/components/legacy/legacy.css'
 import AboutBento from '@/components/AboutBento/AboutBento'
 import Process from '@/components/Process'
@@ -15,7 +15,7 @@ export default async function Home() {
   return (
     <>
       <HashRedirect />
-      <div className="legacy-home"><Hero /></div>
+      <Hero />
       <Approach />
       <div className="legacy-home"><Comparison rows={await getComparison()} /></div>
       <AboutBento />
