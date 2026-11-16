@@ -9,11 +9,11 @@ const pad = (n: number) => String(n).padStart(2, '0')
 export default function ProcessCopy({ step, onSelect }: Props) {
   const current = steps[step]
   return (
-    <div className="absolute left-1/2 top-[clamp(120px,18vh,160px)] z-[2] flex w-full max-w-[360px] -translate-x-1/2 flex-col items-center gap-5 px-5 text-center min-[810px]:top-[clamp(130px,20vh,190px)]">
+    <div className="absolute left-1/2 top-[clamp(120px,18vh,160px)] z-[2] flex w-full max-w-[460px] -translate-x-1/2 flex-col items-center gap-5 px-5 text-center min-[810px]:top-[clamp(130px,20vh,190px)]">
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
-          className="flex min-h-[112px] flex-col items-center gap-1.5"
+          className="flex min-h-[165px] flex-col items-center gap-1.5"
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -14 }}
@@ -21,6 +21,12 @@ export default function ProcessCopy({ step, onSelect }: Props) {
         >
           <h3 className="text-[28px] font-medium leading-[1.2] tracking-[-0.03em] text-navy-deep">{current.title}</h3>
           <p className="text-base font-medium leading-[1.4] text-slate">{current.text}</p>
+          <ul className="mt-3 flex flex-wrap justify-center gap-1.5">
+            {current.delivers.map((d) => (
+              <li key={d} className="rounded-full border border-white bg-white/85 px-3 py-1 text-[13px] font-medium text-navy shadow-[0_1px_3px_rgba(27,42,74,0.08)]">{d}</li>
+            ))}
+          </ul>
+          <p className="mt-1 text-[13px] font-medium text-muted">Typically {current.time}</p>
         </motion.div>
       </AnimatePresence>
       <Link
