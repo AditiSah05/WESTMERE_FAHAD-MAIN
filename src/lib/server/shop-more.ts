@@ -27,7 +27,7 @@ export async function requestable(userId: string) {
 }
 
 export async function reviewable(userId: string) {
-  return (await db()).query<{ id: string; name: string }>(`SELECT DISTINCT p.id, p.name FROM shop_orders o JOIN shop_products p ON p.id = o.product_id WHERE o.user_id = $1 AND o.payment_status = 'Paid' AND o.fulfilment = 'Delivered'`, [userId])
+  return (await db()).query<{ id: string; name: string }>(`SELECT DISTINCT p.id, p.name FROM shop_orders o JOIN shop_products p ON p.id = o.product_id WHERE o.user_id = $1 AND o.payment_status = 'Paid' AND o.fulfilment = 'Delivered' AND NOT EXISTS (SELECT 1 FROM shop_reviews r WHERE r.user_id = o.user_id AND r.product_id = p.id)`, [userId])
 }
 
 export async function loadMore(slug: string, userId: string): Promise<Record<string, Row[]> | null> {

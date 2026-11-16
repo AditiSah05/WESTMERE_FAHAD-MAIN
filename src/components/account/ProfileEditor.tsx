@@ -10,15 +10,15 @@ import type { PGroup } from '@/lib/account/profile-fields'
 const input = 'w-full rounded-[10px] border border-line bg-[#fafbfe] px-3.5 py-2.5 text-sm font-medium text-navy-deep outline-none focus:border-blue-accent focus:bg-white read-only:text-muted'
 const label = 'text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]'
 
-type Props = { slug: string; title: string; subtitle: string; groups: PGroup[]; values: Record<string, string | boolean> }
+type Props = { slug: string; title: string; subtitle: string; groups: PGroup[]; values: Record<string, string | boolean>; embedded?: boolean }
 
-export default function ProfileEditor({ slug, title, subtitle, groups, values }: Props) {
+export default function ProfileEditor({ slug, title, subtitle, groups, values, embedded }: Props) {
   const [state, action, pending] = useActionState(saveProfile.bind(null, slug), undefined)
   const [del, ask, asking] = useActionState(requestDeletion, undefined)
 
   return (
     <>
-      <PageHeader title={title} subtitle={subtitle} />
+      {embedded ? <h2 className="mb-4 text-xl font-medium tracking-[-0.02em] text-navy-deep">{title}</h2> : <PageHeader title={title} subtitle={subtitle} />}
       <form action={action} className="grid max-w-[720px] gap-5">
         {groups.map((g) => (
           <Card key={g.heading} className="p-6">
