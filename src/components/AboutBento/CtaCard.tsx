@@ -1,12 +1,10 @@
-import { FacebookIcon, InstagramIcon, LinkedinIcon, XIcon } from '@/components/ui/SocialIcons'
+import { FacebookIcon, InstagramIcon } from '@/components/ui/SocialIcons'
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoText, bentoTitle } from './BentoCard'
 
 const socials = [
-  { href: 'https://facebook.com', label: 'Facebook', Icon: FacebookIcon },
-  { href: 'https://instagram.com', label: 'Instagram', Icon: InstagramIcon },
-  { href: 'https://linkedin.com', label: 'LinkedIn', Icon: LinkedinIcon },
-  { href: 'https://x.com', label: 'X', Icon: XIcon },
+  { href: 'https://www.facebook.com/profile.php?id=61590820286108', label: 'Facebook', Icon: FacebookIcon },
+  { href: 'https://www.instagram.com/westmere.io/', label: 'Instagram', Icon: InstagramIcon },
 ]
 
 export default function CtaCard() {
