@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import FooterColumns from './FooterColumns'
 import FooterCta from './FooterCta'
 import FooterDiscs from './FooterDiscs'
@@ -15,9 +16,9 @@ export default function Footer() {
         <div className="flex flex-col items-start gap-3.5 border-t border-dashed border-[#cbd5e1] pt-6 min-[601px]:-mt-10 min-[601px]:flex-row min-[601px]:items-center min-[601px]:justify-between">
           <span className={legal}>© {year} Westmere. All rights reserved.</span>
           <div className="flex items-center gap-2.5">
-            <a href="#privacy" className={legal}>Privacy Policy</a>
+            <Link href="/privacy" className={legal}>Privacy Policy</Link>
             <span className="text-[10px] text-[#cbd5e1]">•</span>
-            <a href="#terms" className={legal}>Terms of Service</a>
+            <Link href="/terms" className={legal}>Terms of Service</Link>
           </div>
         </div>
       </div>
