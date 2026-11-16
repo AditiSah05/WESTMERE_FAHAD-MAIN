@@ -43,7 +43,7 @@ function TopLinks() {
   )
 }
 
-export default function AccountShell({ children, name, email }: { children: ReactNode; name: string; email: string }) {
+export default function AccountShell({ children, name, email, needsPhone }: { children: ReactNode; name: string; email: string; needsPhone?: boolean }) {
   const [open, setOpen] = useState(false)
   const side = (onNavigate?: () => void, withTop?: boolean) => (
     <div className="flex h-full flex-col border-r border-line bg-white">
@@ -77,6 +77,11 @@ export default function AccountShell({ children, name, email }: { children: Reac
             <form action={customerLogout}><button type="submit" aria-label="Sign out" title="Sign out" className="flex size-9 items-center justify-center rounded-lg border border-line text-slate hover:bg-paper"><LogOut size={16} /></button></form>
           </div>
         </header>
+        {needsPhone && (
+          <p role="status" className="border-b border-gold/30 bg-gold/10 px-4 py-2.5 text-center text-[13px] font-medium text-navy-deep min-[1025px]:px-8">
+            Add your mobile number so we can confirm your orders. <Link href="/account/profile" className="font-semibold underline underline-offset-2">Go to My Profile</Link>
+          </p>
+        )}
         <main className="mx-auto w-full max-w-[1280px] px-4 py-8 min-[1025px]:px-8">{children}</main>
       </div>
     </div>

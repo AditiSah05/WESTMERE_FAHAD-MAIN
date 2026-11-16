@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { phoneOk } from '@/lib/account/phone'
 import { columnsFor, profileGroups } from '@/lib/account/profile-fields'
 import { assertCustomer } from '@/lib/server/customer'
 import { db } from '@/lib/server/schema'
@@ -17,6 +18,7 @@ export async function saveProfile(slug: string, _p: FState, form: FormData): Pro
   if (slug === 'profile') {
     const name = str(form.get('name'), 80)
     if (!name) return { error: 'Name is required.' }
+    if (!phoneOk(str(form.get('phone'), 80))) return { error: 'Enter a valid mobile number, for example +91 98765 43210.' }
     await query(`UPDATE shop_users SET name = $1 WHERE id = $2`, [name, me.userId])
   }
   // Column names come from our own whitelist, never from the form.
