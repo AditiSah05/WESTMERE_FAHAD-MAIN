@@ -37,7 +37,7 @@ export default function ServiceExplorer() {
               >
                 <span className={cn('font-mono text-sm transition-colors', on ? 'text-gold' : 'text-[#a0aec0]')}>{String(i + 1).padStart(2, '0')}</span>
                 <span className="flex-1">
-                  <span className={cn('block font-display text-[1.7rem] font-bold leading-tight tracking-tight transition-all duration-300 min-[769px]:text-[2.4rem]', on ? 'translate-x-2 text-navy-deep' : 'text-[#a0aec0] group-hover:text-slate')}>{s.title}</span>
+                  <span className={cn('block font-display text-[1.35rem] font-bold leading-tight tracking-tight transition-all duration-300 min-[769px]:text-[1.8rem]', on ? 'translate-x-2 text-navy-deep' : 'text-[#a0aec0] group-hover:text-slate')}>{s.title}</span>
                   <span className={cn('mt-1 block max-w-[420px] text-sm text-[#718096] transition-all duration-300', on ? 'max-h-12 opacity-100' : 'max-h-0 overflow-hidden opacity-0')}>{s.headline}</span>
                 </span>
                 <ArrowRight size={22} className={cn('flex-none transition-all duration-300', on ? 'rotate-[-45deg] text-gold' : 'text-[#cbd5e1]')} />
