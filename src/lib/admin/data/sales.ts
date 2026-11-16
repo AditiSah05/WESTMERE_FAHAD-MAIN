@@ -46,15 +46,15 @@ export const orders: ModuleConfig = {
 }
 
 const customerRows = [
-  { name: 'Aarav Mehta', email: 'aarav@example.com', segment: 'VIP', orders: 7, spent: 9890, status: 'Active', joined: '2025-11-02' },
-  { name: 'Zoya Khan', email: 'zoya@example.com', segment: 'New', orders: 1, spent: 1999, status: 'Active', joined: '2026-10-22' },
-  { name: 'Studio North', email: 'hello@studionorth.example', segment: 'VIP', orders: 12, spent: 41200, status: 'Active', joined: '2025-06-18' },
-  { name: 'Rohan Iyer', email: 'rohan@example.com', segment: 'At risk', orders: 2, spent: 998, status: 'Active', joined: '2026-02-11' },
-  { name: 'Meera Shah', email: 'meera@example.com', segment: 'VIP', orders: 3, spent: 27998, status: 'Active', joined: '2026-03-30' },
-  { name: 'Kabir Anand', email: 'kabir@example.com', segment: 'At risk', orders: 1, spent: 0, status: 'Suspended', joined: '2026-09-04' },
+  { name: 'Aarav Mehta', email: 'aarav@example.com', phone: '+91 98765 43210', segment: 'VIP', orders: 7, spent: 9890, status: 'Active', joined: '2025-11-02' },
+  { name: 'Zoya Khan', email: 'zoya@example.com', phone: '+91 98220 11002', segment: 'New', orders: 1, spent: 1999, status: 'Active', joined: '2026-10-22' },
+  { name: 'Studio North', email: 'hello@studionorth.example', phone: '+91 99600 33004', segment: 'VIP', orders: 12, spent: 41200, status: 'Active', joined: '2025-06-18' },
+  { name: 'Rohan Iyer', email: 'rohan@example.com', phone: '+91 98900 55006', segment: 'At risk', orders: 2, spent: 998, status: 'Active', joined: '2026-02-11' },
+  { name: 'Meera Shah', email: 'meera@example.com', phone: '+91 97300 77008', segment: 'VIP', orders: 3, spent: 27998, status: 'Active', joined: '2026-03-30' },
+  { name: 'Kabir Anand', email: 'kabir@example.com', phone: '+91 98100 99010', segment: 'At risk', orders: 1, spent: 0, status: 'Suspended', joined: '2026-09-04' },
 ]
-const custCols = [c('name', 'Customer'), c('email', 'Email'), c('segment', 'Segment', 'tag'), c('orders', 'Orders', undefined, 'right'), c('spent', 'Total spent', 'money', 'right'), c('status', 'Account', 'status')]
-const custFields = [f('name', 'Name'), f('email', 'Email'), select('segment', 'Segment', ['VIP', 'New', 'At risk', 'Regular']), select('status', 'Account status', ['Active', 'Suspended', 'Blocked'])]
+const custCols = [c('name', 'Customer'), c('email', 'Email'), c('phone', 'Phone'), c('segment', 'Segment', 'tag'), c('orders', 'Orders', undefined, 'right'), c('spent', 'Total spent', 'money', 'right'), c('status', 'Account', 'status')]
+const custFields = [f('name', 'Name'), f('email', 'Email'), f('phone', 'Phone'), select('segment', 'Segment', ['VIP', 'New', 'At risk', 'Regular']), select('status', 'Account status', ['Active', 'Suspended', 'Blocked'])]
 const segment = (key: string, label: string, value: string): TabConfig =>
   tab({ key, label, source: 'all', columns: custCols, rows: customerRows, fields: custFields, filter: { key: 'segment', value } })
 

@@ -14,7 +14,7 @@ export function proxy(request: NextRequest) {
   const area = pathname.startsWith('/account') ? 'account' : 'admin'
   const hasCookie = (area === 'account' ? CUSTOMER : ADMIN).some((c) => request.cookies.has(c))
   const open = area === 'account'
-    ? pathname === '/account/login' || pathname === '/account/signup'
+    ? pathname === '/account/login' || pathname === '/account/signup' || pathname.startsWith('/account/google')
     : pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
   if (!open && !hasCookie) {
     return NextResponse.redirect(new URL(`/${area}/login`, request.url))
