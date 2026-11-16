@@ -51,7 +51,7 @@ export async function submitReview(_p: FState, form: FormData): Promise<FState> 
   if (!(await reviewable(me.userId)).some((p) => p.id === productId)) return { error: 'You can only review products you have received.' }
   const { query } = await db()
   await query(`INSERT INTO shop_reviews (user_id, product_id, rating, feedback) VALUES ($1,$2,$3,$4) ON CONFLICT (user_id, product_id) DO UPDATE SET rating = $3, feedback = $4, status = 'Pending'`, [me.userId, productId, rating, str(form.get('feedback'), 1000)])
-  revalidatePath('/account/reviews')
+  revalidatePath('/account/my-products')
   return { ok: 'Thanks. Your review is pending approval.' }
 }
 

@@ -20,6 +20,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: bySlug((await params).section)?.label ?? 'My account' }
 }
 
+/** Review form for received, not-yet-reviewed products; renders nothing once there is nothing left to review. */
+async function ReviewsOpen({ userId }: { userId: string }) {
+  const products = await reviewable(userId)
+  return products.length ? <ReviewForm products={products} /> : null
+}
+
 export default async function Page({ params }: Params) {
   const s = bySlug((await params).section)
   if (!s?.slug) notFound()
@@ -36,8 +42,9 @@ export default async function Page({ params }: Params) {
     <>
       {s.slug === 'support' && <TicketForm />}
       {s.slug === 'orders' && <OrderRequestForm options={await requestable(c.userId)} />}
-      {s.slug === 'reviews' && <ReviewForm products={await reviewable(c.userId)} />}
+      {s.slug === 'my-products' && <ReviewsOpen userId={c.userId} />}
       <ModuleView key={tabs.map((t) => t.rows.map((r) => r.id).join()).join('|')} module={`account-${s.slug}`} {...config} tabs={tabs} canWrite={false} local />
+      {s.slug === 'billing' && <div className="mt-10"><ProfileEditor slug="company" {...profileGroups.company} values={await profile(c.userId)} embedded /></div>}
     </>
   )
 }
