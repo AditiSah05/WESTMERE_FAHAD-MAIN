@@ -8,7 +8,7 @@ const grid = 'pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px] bg-[r
 
 export default function ProductPage({ items }: { items: CatalogueProduct[] }) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-paper pb-[60px] pt-[100px] text-[#4a5568] min-[769px]:pb-[100px] min-[769px]:pt-[120px]">
+    <div className="relative min-h-screen overflow-hidden bg-paper pb-[60px] pt-[96px] text-[#4a5568] min-[769px]:pb-[80px] min-[769px]:pt-[112px]">
       <div aria-hidden className={grid} />
       <div className="mx-auto w-full max-w-[1200px] px-5 min-[769px]:px-8">
         <CatalogueHeader single={items.length === 1 ? items[0].title : null} />
