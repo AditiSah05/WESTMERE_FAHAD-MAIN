@@ -146,6 +146,11 @@ const statements = [
     at timestamptz NOT NULL DEFAULT now()
   )`,
   `CREATE INDEX IF NOT EXISTS admin_audit_at ON admin_audit (at DESC)`,
+  `CREATE TABLE IF NOT EXISTS site_content (
+    key text PRIMARY KEY,
+    value jsonb NOT NULL,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
 ]
 
 const globalForSchema = globalThis as unknown as { __wmSchema?: Promise<void> }

@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Logo from '@/components/ui/Logo'
 import MenuButton from './MenuButton'
+import type { Socials } from '@/components/ui/socials'
 import NavDrawer from './NavDrawer'
 
 const divider = <div className="w-0.5 self-stretch bg-sky" aria-hidden />
 
-export default function Navbar() {
+export default function Navbar({ socials }: { socials: Socials }) {
   const pathname = usePathname()
   const current = pathname === '/' ? 'home' : pathname.slice(1)
   const [open, setOpen] = useState(false)
@@ -50,7 +51,7 @@ export default function Navbar() {
           </div>
         </motion.nav>
       </header>
-      <NavDrawer open={open} current={current} onClose={() => setOpen(false)} />
+      <NavDrawer open={open} current={current} onClose={() => setOpen(false)} socials={socials} />
     </>
   )
 }

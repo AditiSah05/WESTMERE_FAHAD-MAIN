@@ -33,6 +33,7 @@ export const navGroups: NavGroup[] = [
     title: 'Engagement',
     items: [
       { href: '/admin/cms', label: 'Website / CMS', icon: PanelsTopLeft },
+      { href: '/admin/cms/content', label: 'Website content', icon: PanelsTopLeft },
       { href: '/admin/reviews', label: 'Reviews & Ratings', icon: Star },
       { href: '/admin/shop/reviews', label: 'Review queue', icon: Star },
       { href: '/admin/shop/google', label: 'Google reviews', icon: Star },
