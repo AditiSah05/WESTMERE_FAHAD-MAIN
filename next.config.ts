@@ -13,6 +13,8 @@ const config: NextConfig = {
   // Hides the round "N" dev-only badge; compile and runtime errors still show.
   devIndicators: false,
   serverExternalPackages: ['@electric-sql/pglite', 'pg'],
+  // Admin picture uploads are posted through a server action (limit is 3 MB per picture).
+  experimental: { serverActions: { bodySizeLimit: '4mb' } },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },

@@ -1,15 +1,22 @@
+'use client'
+
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useImage } from '@/components/ui/ImagesProvider'
 import { cn } from '@/lib/cn'
 import type { Service } from './data'
 
 type Props = { card: Service; offset: number }
+
+/** Deck cards are numbered 1-4; their picture slots are named after the service. */
+const SLUGS: Record<number, string> = { 1: 'website', 2: 'app', 3: 'automation', 4: 'software' }
 
 /** One card of the looping deck; only the centre card shows its text panel. */
 export default function DeckCard({ card, offset }: Props) {
   const center = offset === 0
   const far = Math.abs(offset) > 1
   const Icon = card.icon
+  const photo = useImage(`service-${SLUGS[card.id]}`, card.image)
 
   return (
     <motion.div
@@ -33,7 +40,7 @@ export default function DeckCard({ card, offset }: Props) {
           center ? 'h-[260px] min-[769px]:h-[330px]' : 'h-full',
         )}
       >
-        <Image src={card.image} alt={card.title} fill sizes="370px" className="block object-cover" />
+        <Image src={photo} alt={card.title} fill sizes="370px" className="block object-cover" />
         <div
           className={cn(
             'absolute left-4 top-4 z-[5] flex size-11 items-center justify-center rounded-xl border bg-white shadow-[0_4px_14px_rgba(0,0,0,0.08)]',

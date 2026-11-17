@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight, Check } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useImage } from '@/components/ui/ImagesProvider'
 import type { Service } from './data'
 
 const SHOWN_TECH = 4
@@ -11,6 +12,7 @@ const SHOWN_TECH = 4
 /** The detail panel for one service: illustration, short description, key points, tech and a call to action. */
 export default function ServiceStage({ service: s }: { service: Service; index?: number }) {
   const Icon = s.icon
+  const photo = useImage(`service-${s.id}`, s.image)
   const extra = s.techs.length - SHOWN_TECH
   return (
     <motion.div
@@ -27,7 +29,7 @@ export default function ServiceStage({ service: s }: { service: Service; index?:
       </div>
 
       <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-white/10">
-        <Image src={s.image} alt={`${s.title}`} fill sizes="(min-width: 1025px) 600px, 100vw" className="object-cover" />
+        <Image src={photo} alt={`${s.title}`} fill sizes="(min-width: 1025px) 600px, 100vw" className="object-cover" />
       </div>
 
       <p className="mb-6 mt-6 text-[15px] leading-relaxed text-white/75">{s.desc}</p>

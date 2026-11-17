@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import type { About } from '@/lib/about-content'
 import { assertModule } from '@/lib/server/auth'
 import { writeContent } from '@/lib/server/content'
+import { clearImage, writeImage } from '@/lib/server/media'
 import { audit } from '@/lib/server/session'
 
 export type ContentState = { error?: string; ok?: string } | undefined
@@ -113,4 +114,25 @@ export async function saveAbout(_p: ContentState, form: FormData): Promise<Conte
   revalidatePath('/about')
   revalidatePath('/admin/cms/content')
   return { ok: 'Saved. The About page is updated.' }
+}
+
+const imagesPublished = () => { revalidatePath('/', 'layout'); revalidatePath('/admin/cms/content') }
+
+export async function uploadImage(slot: string, _p: ContentState, form: FormData): Promise<ContentState> {
+  const me = await assertModule('cms', 'write')
+  const file = form.get('file')
+  if (!(file instanceof File)) return { error: 'Choose a picture first.' }
+  const problem = await writeImage(slot, file)
+  if (problem) return { error: problem }
+  await audit(me.userId, 'image_uploaded', slot)
+  imagesPublished()
+  return { ok: 'Saved. The new picture is live.' }
+}
+
+export async function resetImage(slot: string): Promise<ContentState> {
+  const me = await assertModule('cms', 'write')
+  await clearImage(slot)
+  await audit(me.userId, 'image_reset', slot)
+  imagesPublished()
+  return { ok: 'Back to the original picture.' }
 }
