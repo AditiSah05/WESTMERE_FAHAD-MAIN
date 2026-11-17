@@ -81,8 +81,8 @@ export default function AccountShell({ children, name, email, needsPhone }: { ch
           </div>
         </div>
       </header>
-      <div className="relative mx-auto flex max-w-[1440px] gap-6 px-2.5 pb-10 pt-8 md:px-5">
-        <aside className="sticky top-[104px] hidden h-[calc(100vh-128px)] w-[248px] flex-none min-[1025px]:block">{side()}</aside>
+      <div className="relative mx-auto flex max-w-[1440px] gap-6 px-2.5 pb-10 pt-12 md:px-5">
+        <aside className="sticky top-[104px] hidden h-[calc(100vh-128px)] mt-4 w-[248px] flex-none min-[1025px]:block">{side()}</aside>
         <div className="min-w-0 flex-1">
           {needsPhone && (
             <p role="status" className="mb-6 rounded-lg border border-gold/30 bg-gold/10 px-4 py-2.5 text-center text-[13px] font-medium text-navy-deep">
