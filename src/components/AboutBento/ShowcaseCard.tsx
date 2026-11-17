@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoText, bentoTitle } from './BentoCard'
+import { useImage } from '@/components/ui/ImagesProvider'
 import { slides } from './data'
 
 const arrow = 'flex size-8 items-center justify-center rounded bg-[#f1f5f9] text-navy-deep transition hover:bg-navy-deep hover:text-white'
@@ -14,6 +15,7 @@ export default function ShowcaseCard() {
   const [i, setI] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const slide = slides[i]
+  const photo = useImage(`about-${i + 1}`, slide.image)
   const Icon = slide.icon
 
   useEffect(() => {
@@ -34,14 +36,14 @@ export default function ShowcaseCard() {
         <div className="relative h-[180px] w-full flex-none min-[961px]:h-auto min-[961px]:min-h-[250px] min-[961px]:w-1/2">
           <AnimatePresence mode="wait">
             <motion.div
-              key={slide.image}
+              key={photo}
               className="absolute inset-0"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.35 }}
             >
-              <Image src={slide.image} alt={slide.title} fill sizes="500px" className="object-cover" />
+              <Image src={photo} alt={slide.title} fill sizes="500px" className="object-cover" />
             </motion.div>
           </AnimatePresence>
         </div>

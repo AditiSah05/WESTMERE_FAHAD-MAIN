@@ -150,6 +150,12 @@ const statements = [
     at timestamptz NOT NULL DEFAULT now()
   )`,
   `CREATE INDEX IF NOT EXISTS admin_audit_at ON admin_audit (at DESC)`,
+  `CREATE TABLE IF NOT EXISTS site_media (
+    slot text PRIMARY KEY,
+    mime text NOT NULL,
+    data bytea NOT NULL,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
   `CREATE TABLE IF NOT EXISTS site_content (
     key text PRIMARY KEY,
     value jsonb NOT NULL,
