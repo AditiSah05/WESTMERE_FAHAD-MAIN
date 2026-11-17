@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowRight, Check, Pencil, Play, Upload } from 'lucide-react'
 import MailoraLogo from './MailoraLogo'
+import PayButton from './PayButton'
 import SimulatorWindow from './SimulatorWindow'
 
 const bullets = [
@@ -13,7 +13,7 @@ const bullets = [
 ]
 const trust = ['100% Safe', 'No Third-Party Logins', 'Works Inside Gmail']
 
-export default function ProductHero() {
+export default function ProductHero({ price }: { price: number }) {
   return (
     <section className="mb-[90px]">
       <div className="grid grid-cols-1 items-center gap-[50px] min-[1025px]:grid-cols-[1.15fr_0.85fr] min-[1025px]:gap-[60px]">
@@ -44,10 +44,10 @@ export default function ProductHero() {
               </span>
             ))}
           </div>
-          <Link href="/contact" className="flex items-center gap-3 rounded-lg bg-black px-[30px] py-4 text-[14.5px] font-bold text-white transition hover:-translate-y-0.5 hover:bg-gold hover:shadow-[0_10px_24px_rgba(196,148,61,0.25)]">
+          <PayButton name="Mailora Chrome Extension" amount={price} className="flex items-center gap-3 rounded-lg bg-black px-[30px] py-4 text-[14.5px] font-bold text-white transition hover:-translate-y-0.5 hover:bg-gold hover:shadow-[0_10px_24px_rgba(196,148,61,0.25)]">
             Get Mailora Chrome Extension
             <ArrowRight size={16} strokeWidth={2} />
-          </Link>
+          </PayButton>
         </motion.div>
 
         <motion.div className="relative w-full" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.25 }}>

@@ -4,6 +4,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import GenericCover from './GenericCover'
+import PayButton from './PayButton'
 import ProductCover from './ProductCover'
 import type { CatalogueProduct } from './data'
 
@@ -40,7 +41,7 @@ export default function ProductCard({ product: p, index, onCategory }: Props) {
 
         <div className="mb-6 flex flex-col gap-3 min-[769px]:flex-row">
           <Link href={`/product/${p.id}`} className={`${btn} border border-navy/20 text-navy-deep hover:bg-navy/5`}>Learn more</Link>
-          <Link href="/contact" className={`${btn} bg-navy-deep text-white hover:bg-gold`}>Get {p.title.replace(/ Chrome Extension$/, '')} · ₹{p.price.toLocaleString('en-IN')} <ArrowUpRight size={14} /></Link>
+          <PayButton name={p.title} amount={p.price} className={`${btn} bg-navy-deep text-white hover:bg-gold`}>Get {p.title.replace(/ Chrome Extension$/, '')} · ₹{p.price.toLocaleString('en-IN')} <ArrowUpRight size={14} /></PayButton>
         </div>
 
         <div className="mt-auto flex items-center justify-between border-t border-mist pt-4 min-[769px]:pt-6">
