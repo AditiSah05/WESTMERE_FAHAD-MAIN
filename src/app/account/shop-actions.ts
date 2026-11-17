@@ -1,26 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { assertCustomer } from '@/lib/server/customer'
 import { db } from '@/lib/server/schema'
-import { createOrder } from '@/lib/server/shop'
-import { profile } from '@/lib/server/shop-more'
 
-const METHODS = ['UPI', 'Card', 'Net banking']
 const TYPES = ['Technical issue', 'Installation help', 'Bug report', 'Billing', 'Other']
 const PRIORITIES = ['Low', 'Medium', 'High']
 const str = (v: FormDataEntryValue | null, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
-
-/** Test-mode checkout: price and statuses are decided on the server, never taken from the form. */
-export async function buy(form: FormData) {
-  const me = await assertCustomer()
-  // Order confirmations go to the customer's mobile, so ordering needs one on file.
-  if (!(await profile(me.userId)).phone) redirect('/account/profile')
-  const method = str(form.get('method'), 20)
-  await createOrder(me.userId, str(form.get('productId'), 40), METHODS.includes(method) ? method : 'UPI', form.get('simulate') === 'fail')
-  redirect('/account/orders')
-}
 
 export async function toggleWishlist(form: FormData) {
   const me = await assertCustomer()
