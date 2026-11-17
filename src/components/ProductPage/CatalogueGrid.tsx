@@ -19,7 +19,7 @@ export default function CatalogueGrid({ items }: { items: CatalogueProduct[] }) 
 
   return (
     <section>
-      <div className="mx-auto mb-10 flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-full border border-white/70 bg-white/70 p-2 shadow-[0_10px_40px_rgba(27,42,74,0.08)] backdrop-blur-xl min-[769px]:mb-14">
+      <div className="mx-auto mb-10 flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-full border border-line bg-white p-2 shadow-[0_6px_24px_rgba(27,42,74,0.06)] min-[769px]:mb-14">
         <button type="button" aria-label="Search products" aria-expanded={searching} onClick={() => setSearching((s) => !s)} className="flex size-11 flex-none items-center justify-center rounded-full bg-white text-blue shadow-sm transition hover:bg-navy-deep hover:text-white">
           <Search size={18} />
         </button>
@@ -49,7 +49,7 @@ export default function CatalogueGrid({ items }: { items: CatalogueProduct[] }) 
             {shown.map((p, i) => <ProductCard key={p.id} product={p} index={i} onCategory={setCategory} />)}
           </motion.div>
         ) : (
-          <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-lg rounded-3xl border border-white/80 bg-white/60 px-6 py-16 text-center text-base font-semibold text-[#65708a] backdrop-blur-2xl">
+          <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-lg rounded-2xl border border-line bg-white px-6 py-16 text-center text-base font-semibold text-[#65708a]">
             No products match that search.
           </motion.p>
         )}

@@ -1,23 +1,25 @@
 import CatalogueGrid from './CatalogueGrid'
 import CatalogueHeader from './CatalogueHeader'
 import CatalogueStats from './CatalogueStats'
-import { catalogue } from './data'
+import type { CatalogueProduct } from './data'
 
-const blob = 'pointer-events-none absolute -z-10 rounded-full blur-[130px]'
+/** Flat paper background with a faint dot grid that fades out toward the bottom; no gradients or blur. */
+const grid = 'pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px] bg-[radial-gradient(rgba(27,42,74,0.13)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:linear-gradient(to_bottom,black,transparent)]'
 
-export default function ProductPage() {
+export default function ProductPage({ items }: { items: CatalogueProduct[] }) {
   return (
     <div className="relative min-h-screen overflow-hidden bg-paper pb-[60px] pt-[100px] text-[#4a5568] min-[769px]:pb-[100px] min-[769px]:pt-[120px]">
-      <div aria-hidden>
-        <div className={`${blob} left-[-10%] top-[10%] size-[500px] animate-pulse bg-blue/15 [animation-duration:10s]`} />
-        <div className={`${blob} right-[-10%] top-[25%] size-[600px] bg-gold/10`} />
-        <div className={`${blob} bottom-[30%] left-[-5%] size-[450px] bg-navy/10`} />
-        <div className={`${blob} bottom-[10%] right-[-5%] size-[500px] animate-pulse bg-blue-accent/10 [animation-duration:12s]`} />
-      </div>
+      <div aria-hidden className={grid} />
       <div className="mx-auto w-full max-w-[1200px] px-5 min-[769px]:px-8">
-        <CatalogueHeader />
-        <CatalogueStats items={catalogue} />
-        <CatalogueGrid items={catalogue} />
+        <CatalogueHeader single={items.length === 1 ? items[0].title : null} />
+        {items.length ? (
+          <>
+            <CatalogueStats items={items} />
+            <CatalogueGrid items={items} />
+          </>
+        ) : (
+          <p className="mx-auto max-w-lg rounded-2xl border border-line bg-white px-6 py-14 text-center text-base font-semibold text-[#65708a]">New products are coming soon.</p>
+        )}
       </div>
     </div>
   )
