@@ -7,12 +7,12 @@ const rise = (delay: number) => ({ initial: { opacity: 0, y: 24 }, animate: { op
 /** Oversized editorial heading: no pill, no stats bar, just type and a gold rule that draws itself. */
 export default function ServicesHeader() {
   return (
-    <header className="mb-14 min-[1025px]:mb-20">
-      <motion.p {...rise(0)} className="mb-6 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate">
+    <header className="mb-8 min-[1025px]:mb-12">
+      <motion.p {...rise(0)} className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-slate">
         <span className="font-mono text-gold">01 — 04</span>
         <span className="h-px w-12 bg-line" />Services
       </motion.p>
-      <motion.h1 {...rise(0.1)} className="font-display text-[1.9rem] font-bold leading-[1.1] tracking-[-0.03em] text-navy-deep min-[769px]:text-[2.5rem] min-[1181px]:text-[3rem]">
+      <motion.h1 {...rise(0.1)} className="font-display text-[1.75rem] font-bold leading-[1.1] tracking-[-0.03em] text-navy-deep min-[769px]:text-[2.2rem] min-[1181px]:text-[2.5rem]">
         What we <br className="min-[601px]:hidden" />
         <span className="relative inline-block">
           build.

@@ -33,7 +33,7 @@ export default function ServiceExplorer() {
                 tabIndex={on ? 0 : -1}
                 onClick={() => setActive(i)}
                 onMouseEnter={() => window.matchMedia('(min-width: 1025px)').matches && setActive(i)}
-                className="group relative flex w-full flex-1 items-center gap-5 py-7 text-left min-[769px]:gap-8 min-[769px]:py-9"
+                className="group relative flex w-full flex-1 items-center gap-4 py-5 text-left min-[769px]:gap-6 min-[769px]:py-6"
               >
                 <span className={cn('font-mono text-sm transition-colors', on ? 'text-gold' : 'text-[#a0aec0]')}>{String(i + 1).padStart(2, '0')}</span>
                 <span className="flex-1">
