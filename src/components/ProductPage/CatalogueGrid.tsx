@@ -10,7 +10,6 @@ import type { CatalogueProduct } from './data'
 export default function CatalogueGrid({ items }: { items: CatalogueProduct[] }) {
   const [category, setCategory] = useState('All')
   const [query, setQuery] = useState('')
-  const [searching, setSearching] = useState(false)
   const categories = useMemo(() => ['All', ...new Set(items.flatMap((p) => p.categories))], [items])
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -19,14 +18,8 @@ export default function CatalogueGrid({ items }: { items: CatalogueProduct[] }) 
 
   return (
     <section>
-      <div className="mx-auto mb-7 flex w-fit max-w-full items-center gap-1.5 overflow-x-auto rounded-full border border-line bg-white p-1.5 min-[769px]:mb-9">
-        <button type="button" aria-label="Search products" aria-expanded={searching} onClick={() => setSearching((s) => !s)} className="flex size-9 flex-none items-center justify-center rounded-full bg-paper text-blue transition hover:bg-navy-deep hover:text-white">
-          <Search size={16} />
-        </button>
-        {searching && (
-          <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products" aria-label="Search products" className="h-9 w-[160px] flex-none rounded-full bg-paper px-4 text-[13px] font-medium text-navy-deep outline-none placeholder:text-[#8591a5] focus:ring-2 focus:ring-blue-accent/30" />
-        )}
-        <div className="flex gap-1" role="tablist" aria-label="Product categories">
+      <div className="mb-7 flex flex-col gap-3 border-b border-line min-[769px]:mb-9 min-[769px]:flex-row min-[769px]:items-center min-[769px]:justify-between">
+        <div className="-mb-px flex gap-6 overflow-x-auto" role="tablist" aria-label="Product categories">
           {categories.map((c) => (
             <button
               key={c}
@@ -34,13 +27,17 @@ export default function CatalogueGrid({ items }: { items: CatalogueProduct[] }) 
               role="tab"
               aria-selected={c === category}
               onClick={() => setCategory(c)}
-              className={cn('flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-full px-4 text-[13px] font-semibold transition', c === category ? 'bg-[linear-gradient(135deg,#1b2a4a_0%,#2f4166_60%,#c4943d_100%)] text-white ' : 'text-slate hover:text-navy-deep')}
+              className={cn('flex-none whitespace-nowrap border-b-2 pb-3 pt-1 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue/40', c === category ? 'border-navy-deep text-navy-deep' : 'border-transparent text-[#718096] hover:text-navy-deep')}
             >
               {c}
-              {c === category && <span className="size-1.5 rounded-full bg-white/80" />}
             </button>
           ))}
         </div>
+        <label className="relative mb-3 block min-[769px]:w-[240px]">
+          <span className="sr-only">Search products</span>
+          <Search size={15} aria-hidden className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#8591a5]" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products" className="h-9 w-full rounded-lg border border-line bg-white pl-9 pr-3 text-[13px] font-medium text-navy-deep outline-none transition placeholder:text-[#8591a5] focus:border-blue-accent focus:ring-2 focus:ring-blue-accent/15" />
+        </label>
       </div>
 
       <AnimatePresence mode="popLayout">
