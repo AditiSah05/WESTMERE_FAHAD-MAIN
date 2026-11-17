@@ -24,11 +24,6 @@ export default function ProductCard({ product: p, index, onCategory }: Props) {
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         {p.id === 'mailora' ? <ProductCover /> : <GenericCover title={p.title} image={p.image} />}
-        <div className="absolute inset-0 flex items-end bg-gradient-to-t from-navy-deep/80 via-transparent to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100 min-[769px]:p-8">
-          <Link href={`/product/${p.id}`} className="flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-navy-deep shadow-2xl transition hover:bg-white/90 min-[769px]:h-14 min-[769px]:px-8">
-            {p.id === 'mailora' ? 'See how it works' : 'View details'} <ArrowUpRight size={16} />
-          </Link>
-        </div>
         <div className="absolute left-4 top-14 z-10 flex flex-wrap gap-2 min-[769px]:left-6 min-[769px]:top-16">
           {p.categories.map((c) => <button key={c} type="button" onClick={() => onCategory(c)} className={chip}>{c}</button>)}
         </div>
