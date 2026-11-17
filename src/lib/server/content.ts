@@ -3,6 +3,7 @@ import { db } from './schema'
 
 export type ComparisonRow = { otherText: string; ourText: string }
 export type Story = { title: string; paragraphs: string[] }
+export type Socials = { instagram: string; facebook: string }
 
 export const defaultComparison: ComparisonRow[] = [
   { otherText: 'Vanity metrics likes, impressions, no revenue focus', ourText: 'Every campaign tracked to ROAS, CPR, and actual revenue' },
@@ -11,6 +12,8 @@ export const defaultComparison: ComparisonRow[] = [
   { otherText: 'Monthly reports with no clear next steps', ourText: 'Weekly updates with numbers + what we are doing next week' },
   { otherText: 'Extra charges for revisions and edits', ourText: 'Revisions included no surprise invoices' },
 ]
+
+export const defaultSocials: Socials = { instagram: 'https://www.instagram.com/westmere.io/', facebook: 'https://www.facebook.com/profile.php?id=61590820286108' }
 
 export const defaultStory: Story = {
   title: 'Our story',
@@ -33,8 +36,9 @@ async function read<T>(key: string, fallback: T): Promise<T> {
 
 export const getComparison = () => read('comparison', defaultComparison)
 export const getStory = () => read('story', defaultStory)
+export const getSocials = () => read('socials', defaultSocials)
 
-export async function writeContent(key: 'comparison' | 'story', value: ComparisonRow[] | Story) {
+export async function writeContent(key: 'comparison' | 'story' | 'socials', value: ComparisonRow[] | Story | Socials) {
   await (await db()).query(
     `INSERT INTO site_content (key, value) VALUES ($1, $2::jsonb) ON CONFLICT (key) DO UPDATE SET value = $2::jsonb, updated_at = now()`,
     [key, JSON.stringify(value)],

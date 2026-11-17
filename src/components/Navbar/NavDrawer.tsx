@@ -2,18 +2,14 @@
 
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FacebookIcon, InstagramIcon } from '@/components/ui/SocialIcons'
+import { socialList, type Socials } from '@/components/ui/socials'
 import { cn } from '@/lib/cn'
 import { navLinks } from './links'
 
-const socials = [
-  { href: 'https://www.instagram.com/westmere.io/', label: 'Instagram', Icon: InstagramIcon },
-  { href: 'https://www.facebook.com/profile.php?id=61590820286108', label: 'Facebook', Icon: FacebookIcon },
-]
+type Props = { open: boolean; current: string; onClose: () => void; socials: Socials }
 
-type Props = { open: boolean; current: string; onClose: () => void }
-
-export default function NavDrawer({ open, current, onClose }: Props) {
+export default function NavDrawer({ open, current, onClose, socials: links }: Props) {
+  const socials = socialList(links)
   return (
     <AnimatePresence>
       {open && (
@@ -50,20 +46,22 @@ export default function NavDrawer({ open, current, onClose }: Props) {
                 </div>
               ))}
             </nav>
-            <div className="mt-5 flex items-center gap-2.5 pt-1">
-              {socials.map(({ href, label, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] bg-[#efefef] text-navy-deep transition hover:-translate-y-0.5 hover:bg-navy-deep hover:text-white"
-                >
-                  <Icon />
-                </a>
-              ))}
-            </div>
+            {socials.length > 0 && (
+              <div className="mt-5 flex items-center gap-2.5 pt-1">
+                {socials.map(({ href, label, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex h-[38px] w-[38px] items-center justify-center rounded-[10px] bg-[#efefef] text-navy-deep transition hover:-translate-y-0.5 hover:bg-navy-deep hover:text-white"
+                  >
+                    <Icon />
+                  </a>
+                ))}
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

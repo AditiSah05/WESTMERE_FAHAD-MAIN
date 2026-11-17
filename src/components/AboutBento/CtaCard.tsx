@@ -1,13 +1,10 @@
-import { FacebookIcon, InstagramIcon } from '@/components/ui/SocialIcons'
+import { socialList } from '@/components/ui/socials'
+import { getSocials } from '@/lib/server/content'
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoText, bentoTitle } from './BentoCard'
 
-const socials = [
-  { href: 'https://www.facebook.com/profile.php?id=61590820286108', label: 'Facebook', Icon: FacebookIcon },
-  { href: 'https://www.instagram.com/westmere.io/', label: 'Instagram', Icon: InstagramIcon },
-]
-
-export default function CtaCard() {
+export default async function CtaCard() {
+  const socials = socialList(await getSocials())
   return (
     <BentoCard plain delay={0.3} className="flex flex-col items-center justify-between px-6 py-7 text-center min-[961px]:col-span-6">
       <h3 className={bentoTitle}>Discuss your project</h3>
@@ -22,23 +19,25 @@ export default function CtaCard() {
         </a>
         <p className={cn(bentoText)}>No pressure, just a thoughtful chat.</p>
       </div>
-      <div className="flex flex-col items-center gap-2.5">
-        <span className="text-xs font-semibold tracking-[0.15em] text-slate">CONNECT US ON</span>
-        <div className="flex items-center gap-2">
-          {socials.map(({ href, label, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="flex size-7 items-center justify-center rounded-md bg-navy-deep text-white transition hover:-translate-y-0.5 hover:bg-blue"
-            >
-              <Icon width={14} height={14} />
-            </a>
-          ))}
+      {socials.length > 0 && (
+        <div className="flex flex-col items-center gap-2.5">
+          <span className="text-xs font-semibold tracking-[0.15em] text-slate">CONNECT US ON</span>
+          <div className="flex items-center gap-2">
+            {socials.map(({ href, label, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="flex size-7 items-center justify-center rounded-md bg-navy-deep text-white transition hover:-translate-y-0.5 hover:bg-blue"
+              >
+                <Icon width={14} height={14} />
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </BentoCard>
   )
 }

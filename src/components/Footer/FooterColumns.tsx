@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Logo from '@/components/ui/Logo'
-import { FacebookIcon, InstagramIcon } from '@/components/ui/SocialIcons'
+import { socialList } from '@/components/ui/socials'
+import { getSocials } from '@/lib/server/content'
 
 const links = [
   { href: '/', label: 'Home' },
@@ -13,12 +14,8 @@ const links = [
 const title = 'mb-[30px] text-xs font-semibold uppercase tracking-[0.15em] text-slate'
 const text = 'text-base font-medium text-navy-deep transition-colors hover:text-gold'
 
-const socials = [
-  { href: 'https://www.instagram.com/westmere.io/', label: 'Instagram', Icon: InstagramIcon },
-  { href: 'https://www.facebook.com/profile.php?id=61590820286108', label: 'Facebook', Icon: FacebookIcon },
-]
-
-export default function FooterColumns() {
+export default async function FooterColumns() {
+  const socials = socialList(await getSocials())
   return (
     <div className="grid grid-cols-1 gap-9 min-[601px]:grid-cols-2 min-[601px]:gap-10 min-[1101px]:grid-cols-3 min-[1101px]:gap-[100px]">
       <div className="flex flex-col gap-[30px]">
@@ -44,21 +41,25 @@ export default function FooterColumns() {
           <a href="mailto:hello@westmere.io" className={text}>hello@westmere.io</a>
           <p className="text-base font-medium leading-[1.2] text-navy-deep">New Delhi , India</p>
         </div>
-        <h5 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-slate">FOLLOW US ON</h5>
-        <div className="flex gap-2">
-          {socials.map(({ href, label, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="flex size-7 items-center justify-center rounded-md bg-ink text-white transition hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_#c4943d]"
-            >
-              <Icon width={14} height={14} />
-            </a>
-          ))}
-        </div>
+        {socials.length > 0 && (
+          <>
+            <h5 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-slate">FOLLOW US ON</h5>
+            <div className="flex gap-2">
+              {socials.map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="flex size-7 items-center justify-center rounded-md bg-ink text-white transition hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_#c4943d]"
+                >
+                  <Icon width={14} height={14} />
+                </a>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
