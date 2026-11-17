@@ -1,5 +1,6 @@
 import 'server-only'
 import { defaultAbout, type About } from '@/lib/about-content'
+import { defaultHomeAbout, type HomeAbout } from '@/lib/home-about-content'
 import { db } from './schema'
 
 export type ComparisonRow = { otherText: string; ourText: string }
@@ -38,9 +39,10 @@ async function read<T>(key: string, fallback: T): Promise<T> {
 export const getComparison = () => read('comparison', defaultComparison)
 export const getStory = () => read('story', defaultStory)
 export const getAbout = () => read<About>('about', defaultAbout)
+export const getHomeAbout = () => read<HomeAbout>('homeAbout', defaultHomeAbout)
 export const getSocials = () => read('socials', defaultSocials)
 
-export async function writeContent(key: 'comparison' | 'story' | 'socials' | 'about', value: ComparisonRow[] | Story | Socials | About) {
+export async function writeContent(key: 'comparison' | 'story' | 'socials' | 'about' | 'homeAbout', value: ComparisonRow[] | Story | Socials | About | HomeAbout) {
   await (await db()).query(
     `INSERT INTO site_content (key, value) VALUES ($1, $2::jsonb) ON CONFLICT (key) DO UPDATE SET value = $2::jsonb, updated_at = now()`,
     [key, JSON.stringify(value)],

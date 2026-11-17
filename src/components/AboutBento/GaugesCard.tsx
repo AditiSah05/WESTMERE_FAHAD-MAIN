@@ -3,16 +3,19 @@
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoText, bentoTitle } from './BentoCard'
-import { gauges } from './data'
 
 const CIRCUMFERENCE = 276.46
 
-export default function GaugesCard() {
+type Props = { title: string; subtitle: string; items: { label: string; value: number }[] }
+
+/** The middle gauge is drawn larger; reveal delay follows the position. */
+export default function GaugesCard({ title, subtitle, items }: Props) {
+  const gauges = items.map((g, i) => ({ ...g, large: i === 1, delay: 0.2 + i * 0.1 }))
   return (
     <BentoCard delay={0.4} className="flex flex-col justify-between px-6 pb-6 pt-7 min-[961px]:col-span-6">
       <div className="text-center">
-        <h3 className={cn(bentoTitle, 'mb-2')}>SEO ready &amp; fast performance</h3>
-        <p className={bentoText}>Optimized for search rankings and blazing-fast speed.</p>
+        <h3 className={cn(bentoTitle, 'mb-2')}>{title}</h3>
+        <p className={bentoText}>{subtitle}</p>
       </div>
       <div className="mt-6 flex items-end justify-center gap-4 min-[601px]:gap-10">
         {gauges.map((g) => (

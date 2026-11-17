@@ -11,10 +11,10 @@ import { slides } from './data'
 
 const arrow = 'flex size-8 items-center justify-center rounded bg-[#f1f5f9] text-navy-deep transition hover:bg-navy-deep hover:text-white'
 
-export default function ShowcaseCard() {
+export default function ShowcaseCard({ texts }: { texts: { title: string; description: string }[] }) {
   const [i, setI] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
-  const slide = slides[i]
+  const slide = { ...slides[i], ...texts[i] }
   const photo = useImage(`about-${i + 1}`, slide.image)
   const Icon = slide.icon
 

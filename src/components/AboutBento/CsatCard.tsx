@@ -4,19 +4,19 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoText, bentoTitle } from './BentoCard'
-import { csatEmojis, csatLabels } from './data'
+import { csatEmojis } from './data'
 
-export default function CsatCard() {
+export default function CsatCard({ title, description, labels }: { title: string; description: string; labels: string[] }) {
   const [index, setIndex] = useState(0)
 
   return (
     <BentoCard delay={0.1} className="flex flex-col justify-between px-5 py-6 text-center min-[961px]:col-span-3">
       <div>
-        <h3 className={cn(bentoTitle, 'mb-2')}>CSAT</h3>
-        <p className={bentoText}>Measures and improves client satisfaction.</p>
+        <h3 className={cn(bentoTitle, 'mb-2')}>{title}</h3>
+        <p className={bentoText}>{description}</p>
       </div>
       <div className="mt-6 flex flex-col items-center gap-3.5">
-        <span className="text-[13px] font-semibold uppercase tracking-[0.15em] text-blue">{csatLabels[index]}</span>
+        <span className="text-[13px] font-semibold uppercase tracking-[0.15em] text-blue">{labels[index] ?? ''}</span>
         <div className="flex items-center justify-center gap-1.5">
           {csatEmojis.map((src, i) => (
             <button

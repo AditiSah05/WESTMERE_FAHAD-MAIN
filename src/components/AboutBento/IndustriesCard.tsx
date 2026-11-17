@@ -2,18 +2,17 @@
 
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoTitle } from './BentoCard'
-import { industries } from './data'
 import { useTicker } from './useTicker'
 
 const dot = 'size-1 flex-none rounded-full bg-blue'
-const list = [...industries, ...industries]
 
-export default function IndustriesCard() {
+export default function IndustriesCard({ title, items }: { title: string; items: string[] }) {
   const ref = useTicker()
+  const list = [...items, ...items]
 
   return (
     <BentoCard delay={0.5} className="flex flex-col items-center px-6 pb-6 pt-7 text-center min-[961px]:col-span-12">
-      <h3 className={bentoTitle}>Industries we work with</h3>
+      <h3 className={bentoTitle}>{title}</h3>
       <div ref={ref} className="relative mt-7 h-[160px] w-full max-w-[680px] cursor-ns-resize touch-pan-x select-none overflow-hidden">
         <div data-track className="flex flex-col will-change-transform">
           {list.map((name, i) => (
