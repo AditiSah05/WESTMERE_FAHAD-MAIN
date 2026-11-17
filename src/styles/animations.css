@@ -54,16 +54,4 @@
 
 /* keyframes for work (Tailwind v4 reads @keyframes from CSS) */
 
-/* Services cards: notification slide-in and terminal line reveal. */
-@keyframes svcSlide {
-  0%, 8% { opacity: 0; transform: translateY(14px); }
-  22%, 70% { opacity: 1; transform: translateY(0); }
-  90%, 100% { opacity: 0; transform: translateY(-6px); }
-}
-@keyframes svcType {
-  0%, 4% { opacity: 1; max-width: 0; }
-  30%, 85% { opacity: 1; max-width: 100%; }
-  95%, 100% { opacity: 0; max-width: 100%; }
-}
-
 @keyframes svcMarquee { to { transform: translateX(-50%); } }
