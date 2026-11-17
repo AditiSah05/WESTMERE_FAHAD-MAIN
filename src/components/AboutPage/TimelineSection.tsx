@@ -1,8 +1,9 @@
 import Reveal from '@/components/ui/Reveal'
 import { cn } from '@/lib/cn'
-import { heading, lead, milestones, shell } from './data'
+import type { About } from '@/lib/about-content'
+import { heading, lead, shell } from './data'
 
-export default function TimelineSection() {
+export default function TimelineSection({ milestones }: { milestones: About['milestones'] }) {
   return (
     <section className="bg-[#fafbfe] pb-[120px] pt-[100px]">
       <div className={shell}>
@@ -16,7 +17,7 @@ export default function TimelineSection() {
           {milestones.map((m, i) => {
             const left = i % 2 === 0
             return (
-              <Reveal key={m.year}>
+              <Reveal key={`${m.year}-${m.title}`}>
                 <div className={cn('group relative flex w-full justify-start py-5 pl-10 min-[769px]:w-1/2 min-[769px]:py-[30px] min-[769px]:pl-0', left ? 'min-[769px]:justify-end' : 'min-[769px]:ml-[50%] min-[769px]:justify-start')}>
                   <span
                     className={cn(

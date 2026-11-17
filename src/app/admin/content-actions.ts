@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import type { About } from '@/lib/about-content'
 import { assertModule } from '@/lib/server/auth'
 import { writeContent } from '@/lib/server/content'
 import { audit } from '@/lib/server/session'
@@ -60,4 +61,56 @@ export async function saveStory(_p: ContentState, form: FormData): Promise<Conte
   await audit(me.userId, 'content_story', title)
   published()
   return { ok: 'Saved. The story page is updated.' }
+}
+
+type Spec = { key: string; max: number }
+
+/** Zip repeated form fields (name_key) into rows; empty rows are dropped, half-filled rows are an error. */
+function rows(form: FormData, prefix: string, specs: Spec[]): Record<string, string>[] | string {
+  const cols = specs.map((s) => form.getAll(`${prefix}_${s.key}`))
+  const out: Record<string, string>[] = []
+  for (let i = 0; i < cols[0].length; i++) {
+    const row = Object.fromEntries(specs.map((s, c) => [s.key, clean(cols[c][i] ?? '', s.max)]))
+    const filled = Object.values(row).filter(Boolean).length
+    if (filled === 0) continue
+    if (filled < specs.length) return 'Fill in every field of a row, or remove the row.'
+    out.push(row)
+  }
+  return out
+}
+
+const LISTS = [
+  { prefix: 'stat', label: 'Numbers', min: 1, max: 6, specs: [{ key: 'value', max: 12 }, { key: 'label', max: 40 }] },
+  { prefix: 'value', label: 'Values', min: 1, max: 6, specs: [{ key: 'title', max: 40 }, { key: 'desc', max: 220 }] },
+  { prefix: 'step', label: 'Process steps', min: 2, max: 8, specs: [{ key: 'title', max: 30 }, { key: 'desc', max: 100 }] },
+  { prefix: 'ms', label: 'Journey', min: 1, max: 8, specs: [{ key: 'year', max: 10 }, { key: 'title', max: 50 }, { key: 'desc', max: 240 }] },
+] as const
+
+export async function saveAbout(_p: ContentState, form: FormData): Promise<ContentState> {
+  const me = await assertModule('cms', 'write')
+  const heading = clean(form.get('heroHeading') ?? '', 120), intro = clean(form.get('heroIntro') ?? '', 400)
+  const storyTitle = clean(form.get('storyTitle') ?? '', 80)
+  const paragraphs = clean(form.get('storyBody') ?? '', 2000).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+  if (!heading || !intro || !storyTitle || !paragraphs.length) return { error: 'Fill in the heading, intro, story title and story text.' }
+  if (paragraphs.length > 4) return { error: 'Use 4 story paragraphs or fewer.' }
+
+  const parsed: Record<string, Record<string, string>[]> = {}
+  for (const l of LISTS) {
+    const r = rows(form, l.prefix, [...l.specs])
+    if (typeof r === 'string') return { error: `${l.label}: ${r}` }
+    if (r.length < l.min || r.length > l.max) return { error: `${l.label}: use between ${l.min} and ${l.max} rows.` }
+    parsed[l.prefix] = r
+  }
+  await writeContent('about', {
+    hero: { heading, intro },
+    story: { title: storyTitle, paragraphs },
+    stats: parsed.stat as About['stats'],
+    values: parsed.value as About['values'],
+    process: parsed.step as About['process'],
+    milestones: parsed.ms as About['milestones'],
+  })
+  await audit(me.userId, 'content_about', 'About page updated')
+  revalidatePath('/about')
+  revalidatePath('/admin/cms/content')
+  return { ok: 'Saved. The About page is updated.' }
 }
