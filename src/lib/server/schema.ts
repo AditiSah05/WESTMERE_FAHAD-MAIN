@@ -150,6 +150,13 @@ const statements = [
     at timestamptz NOT NULL DEFAULT now()
   )`,
   `CREATE INDEX IF NOT EXISTS admin_audit_at ON admin_audit (at DESC)`,
+  `CREATE TABLE IF NOT EXISTS site_ratings (
+    id bigserial PRIMARY KEY,
+    score smallint NOT NULL CHECK (score BETWEEN 1 AND 5),
+    ip_hash text,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS site_ratings_created ON site_ratings (created_at DESC)`,
   `CREATE TABLE IF NOT EXISTS site_media (
     slot text PRIMARY KEY,
     mime text NOT NULL,
