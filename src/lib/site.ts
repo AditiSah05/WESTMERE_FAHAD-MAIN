@@ -7,5 +7,7 @@ export const siteConfig = {
     'creative agency', 'growth agency', 'web design', 'mobile app development', 'React', 'Next.js',
     'Figma design system', 'Westmere', 'SEO optimization', 'high-converting UX', 'Pune digital agency',
   ] as string[],
+  /** Where every "Schedule a call" / "Discuss your ideas" button sends people. */
+  bookingUrl: 'https://cal.com/westmere-bbgln6/15min',
   routes: ['', '/about', '/services', '/product', '/product/mailora', '/work', '/contact', '/privacy', '/terms'],
 }

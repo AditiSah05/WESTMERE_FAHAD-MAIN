@@ -1,5 +1,6 @@
 import { socialList } from '@/components/ui/socials'
 import { getSocials } from '@/lib/server/content'
+import { siteConfig } from '@/lib/site'
 import { cn } from '@/lib/cn'
 import BentoCard, { bentoText, bentoTitle } from './BentoCard'
 
@@ -10,7 +11,7 @@ export default async function CtaCard() {
       <h3 className={bentoTitle}>Discuss your project</h3>
       <div className="mb-10 mt-7 flex flex-col items-center gap-3">
         <a
-          href="https://cal.com"
+          href={siteConfig.bookingUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="rounded-lg bg-navy px-8 py-2.5 text-base font-medium text-white shadow-[0_4px_18px_rgba(27,42,74,0.22),inset_0_1px_0_rgba(255,255,255,0.15)] transition-colors hover:bg-navy-deep"

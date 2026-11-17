@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { cn } from '@/lib/cn'
 import GradientText from '@/components/ui/GradientText'
+import { siteConfig } from '@/lib/site'
 import DeckCard from './DeckCard'
 import { services } from './data'
 import { useCarousel } from './useCarousel'
@@ -38,7 +39,7 @@ export default function WhatWeDo() {
 
           <div className="relative inline-flex items-center justify-center">
             <a
-              href="https://cal.com"
+              href={siteConfig.bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-navy px-7 py-[13px] text-[13.5px] font-semibold text-white shadow-[0_4px_18px_rgba(27,42,74,0.22),inset_0_1px_0_rgba(255,255,255,0.15)] transition hover:-translate-y-0.5 hover:bg-navy-deep hover:shadow-[0_8px_24px_rgba(15,27,51,0.3)]"
