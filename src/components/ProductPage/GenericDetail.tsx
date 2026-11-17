@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import GenericCover from './GenericCover'
+import PayButton from './PayButton'
 import type { CatalogueProduct } from './data'
 
 /** Detail page for any admin-added product: cover, description, price and a way to buy. */
@@ -19,7 +20,7 @@ export default function GenericDetail({ product: p }: { product: CatalogueProduc
             <p className="mt-4 text-[17px] leading-[1.7]">{p.description}</p>
             {p.tech.length > 0 && <ul className="mt-5 flex flex-wrap gap-2">{p.tech.map((t) => <li key={t} className="rounded-full border border-line bg-white px-3 py-1 text-[13px] font-medium text-navy">{t}</li>)}</ul>}
             <p className="mt-6 text-3xl font-medium tracking-[-0.03em] text-navy-deep">₹{p.price.toLocaleString('en-IN')}</p>
-            <Link href="/contact" className="mt-5 inline-flex rounded-lg bg-navy-deep px-7 py-3 text-[15px] font-medium text-white transition-colors hover:bg-gold">Get {p.title}</Link>
+            <PayButton name={p.title} amount={p.price} className="mt-5 inline-flex rounded-lg bg-navy-deep px-7 py-3 text-[15px] font-medium text-white transition-colors hover:bg-gold">Get {p.title}</PayButton>
           </div>
         </div>
       </div>

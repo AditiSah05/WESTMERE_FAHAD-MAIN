@@ -19,5 +19,5 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function Page({ params }: Params) {
   const product = await find((await params).slug)
   if (!product) notFound()
-  return product.id === 'mailora' ? <ProductDetail /> : <GenericDetail product={product} />
+  return product.id === 'mailora' ? <ProductDetail price={product.price} /> : <GenericDetail product={product} />
 }
