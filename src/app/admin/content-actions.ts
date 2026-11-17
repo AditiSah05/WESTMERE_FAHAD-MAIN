@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import type { About } from '@/lib/about-content'
+import type { HomeAbout } from '@/lib/home-about-content'
 import { assertModule } from '@/lib/server/auth'
 import { writeContent } from '@/lib/server/content'
 import { clearImage, writeImage } from '@/lib/server/media'
@@ -135,4 +136,34 @@ export async function resetImage(slot: string): Promise<ContentState> {
   await audit(me.userId, 'image_reset', slot)
   imagesPublished()
   return { ok: 'Back to the original picture.' }
+}
+
+export async function saveHomeAbout(_p: ContentState, form: FormData): Promise<ContentState> {
+  const me = await assertModule('cms', 'write')
+  const text = (k: string, max: number) => clean(form.get(k) ?? '', max)
+  const one = { csatTitle: text('csatTitle', 30), csatDesc: text('csatDesc', 80), gaugeTitle: text('gaugeTitle', 60), gaugeSub: text('gaugeSub', 100), indTitle: text('indTitle', 50), ctaTitle: text('ctaTitle', 50), ctaButton: text('ctaButton', 50), ctaNote: text('ctaNote', 80) }
+  if (Object.values(one).some((v) => !v)) return { error: 'Fill in every heading, description and button text.' }
+
+  const slides = rows(form, 'slide', [{ key: 'title', max: 40 }, { key: 'description', max: 100 }])
+  const labels = rows(form, 'csatlabel', [{ key: 'name', max: 14 }])
+  const gauges = rows(form, 'gauge', [{ key: 'label', max: 20 }, { key: 'value', max: 3 }])
+  const inds = rows(form, 'ind', [{ key: 'name', max: 40 }])
+  for (const [name, r] of [['Slides', slides], ['Satisfaction labels', labels], ['Gauges', gauges], ['Industries', inds]] as const) if (typeof r === 'string') return { error: `${name}: ${r}` }
+  const [s, l, g, i] = [slides, labels, gauges, inds] as Record<string, string>[][]
+  if (s.length !== 3 || l.length !== 5 || g.length !== 3) return { error: 'Slides (3), satisfaction labels (5) and gauges (3) keep a fixed number of rows.' }
+  if (i.length < 3 || i.length > 12) return { error: 'Industries: use between 3 and 12 rows.' }
+  const values = g.map((x) => Number(x.value))
+  if (values.some((v) => !Number.isInteger(v) || v < 0 || v > 100)) return { error: 'Gauge values must be whole numbers from 0 to 100.' }
+
+  await writeContent('homeAbout', {
+    slides: s.map((x) => ({ title: x.title, description: x.description })),
+    csat: { title: one.csatTitle, description: one.csatDesc, labels: l.map((x) => x.name) },
+    gauges: { title: one.gaugeTitle, subtitle: one.gaugeSub, items: g.map((x, n) => ({ label: x.label, value: values[n] })) },
+    industries: { title: one.indTitle, items: i.map((x) => x.name) },
+    cta: { title: one.ctaTitle, button: one.ctaButton, note: one.ctaNote },
+  })
+  await audit(me.userId, 'content_home_about', 'Home About block updated')
+  revalidatePath('/')
+  revalidatePath('/admin/cms/content')
+  return { ok: 'Saved. The home page About block is updated.' }
 }

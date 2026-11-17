@@ -10,9 +10,10 @@ type Row = Record<string, string>
 type KeyedRow = Row & { _id: string }
 
 /** Repeating group of inputs (named `${prefix}_${key}`) with add/remove; the parent form submits them. */
-export default function ListEditor({ legend, hint, prefix, fields, initial, max, canWrite }: {
-  legend: string; hint: string; prefix: string; fields: ListField[]; initial: Row[]; max: number; canWrite: boolean
+export default function ListEditor({ legend, hint, prefix, fields, initial, max, canWrite, fixed }: {
+  legend: string; hint: string; prefix: string; fields: ListField[]; initial: Row[]; max: number; canWrite: boolean; fixed?: boolean
 }) {
+  const edits = canWrite && !fixed
   const [rows, setRows] = useState<KeyedRow[]>(initial.map((r, i) => ({ ...r, _id: String(i) })))
   const edit = (id: string, key: string, v: string) => setRows((rs) => rs.map((r) => (r._id === id ? { ...r, [key]: v } : r)))
   return (
@@ -29,10 +30,10 @@ export default function ListEditor({ legend, hint, prefix, fields, initial, max,
                 : <input name={`${prefix}_${f.key}`} value={r[f.key] ?? ''} onChange={(e) => edit(r._id, f.key, e.target.value)} maxLength={f.max} readOnly={!canWrite} className={field} />}
             </label>
           ))}
-          {canWrite && <button type="button" aria-label={`Remove ${legend} ${i + 1}`} onClick={() => setRows((rs) => rs.filter((x) => x._id !== r._id))} className={`${btn.ghost} !px-3`}><Trash2 size={15} /></button>}
+          {edits && <button type="button" aria-label={`Remove ${legend} ${i + 1}`} onClick={() => setRows((rs) => rs.filter((x) => x._id !== r._id))} className={`${btn.ghost} !px-3`}><Trash2 size={15} /></button>}
         </div>
       ))}
-      {canWrite && <div><button type="button" disabled={rows.length >= max} onClick={() => setRows((rs) => [...rs, { ...Object.fromEntries(fields.map((f) => [f.key, ''])), _id: `n${Date.now()}` }])} className={`${btn.ghost} disabled:opacity-60`}><Plus size={15} />Add</button></div>}
+      {edits && <div><button type="button" disabled={rows.length >= max} onClick={() => setRows((rs) => [...rs, { ...Object.fromEntries(fields.map((f) => [f.key, ''])), _id: `n${Date.now()}` }])} className={`${btn.ghost} disabled:opacity-60`}><Plus size={15} />Add</button></div>}
     </fieldset>
   )
 }

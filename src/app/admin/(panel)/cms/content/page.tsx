@@ -1,3 +1,4 @@
+import HomeAboutEditor from '@/components/admin/content/HomeAboutEditor'
 import ImagesEditor from '@/components/admin/content/ImagesEditor'
 import AboutEditor from '@/components/admin/content/AboutEditor'
 import ComparisonEditor from '@/components/admin/content/ComparisonEditor'
@@ -6,7 +7,7 @@ import StoryEditor from '@/components/admin/content/StoryEditor'
 import PageHeader from '@/components/admin/ui/PageHeader'
 import { can } from '@/lib/admin/permissions'
 import { requireModule } from '@/lib/server/auth'
-import { getAbout, getComparison, getSocials, getStory } from '@/lib/server/content'
+import { getAbout, getComparison, getHomeAbout, getSocials, getStory } from '@/lib/server/content'
 import { getImages } from '@/lib/server/media'
 
 export const metadata = { title: 'Website content' }
@@ -21,6 +22,7 @@ export default async function Page() {
       <SocialsEditor initial={await getSocials()} canWrite={canWrite} />
       <ComparisonEditor initial={await getComparison()} canWrite={canWrite} />
       <ImagesEditor urls={await getImages()} canWrite={canWrite} />
+      <HomeAboutEditor initial={await getHomeAbout()} canWrite={canWrite} />
       <AboutEditor initial={await getAbout()} canWrite={canWrite} />
       <StoryEditor initial={await getStory()} canWrite={canWrite} />
     </>
