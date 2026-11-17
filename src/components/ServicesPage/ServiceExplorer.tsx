@@ -33,14 +33,14 @@ export default function ServiceExplorer() {
                 tabIndex={on ? 0 : -1}
                 onClick={() => setActive(i)}
                 onMouseEnter={() => window.matchMedia('(min-width: 1025px)').matches && setActive(i)}
-                className="group relative flex w-full flex-1 items-center gap-4 py-5 text-left min-[769px]:gap-6 min-[769px]:py-6"
+                className="group relative flex w-full flex-1 items-center gap-5 py-6 text-left min-[769px]:gap-7 min-[769px]:py-8"
               >
-                <span className={cn('font-mono text-sm transition-colors', on ? 'text-gold' : 'text-[#a0aec0]')}>{String(i + 1).padStart(2, '0')}</span>
+                <span className={cn('font-mono text-[15px] transition-colors', on ? 'text-gold' : 'text-[#a0aec0]')}>{String(i + 1).padStart(2, '0')}</span>
                 <span className="flex-1">
-                  <span className={cn('block font-display text-[1.15rem] font-bold leading-tight tracking-tight transition-all duration-300 min-[769px]:text-[1.45rem]', on ? 'translate-x-2 text-navy-deep' : 'text-[#a0aec0] group-hover:text-slate')}>{s.title}</span>
-                  <span className={cn('mt-1 block max-w-[420px] text-sm text-[#718096] transition-all duration-300', on ? 'max-h-12 opacity-100' : 'max-h-0 overflow-hidden opacity-0')}>{s.headline}</span>
+                  <span className={cn('block font-display text-[1.45rem] font-bold leading-tight tracking-tight transition-all duration-300 min-[769px]:text-[2rem]', on ? 'translate-x-2 text-navy-deep' : 'text-[#a0aec0] group-hover:text-slate')}>{s.title}</span>
+                  <span className={cn('mt-1.5 block max-w-[440px] text-[15px] text-[#718096] transition-all duration-300', on ? 'max-h-14 opacity-100' : 'max-h-0 overflow-hidden opacity-0')}>{s.headline}</span>
                 </span>
-                <ArrowRight size={22} className={cn('flex-none transition-all duration-300', on ? 'rotate-[-45deg] text-gold' : 'text-[#cbd5e1]')} />
+                <ArrowRight size={24} className={cn('flex-none transition-all duration-300', on ? 'rotate-[-45deg] text-gold' : 'text-[#cbd5e1]')} />
                 <span aria-hidden className={cn('absolute bottom-[-1px] left-0 h-[2px] bg-[linear-gradient(90deg,#2563eb,#1b2a4a,#c4943d)] transition-all duration-500', on ? 'w-full' : 'w-0')} />
               </button>
               <div className="min-[1025px]:hidden">
