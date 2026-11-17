@@ -9,7 +9,7 @@ import type { CatalogueProduct } from './data'
 
 type Props = { product: CatalogueProduct; index: number; onCategory: (c: string) => void }
 
-const chip = 'cursor-pointer rounded-lg border border-white/20 bg-white/90 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest text-blue shadow-sm backdrop-blur-md transition-colors hover:bg-navy-deep hover:text-white min-[769px]:text-[10px]'
+const chip = 'cursor-pointer rounded-md bg-blue/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-blue transition-colors hover:bg-navy-deep hover:text-white'
 const btn = 'flex h-12 w-full items-center justify-center min-[769px]:w-auto min-[769px]:flex-1 gap-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-300'
 
 export default function ProductCard({ product: p, index, onCategory }: Props) {
@@ -24,13 +24,13 @@ export default function ProductCard({ product: p, index, onCategory }: Props) {
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         {p.id === 'mailora' ? <ProductCover /> : <GenericCover title={p.title} image={p.image} />}
-        <div className="absolute left-4 top-14 z-10 flex flex-wrap gap-2 min-[769px]:left-6 min-[769px]:top-16">
-          {p.categories.map((c) => <button key={c} type="button" onClick={() => onCategory(c)} className={chip}>{c}</button>)}
-        </div>
       </div>
 
       <div className="flex flex-1 flex-col justify-between p-6 min-[769px]:p-10">
         <div>
+          <div className="mb-3 flex flex-wrap gap-2">
+            {p.categories.map((c) => <button key={c} type="button" onClick={() => onCategory(c)} className={chip}>{c}</button>)}
+          </div>
           <div className="mb-3 flex items-center justify-between gap-3 min-[769px]:mb-4">
             <h2 className="text-2xl font-black tracking-tight text-navy-deep min-[769px]:text-3xl">{p.title}</h2>
             <span className="whitespace-nowrap text-[9px] font-bold uppercase tracking-widest text-[#65708a] min-[769px]:text-[10px]">{p.type}</span>
