@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { socialList, type Socials } from '@/components/ui/socials'
-import { ArrowRight, UserRound } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { navLinks } from './links'
 
@@ -47,15 +46,6 @@ export default function NavDrawer({ open, current, onClose, socials: links }: Pr
                 </div>
               ))}
             </nav>
-            {/* Signed-in customers are sent on to their dashboard by the sign-in page itself. */}
-            <Link
-              href="/account/login"
-              onClick={onClose}
-              className="mt-4 flex items-center justify-between rounded-xl border border-line px-4 py-3 text-[15px] font-semibold text-navy-deep transition-colors hover:border-blue/40 hover:bg-sky hover:text-blue"
-            >
-              <span className="flex items-center gap-2.5"><UserRound size={18} />Customer login</span>
-              <ArrowRight size={16} />
-            </Link>
             {socials.length > 0 && (
               <div className="mt-5 flex items-center gap-2.5 pt-1">
                 {socials.map(({ href, label, Icon }) => (
