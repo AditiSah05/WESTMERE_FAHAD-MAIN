@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import full from '@/assets/mailora-logo.jpeg'
+import full from '@/assets/mailora-logo.png'
 import mark from '@/assets/mailora-mark.jpeg'
 
 /**

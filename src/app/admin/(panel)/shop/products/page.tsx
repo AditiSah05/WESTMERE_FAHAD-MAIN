@@ -23,7 +23,11 @@ function Fields({ r }: { r?: Row }) {
       <select name="kind" defaultValue={String(r?.kind ?? 'website')} className={input}>{KINDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
       <input name="price" type="number" min={0} max={1000000} step={1} required defaultValue={String(r?.price ?? '')} placeholder="₹ price" className={`${input} w-28`} />
       <input name="tag" maxLength={20} defaultValue={String(r?.tag ?? '')} placeholder="Tag" className={`${input} w-28`} />
-      <select name="status" defaultValue={String(r?.status ?? 'Published')} className={input}><option>Published</option><option>Hidden</option></select>
+      <select name="status" defaultValue={String(r?.status ?? 'Published')} className={input} aria-label="Status"><option>Published</option><option>Hidden</option></select>
+      <textarea name="description" maxLength={300} rows={2} defaultValue={String(r?.description ?? '')} placeholder="Short description shown on the Products page" className={`${input} w-full min-[769px]:w-[420px]`} />
+      <input name="tech" maxLength={80} defaultValue={String(r?.tech ?? '')} placeholder="Tech, comma separated (React, Node)" className={`${input} w-52`} />
+      <input name="image" type="url" maxLength={400} defaultValue={String(r?.image ?? '')} placeholder="Cover image link (https), optional" className={`${input} w-64`} />
+      <label className="flex items-center gap-1.5 text-xs font-semibold text-navy-deep"><input type="checkbox" name="listed" defaultChecked={r ? r.on_page === 'Shown' : true} className="size-4" />Show on Products page</label>
       <button type="submit" className={`${btn.gold} !px-3 !py-1.5 text-xs`}>{r ? 'Save' : 'Add product'}</button>
     </>
   )
@@ -35,12 +39,12 @@ export default async function Page() {
   const rows = (await adminLists.products()) as Row[]
   return (
     <>
-      <PageHeader title="Products" subtitle="The catalogue customers see in the shop. Hidden products cannot be bought; existing orders are unaffected." />
+      <PageHeader title="Products" subtitle="Add products and set their prices. They appear in the customer shop, and on the public Products page when ticked. Hidden products cannot be bought; existing orders are unaffected." />
       {write && <Card className="mb-5 p-5"><h2 className="mb-3 text-sm font-semibold text-navy-deep">Add a product</h2><form action={saveProduct} className="flex flex-wrap items-center gap-2"><Fields /></form></Card>}
       <ShopTable
         empty="No products yet."
         rows={rows}
-        cols={[{ key: 'name', header: 'Product' }, { key: 'category', header: 'Category' }, { key: 'kind', header: 'Type' }, { key: 'price', header: 'Price', money: true }, { key: 'tag', header: 'Tag' }, { key: 'status', header: 'Status', badge: true }]}
+        cols={[{ key: 'name', header: 'Product' }, { key: 'category', header: 'Category' }, { key: 'kind', header: 'Type' }, { key: 'price', header: 'Price', money: true }, { key: 'tag', header: 'Tag' }, { key: 'on_page', header: 'Products page' }, { key: 'status', header: 'Status', badge: true }]}
         actions={write ? (r) => <details><summary className="cursor-pointer text-xs font-semibold text-blue">Edit</summary><form action={saveProduct} className="mt-2 flex flex-wrap items-center gap-2"><Fields r={r} /></form></details> : undefined}
       />
     </>

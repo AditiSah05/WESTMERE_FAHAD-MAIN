@@ -62,16 +62,19 @@ export async function saveProduct(form: FormData) {
   const me = await assertModule('products', 'write')
   const name = s(form, 'name', 80).trim(), category = s(form, 'category'), kind = s(form, 'kind'), tag = s(form, 'tag', 20).trim()
   const price = Number(s(form, 'price', 9)), active = s(form, 'status') !== 'Hidden'
+  const description = s(form, 'description', 300).trim(), tech = s(form, 'tech', 80).trim(), image = s(form, 'image', 400).trim(), listed = form.get('listed') === 'on'
+  if (image && !/^https:\/\/\S+$/.test(image)) throw new Error('Image must be an https link')
   if (!name || !CATEGORIES.includes(category) || !KINDS.includes(kind) || !Number.isInteger(price) || price < 0 || price > 1_000_000) throw new Error('Invalid')
   const { query } = await db()
   const id = s(form, 'id', 60)
   if (id) {
-    await query(`UPDATE shop_products SET name = $1, category = $2, kind = $3, price = $4, tag = $5, active = $6 WHERE id = $7`, [name, category, kind, price, tag, active, id])
+    await query(`UPDATE shop_products SET name = $1, category = $2, kind = $3, price = $4, tag = $5, active = $6, description = $7, tech = $8, image = $9, listed = $10 WHERE id = $11`, [name, category, kind, price, tag, active, description, tech, image, listed, id])
   } else {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'product'
-    await query(`INSERT INTO shop_products (id, name, category, kind, price, tag, active) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (id) DO NOTHING`, [`${slug}-${Date.now().toString(36)}`, name, category, kind, price, tag, active])
+    await query(`INSERT INTO shop_products (id, name, category, kind, price, tag, active, description, tech, image, listed) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT (id) DO NOTHING`, [`${slug}-${Date.now().toString(36)}`, name, category, kind, price, tag, active, description, tech, image, listed])
   }
   await audit(me.userId, id ? 'product_updated' : 'product_created', name)
   revalidatePath('/admin/shop', 'layout')
   revalidatePath('/account', 'layout')
+  revalidatePath('/product', 'layout')
 }

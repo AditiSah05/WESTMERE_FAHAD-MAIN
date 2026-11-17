@@ -5,6 +5,9 @@ import { db } from './schema'
 
 export type Product = { id: string; name: string; category: string; kind: 'website' | 'software' | 'service'; price: number; rating: string; tag: string }
 
+/** A product as shown on the public Products page. */
+export type ListedProduct = Product & { description: string; tech: string[]; image: string }
+
 export const catalogueSeed: Product[] = [
   { id: 'agency-starter', name: 'Agency Starter Website', category: 'Websites', kind: 'website', price: 1999, rating: '4.8', tag: 'Bestseller' },
   { id: 'mailora', name: 'Mailora Chrome Extension', category: 'Software & Tools', kind: 'software', price: 499, rating: '4.9', tag: 'Featured' },
@@ -19,6 +22,8 @@ async function ready() {
   const d = await db()
   if (!seeded) {
     for (const p of catalogueSeed) await d.query(`INSERT INTO shop_products (id, name, category, kind, price, rating, tag) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (id) DO NOTHING`, [p.id, p.name, p.category, p.kind, p.price, p.rating, p.tag])
+    // Mailora is the one product on the public Products page; other products opt in from admin.
+    await d.query(`UPDATE shop_products SET listed = true, description = $1, tech = 'Chrome, Gmail, CSV' WHERE id = 'mailora' AND description = ''`, ['Upload your recipient list and a message template once, and Mailora sends personalised emails for you, right from your own Gmail.'])
     seeded = true
   }
   return d
@@ -27,6 +32,15 @@ async function ready() {
 export async function products(): Promise<Product[]> {
   const { query } = await ready()
   return query<Product>(`SELECT id, name, category, kind, price, rating, tag FROM shop_products WHERE active ORDER BY price`)
+}
+
+/** Products shown on the public page: on sale (not hidden) and ticked "show on the Products page". */
+export async function listedProducts(): Promise<ListedProduct[]> {
+  const { query } = await ready()
+  const rows = await query<Product & { description: string; tech: string; image: string }>(
+    `SELECT id, name, category, kind, price, rating, tag, description, tech, image FROM shop_products WHERE active AND listed ORDER BY (id = 'mailora') DESC, price, name`,
+  )
+  return rows.map((r) => ({ ...r, tech: r.tech.split(',').map((t) => t.trim()).filter(Boolean) }))
 }
 
 export const wishlistIds = async (userId: string) => (await (await ready()).query<{ product_id: string }>(`SELECT product_id FROM shop_wishlist WHERE user_id = $1`, [userId])).map((r) => r.product_id)

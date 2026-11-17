@@ -1,21 +1,23 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import GenericDetail from '@/components/ProductPage/GenericDetail'
 import ProductDetail from '@/components/ProductPage/ProductDetail'
-import { catalogue } from '@/components/ProductPage/data'
+import { toCatalogue } from '@/components/ProductPage/data'
+import { listedProducts } from '@/lib/server/shop'
 
 type Params = { params: Promise<{ slug: string }> }
 
-export const dynamicParams = false
-export const generateStaticParams = () => catalogue.map((p) => ({ slug: p.id }))
+export const revalidate = 60
+
+const find = async (slug: string) => toCatalogue(await listedProducts()).find((p) => p.id === slug)
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { slug } = await params
-  const product = catalogue.find((p) => p.id === slug)
+  const product = await find((await params).slug)
   return product ? { title: `${product.title} | Westmere`, description: product.description } : {}
 }
 
 export default async function Page({ params }: Params) {
-  const { slug } = await params
-  if (!catalogue.some((p) => p.id === slug)) notFound()
-  return <ProductDetail />
+  const product = await find((await params).slug)
+  if (!product) notFound()
+  return product.id === 'mailora' ? <ProductDetail /> : <GenericDetail product={product} />
 }
