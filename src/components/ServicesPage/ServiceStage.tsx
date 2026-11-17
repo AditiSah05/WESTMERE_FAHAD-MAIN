@@ -25,7 +25,7 @@ export default function ServiceStage({ service: s }: { service: Service; index?:
       <div className="mb-5 flex items-center gap-3">
         <span className="flex size-10 flex-none items-center justify-center rounded-lg bg-white/[0.07] text-gold"><Icon size={20} /></span>
         <h2 className="font-display text-xl font-bold leading-tight tracking-tight">{s.title}</h2>
-        <span className="ml-auto hidden text-[11px] font-semibold uppercase tracking-[0.15em] text-white/45 min-[480px]:block">{s.badge}</span>
+        <span className="ml-auto hidden text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 min-[480px]:block">{s.badge}</span>
       </div>
 
       <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-white/10">
@@ -37,14 +37,14 @@ export default function ServiceStage({ service: s }: { service: Service; index?:
       <ul className="mb-6 grid gap-3 min-[769px]:grid-cols-2">
         {s.features.map((f) => (
           <li key={f} className="flex items-start gap-2.5 text-[13px] leading-snug text-white/85">
-            <span className="mt-px flex size-4 flex-none items-center justify-center rounded-full bg-gold/15 text-gold"><Check size={10} strokeWidth={3} /></span>{f}
+            <span className="mt-px flex size-4 flex-none items-center justify-center rounded-full bg-gold text-navy-deep"><Check size={10} strokeWidth={3.5} /></span>{f}
           </li>
         ))}
       </ul>
 
       <div className="mb-7 flex flex-wrap gap-2 border-t border-white/10 pt-5">
         {s.techs.slice(0, SHOWN_TECH).map((t) => <span key={t} className="rounded-md bg-white/[0.07] px-2.5 py-1 text-[11px] font-semibold text-white/75">{t}</span>)}
-        {extra > 0 && <span className="rounded-md px-2 py-1 text-[11px] font-semibold text-white/45">+{extra} more</span>}
+        {extra > 0 && <span className="rounded-md px-2 py-1 text-[11px] font-semibold text-white/70">+{extra} more</span>}
       </div>
 
       <Link href="/contact" className="group inline-flex items-center gap-3 rounded-full bg-gold py-2 pl-6 pr-2 text-sm font-semibold text-white shadow-[0_0_0_1px_#a87a2b,inset_0_1.4px_1px_rgba(255,255,255,0.25)] transition hover:bg-[#b3862f]">
