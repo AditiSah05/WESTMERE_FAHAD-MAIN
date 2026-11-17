@@ -14,8 +14,8 @@ export const subscriptions: ModuleConfig = {
   title: 'My Subscriptions',
   subtitle: 'Plans, renewals and payment methods.',
   tabs: [
-    tab({ key: 'plans', label: 'Active plans', columns: [c('plan', 'Plan'), c('product', 'Product'), c('price', 'Price / month', 'money', 'right'), c('status', 'Status', 'status'), c('next', 'Next billing', 'date')], rows: [{ plan: 'Pro', product: 'SEO Dashboard App', price: 799, status: 'Past due', next: '2026-10-30' }, { plan: 'Starter', product: 'Workflow Automation Pack', price: 299, status: 'Active', next: '2026-11-04' }] }),
-    tab({ key: 'renewals', label: 'Renewal history', columns: [c('plan', 'Plan'), c('amount', 'Amount', 'money', 'right'), c('date', 'Date', 'date'), c('status', 'Status', 'status')], rows: [{ plan: 'Starter', amount: 299, date: '2026-10-04', status: 'Paid' }, { plan: 'Pro', amount: 799, date: '2026-09-30', status: 'Paid' }] }),
+    tab({ key: 'plans', label: 'Active plans', columns: [c('plan', 'Plan'), c('product', 'Product'), c('price', 'Price / month', 'money', 'right'), c('status', 'Status', 'status'), c('next', 'Next billing', 'date')], rows: [] }),
+    tab({ key: 'renewals', label: 'Renewal history', columns: [c('plan', 'Plan'), c('amount', 'Amount', 'money', 'right'), c('date', 'Date', 'date'), c('status', 'Status', 'status')], rows: [] }),
   ],
 }
 
