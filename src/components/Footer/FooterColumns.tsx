@@ -9,6 +9,7 @@ const links = [
   { href: '/services', label: 'Our Services' },
   { href: '/product', label: 'Our Product' },
   { href: '/contact', label: 'Contact us' },
+  { href: '/account/login', label: 'Customer login' },
 ]
 
 const title = 'mb-[30px] text-xs font-semibold uppercase tracking-[0.15em] text-slate'
