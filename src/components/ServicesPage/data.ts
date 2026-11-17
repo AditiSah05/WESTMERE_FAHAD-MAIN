@@ -9,11 +9,13 @@ export type Service = {
   techs: string[]
   desc: string
   features: string[]
+  image: string
 }
 
 export const services: Service[] = [
   {
     id: 'website',
+    image: '/images/services/website.jpg',
     icon: Monitor,
     badge: 'WEB ENGINEERING',
     title: 'Website Development',
@@ -29,6 +31,7 @@ export const services: Service[] = [
   },
   {
     id: 'app',
+    image: '/images/services/app.jpg',
     icon: Smartphone,
     badge: 'MOBILE ENGINEERING',
     title: 'Mobile Applications',
@@ -44,6 +47,7 @@ export const services: Service[] = [
   },
   {
     id: 'automation',
+    image: '/images/services/automation.jpg',
     icon: Workflow,
     badge: 'INTEGRATIONS',
     title: 'Workflow Automation',
@@ -59,6 +63,7 @@ export const services: Service[] = [
   },
   {
     id: 'software',
+    image: '/images/services/software.jpg',
     icon: Code2,
     badge: 'CORE ENGINEERING',
     title: 'Custom Software Systems',
