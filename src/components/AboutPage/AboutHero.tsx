@@ -10,7 +10,7 @@ const col = 'grid grid-rows-[4fr_1fr]'
 const navy = 'bg-navy'
 const gold = 'bg-gold'
 
-export default function AboutHero() {
+export default function AboutHero({ heading, intro }: { heading: string; intro: string }) {
   return (
     <section className="relative overflow-hidden bg-paper px-5 pb-20 pt-[clamp(110px,16vh,150px)]">
       <AboutRings />
@@ -37,12 +37,11 @@ export default function AboutHero() {
         >
           <div className="flex min-h-[320px] flex-col justify-between gap-[30px] rounded-lg bg-white p-6 min-[821px]:min-h-[458px]">
             <h2 className="text-[clamp(26px,3vw,36px)] font-medium leading-[1.2] tracking-[-0.03em] text-navy-deep">
-              A team built on clarity, craft and commitment
+              {heading}
             </h2>
             <div className="flex flex-col items-start gap-[30px]">
               <p className="text-base font-medium leading-[1.4] text-slate">
-                We are a creative engineering agency built to help ambitious brands scale. By merging high-converting UX
-                with hyper-optimized development, we translate bold visions into measurable business growth.
+                {intro}
               </p>
               <ButtonLink href="/contact">Start a project</ButtonLink>
             </div>
