@@ -7,7 +7,7 @@ export default function TechTicker() {
   const row = (hidden?: boolean) => (
     <ul aria-hidden={hidden} className="flex flex-none items-center gap-10 pr-10">
       {techs.map((t) => (
-        <li key={t} className="flex items-center gap-10 whitespace-nowrap font-display text-3xl font-bold tracking-tight text-navy-deep/20 transition-colors hover:text-navy-deep min-[769px]:text-5xl">
+        <li key={t} className="flex items-center gap-10 whitespace-nowrap font-display text-base font-bold tracking-tight text-navy-deep/20 transition-colors hover:text-navy-deep min-[769px]:text-xl">
           {t}<span className="size-2 rounded-full bg-gold/70" />
         </li>
       ))}
