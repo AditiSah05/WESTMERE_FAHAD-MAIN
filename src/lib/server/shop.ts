@@ -47,18 +47,6 @@ export const wishlistIds = async (userId: string) => (await (await ready()).quer
 
 export const PAYMENT = ['Pending', 'Paid', 'Failed', 'Partially Refunded', 'Refunded']
 
-/** Server decides price and statuses. Test mode: no gateway, `fail` simulates a declined payment. */
-export async function createOrder(userId: string, productId: string, method: string, fail: boolean) {
-  const { query } = await ready()
-  const [p] = await query<Product>(`SELECT * FROM shop_products WHERE id = $1 AND active`, [productId])
-  if (!p) throw new Error('Unknown product')
-  const payment = fail ? 'Failed' : 'Paid'
-  // Protected access only after a verified payment; custom projects need scoping first.
-  const fulfilment = fail ? 'Awaiting Payment' : p.kind === 'service' ? 'Processing' : 'Delivered'
-  const [o] = await query<{ id: string }>(`INSERT INTO shop_orders (user_id, product_id, amount, payment_status, fulfilment, method) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`, [userId, productId, p.price, payment, fulfilment, method])
-  return o.id
-}
-
 type O = { id: string; name: string; kind: string; category: string; amount: number; payment_status: string; fulfilment: string; method: string; date: string }
 
 const orderRows = (userId: string) =>

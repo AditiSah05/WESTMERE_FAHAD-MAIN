@@ -1,16 +1,17 @@
 import { Heart, Star } from 'lucide-react'
-import { buy, toggleWishlist } from '@/app/account/shop-actions'
+import Link from 'next/link'
+import { toggleWishlist } from '@/app/account/shop-actions'
+import PayButton from '@/components/ProductPage/PayButton'
 import Card from '@/components/admin/ui/Card'
 import PageHeader, { btn } from '@/components/admin/ui/PageHeader'
 import type { Product } from '@/lib/server/shop'
 
 const inr = (n: number) => `₹${n.toLocaleString('en-IN')}`
-const select = 'rounded-lg border border-line bg-[#fafbfe] px-2.5 py-2 text-sm font-medium text-navy-deep'
 
 export default function ProductGrid({ items, saved }: { items: Product[]; saved: string[] }) {
   return (
     <>
-      <PageHeader title="Browse Products" subtitle="Websites, applications and software. Checkout is in test mode: no real payment is taken." />
+      <PageHeader title="Browse Products" subtitle="Websites, applications and software. Pay by UPI, then send us the screenshot and we confirm your order." />
       <div className="grid gap-5 min-[601px]:grid-cols-2 min-[1025px]:grid-cols-3">
         {items.map((p) => (
           <Card key={p.id} className="flex flex-col p-5">
@@ -29,12 +30,11 @@ export default function ProductGrid({ items, saved }: { items: Product[]; saved:
               {p.rating && <span className="flex items-center gap-1"><Star size={13} className="fill-gold text-gold" />{p.rating}</span>}
             </p>
             <p className="mt-4 text-2xl font-medium tracking-[-0.03em] text-navy-deep">{inr(p.price)}</p>
-            <form action={buy} className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
-              <input type="hidden" name="productId" value={p.id} />
-              <select name="method" className={select} aria-label="Payment method"><option>UPI</option><option>Card</option><option>Net banking</option></select>
-              <label className="flex items-center gap-2 text-xs font-medium text-muted"><input type="checkbox" name="simulate" value="fail" />Test: simulate a failed payment</label>
-              <button type="submit" className={`${btn.gold} justify-center`}>{p.kind === 'service' ? 'Start project' : 'Buy now'}</button>
-            </form>
+            <div className="mt-4 border-t border-line pt-4">
+              {p.kind === 'service'
+                ? <Link href="/contact" className={`${btn.gold} w-full justify-center`}>Start project</Link>
+                : <PayButton name={p.name} amount={p.price} className={`${btn.gold} w-full justify-center`}>Buy now</PayButton>}
+            </div>
           </Card>
         ))}
       </div>
