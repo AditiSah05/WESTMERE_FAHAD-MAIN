@@ -20,7 +20,7 @@ export default function AdminShell({ children, email, role, theme: initial }: { 
 
   return (
     <div data-admin-theme={theme} className="min-h-screen bg-paper font-sans text-[#4a5568]">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] min-[1025px]:block"><Sidebar role={role} /></aside>
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[252px] min-[1025px]:block"><Sidebar role={role} /></aside>
       <AnimatePresence>
         {open && (
           <div className="fixed inset-0 z-50 min-[1025px]:hidden">
@@ -32,9 +32,9 @@ export default function AdminShell({ children, email, role, theme: initial }: { 
         )}
       </AnimatePresence>
 
-      <div className="min-[1025px]:pl-[264px]">
+      <div className="min-[1025px]:pl-[252px]">
         <Topbar onMenu={() => setOpen(true)} email={email} theme={theme} onToggleTheme={toggleTheme} />
-        <main className="mx-auto w-full max-w-[1280px] px-4 py-8 min-[1025px]:px-8">{children}</main>
+        <main className="mx-auto w-full max-w-[1440px] px-4 py-8 min-[1025px]:px-8">{children}</main>
       </div>
     </div>
   )

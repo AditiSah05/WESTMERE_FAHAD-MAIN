@@ -4,7 +4,7 @@ import { money } from '@/lib/admin/format'
 import type { Dash } from '@/lib/server/dashboard'
 import Card from '../ui/Card'
 
-const title = 'mb-4 text-lg font-medium tracking-[-0.02em] text-navy-deep'
+const title = 'mb-4 text-lg font-semibold tracking-[-0.02em] text-navy-deep'
 const empty = (text: string) => <p className="text-sm font-medium text-muted">{text}</p>
 
 const ago = (iso: string) => {
@@ -19,7 +19,7 @@ export function TopProducts({ items }: { items: Dash['top'] }) {
   const max = items[0]?.revenue || 1
   return (
     <Card className="p-5">
-      <h2 className={title}>Top products</h2>
+      <h2 className={title}>Top Selling Products</h2>
       {!items.length ? empty('Paid orders will show up here.') : (
         <ul className="flex flex-col gap-4">
           {items.map((p) => (
@@ -41,7 +41,7 @@ export function TopProducts({ items }: { items: Dash['top'] }) {
 export function PendingTasks({ tasks }: { tasks: Dash['tasks'] }) {
   return (
     <Card className="p-5">
-      <h2 className={title}>Pending tasks</h2>
+      <h2 className={title}>Needs Attention</h2>
       {!tasks.length ? <p className="flex items-center gap-2 text-sm font-medium text-[#047857]"><CheckCircle2 size={16} />All caught up.</p> : (
         <ul className="flex flex-col gap-2.5">
           {tasks.map((t) => (
@@ -56,7 +56,7 @@ export function PendingTasks({ tasks }: { tasks: Dash['tasks'] }) {
 export function RecentActivity({ items }: { items: Dash['activity'] }) {
   return (
     <Card className="p-5">
-      <h2 className={title}>Recent activity</h2>
+      <h2 className={title}>Recent Activity</h2>
       {!items.length ? empty('Activity will appear as customers use the shop.') : (
         <ol className="relative flex flex-col gap-4 border-l border-dashed border-line pl-5">
           {items.map((a, i) => (
