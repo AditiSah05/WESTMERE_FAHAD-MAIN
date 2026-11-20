@@ -3,10 +3,11 @@
 import { CheckCircle2, Download, Layers, LayoutGrid, List, Network, PackageX, Plus, Search, Star } from 'lucide-react'
 import { useMemo, useState, useTransition } from 'react'
 import { deleteCategory, setCategoryFlag } from '@/app/admin/category-actions'
+import { deleteCollection } from '@/app/admin/collection-actions'
 import { downloadCsv } from '@/lib/admin/csv'
 import { c as col } from '@/lib/admin/data/helpers'
 import { cn } from '@/lib/cn'
-import type { Category } from '@/lib/server/categories'
+import type { Category, Collection } from '@/lib/server/categories'
 import Card from '../ui/Card'
 import Drawer from '../ui/Drawer'
 import PageHeader, { btn } from '../ui/PageHeader'
@@ -14,13 +15,19 @@ import StatCard from '../ui/StatCard'
 import CategoryForm from './CategoryForm'
 import { CategoryCards, CategoryTable } from './CategoryCards'
 import CategoryInsights from './CategoryInsights'
+import CollectionForm from './CollectionForm'
+import CollectionsSection from './CollectionsSection'
+import { SeoHealth, SeoTable } from './SeoPanel'
 
 const sorts = { order: 'Display Order', name: 'Name', products: 'Most products' } as const
 const field = 'rounded-lg border border-line bg-white px-3 py-2 text-sm font-medium text-navy-deep outline-none focus:border-gold'
-const tabs = [['all', 'All Categories'], ['main', 'Main Categories'], ['sub', 'Subcategories'], ['featured', 'Featured']] as const
+const tabs = [['all', 'All Categories'], ['main', 'Main Categories'], ['sub', 'Subcategories'], ['featured', 'Featured'], ['seo', 'Category SEO']] as const
+const delta = (now: number, before: number) => (before > 0 ? Math.round(((now - before) / before) * 1000) / 10 : undefined)
 type Collections = { name: string; note: string; count: number }[]
 
-export default function CategoriesView({ rows, unassigned, collections, write }: { rows: Category[]; unassigned: number; collections: Collections; write: boolean }) {
+type Growth = Record<string, number>
+
+export default function CategoriesView({ rows, unassigned, collections, handPicked, products, growth: g, write }: { rows: Category[]; unassigned: number; collections: Collections; handPicked: Collection[]; products: { id: string; name: string }[]; growth: Growth; write: boolean }) {
   const [tab, setTab] = useState<(typeof tabs)[number][0]>('all')
   const [q, setQ] = useState('')
   const [parent, setParent] = useState('All')
@@ -29,13 +36,14 @@ export default function CategoriesView({ rows, unassigned, collections, write }:
   const [sort, setSort] = useState<keyof typeof sorts>('order')
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [edit, setEdit] = useState<Category | 'new' | null>(null)
+  const [editCol, setEditCol] = useState<Collection | 'new' | null>(null)
   const [err, setErr] = useState('')
   const [, start] = useTransition()
   const mains = rows.filter((r) => !r.parent)
   const names = Object.fromEntries(rows.map((r) => [r.id, r.name]))
   const subs = rows.filter((r) => r.parent).length
   const active = rows.filter((r) => r.active).length
-  const inTab = (r: Category, t: string) => t === 'all' || (t === 'main' && !r.parent) || (t === 'sub' && !!r.parent) || (t === 'featured' && r.featured)
+  const inTab = (r: Category, t: string) => t === 'all' || (t === 'main' && !r.parent) || (t === 'sub' && !!r.parent) || (t === 'featured' && r.featured) || t === 'seo'
 
   const shown = useMemo(() => {
     const list = rows.filter((r) => inTab(r, tab) && (parent === 'All' || (parent === 'None' ? !r.parent : r.parent === parent)) && (status === 'All' || (status === 'Published') === r.active) && (feat === 'All' || (feat === 'Featured') === r.featured) && `${r.name} ${r.id}`.toLowerCase().includes(q.trim().toLowerCase()))
@@ -52,11 +60,11 @@ export default function CategoriesView({ rows, unassigned, collections, write }:
   return (
     <>
       <PageHeader title="Categories & Collections" subtitle="Organise products into categories. Your product forms and the shop use this list."
-        actions={<>{write && <button type="button" className={btn.gold} onClick={() => setEdit('new')}><Plus size={16} />Add Category</button>}<button type="button" className={btn.ghost} onClick={exportCsv}><Download size={15} />Export</button></>} />
+        actions={<>{write && <button type="button" className={btn.gold} onClick={() => setEdit('new')}><Plus size={16} />Add Category</button>}{write && <button type="button" className={btn.ghost} onClick={() => setEditCol('new')}><Layers size={15} />Create Collection</button>}<button type="button" className={btn.ghost} onClick={exportCsv}><Download size={15} />Export</button></>} />
       <div className="grid grid-cols-1 gap-4 min-[601px]:grid-cols-2 min-[1181px]:grid-cols-5">
-        <StatCard label="Total Categories" value={String(rows.length)} icon={Layers} accent="blue" note="Main and sub" />
+        <StatCard label="Total Categories" value={String(rows.length)} icon={Layers} accent="blue" delta={delta(g.new30, g.prev30)} note={`${g.new30} added in the last 30 days`} />
         <StatCard label="Active Categories" value={String(active)} icon={CheckCircle2} accent="green" note={rows.length ? `${Math.round((active / rows.length) * 1000) / 10}% of all categories` : ''} />
-        <StatCard label="Subcategories" value={String(subs)} icon={Network} accent="gold" note={`${mains.length} main categories`} />
+        <StatCard label="Subcategories" value={String(subs)} icon={Network} accent="gold" delta={delta(g.sub30, g.subprev30)} note={`${mains.length} main categories`} />
         <StatCard label="Featured" value={String(rows.filter((r) => r.featured).length)} icon={Star} accent="navy" note="Actively showcased" />
         <StatCard label="Unassigned Products" value={String(unassigned)} icon={PackageX} accent="gold" note="Products without a category" />
       </div>
@@ -75,10 +83,15 @@ export default function CategoriesView({ rows, unassigned, collections, write }:
         </div>
         {err && <p role="alert" className="border-b border-line bg-[#ef4444]/10 px-4 py-2.5 text-sm font-medium text-[#b91c1c]">{err}</p>}
         {!shown.length ? <p className="p-8 text-center text-sm font-medium text-muted">{rows.length ? 'No categories match these filters.' : 'No categories yet. Add the first one.'}</p>
+          : tab === 'seo' ? <SeoTable rows={shown} all={rows} write={write} onEdit={setEdit} />
           : view === 'grid' ? <CategoryCards rows={shown} parents={names} a={actions} /> : <CategoryTable rows={shown} parents={names} a={actions} />}
         <p className="border-t border-line px-4 py-3 text-[13px] font-medium text-muted">Showing {shown.length} of {rows.length} categories</p>
       </Card>
-      <CategoryInsights rows={rows} collections={collections} />
+      <CollectionsSection items={handPicked} auto={collections} write={write} onCreate={() => setEditCol('new')} onEdit={setEditCol} onDelete={(c) => { if (window.confirm(`Delete the collection “${c.name}”? Its products are not deleted.`)) start(async () => { await deleteCollection(c.id) }) }} />
+      <div className="mt-4 grid grid-cols-1 gap-4 min-[1181px]:grid-cols-5"><div className="min-[1181px]:col-span-2"><SeoHealth rows={rows} /></div><CategoryInsights rows={rows} /></div>
+      <Drawer open={editCol !== null} title={editCol === 'new' ? 'Create Collection' : 'Edit collection'} onClose={() => setEditCol(null)}>
+        {editCol !== null && <CollectionForm key={editCol === 'new' ? 'new' : editCol.id} c={editCol === 'new' ? undefined : editCol} products={products} onDone={() => setEditCol(null)} />}
+      </Drawer>
       <Drawer open={edit !== null} title={edit === 'new' ? 'Add Category' : 'Edit category'} onClose={() => setEdit(null)}>
         {edit !== null && <CategoryForm key={edit === 'new' ? 'new' : edit.id} c={edit === 'new' ? undefined : edit} mains={mains} onDone={() => setEdit(null)} />}
       </Drawer>

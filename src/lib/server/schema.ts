@@ -68,6 +68,24 @@ const statements = [
     sort_order integer NOT NULL DEFAULT 0,
     updated_at timestamptz NOT NULL DEFAULT now()
   )`,
+  `ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS seo_title text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS seo_description text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now()`,
+  `CREATE TABLE IF NOT EXISTS shop_collections (
+    id text PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    description text NOT NULL DEFAULT '',
+    active boolean NOT NULL DEFAULT true,
+    featured boolean NOT NULL DEFAULT false,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_collection_products (
+    collection_id text NOT NULL REFERENCES shop_collections(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id) ON DELETE CASCADE,
+    position integer NOT NULL DEFAULT 0,
+    PRIMARY KEY (collection_id, product_id)
+  )`,
   `INSERT INTO shop_categories (id, name, description, sort_order) VALUES
     ('websites', 'Websites', 'Ready-made website templates and designs.', 1),
     ('applications', 'Applications', 'Business applications and dashboards.', 2),

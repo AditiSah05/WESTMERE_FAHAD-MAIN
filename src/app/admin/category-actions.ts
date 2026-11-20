@@ -13,7 +13,7 @@ export type CatState = { error?: string } | undefined
 export async function saveCategory(_p: CatState, form: FormData): Promise<CatState> {
   const me = await assertModule('categories', 'write')
   const id = s(form, 'id'), name = s(form, 'name', 40), description = s(form, 'description', 200), parent = s(form, 'parent') || null
-  const sort = Number(s(form, 'sort', 3)), active = form.get('active') === 'on', featured = form.get('featured') === 'on'
+  const seoTitle = s(form, 'seoTitle', 80), seoDescription = s(form, 'seoDescription', 200), sort = Number(s(form, 'sort', 3)), active = form.get('active') === 'on', featured = form.get('featured') === 'on'
   if (name.length < 2) return { error: 'Enter a name (at least 2 letters).' }
   if (!Number.isInteger(sort) || sort < 0 || sort > 999) return { error: 'Display order must be a whole number from 0 to 999.' }
   const { query } = await db()
@@ -27,12 +27,12 @@ export async function saveCategory(_p: CatState, form: FormData): Promise<CatSta
     const [old] = await query<{ name: string }>(`SELECT name FROM shop_categories WHERE id = $1`, [id])
     if (!old) return { error: 'Category not found.' }
     if (parent && (await query(`SELECT 1 FROM shop_categories WHERE parent = $1`, [id])).length) return { error: 'This category has subcategories, so it cannot become a subcategory.' }
-    await query(`UPDATE shop_categories SET name = $1, description = $2, parent = $3, sort_order = $4, active = $5, featured = $6, updated_at = now() WHERE id = $7`, [name, description, parent, sort, active, featured, id])
+    await query(`UPDATE shop_categories SET name = $1, description = $2, parent = $3, sort_order = $4, active = $5, featured = $6, seo_title = $7, seo_description = $8, updated_at = now() WHERE id = $9`, [name, description, parent, sort, active, featured, seoTitle, seoDescription, id])
     if (old.name !== name) await query(`UPDATE shop_products SET category = $1 WHERE category = $2`, [name, old.name])
   } else {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'category'
     if ((await query(`SELECT 1 FROM shop_categories WHERE id = $1`, [slug])).length) return { error: 'A category with a similar name already exists.' }
-    await query(`INSERT INTO shop_categories (id, name, description, parent, sort_order, active, featured) VALUES ($1,$2,$3,$4,$5,$6,$7)`, [slug, name, description, parent, sort, active, featured])
+    await query(`INSERT INTO shop_categories (id, name, description, parent, sort_order, active, featured, seo_title, seo_description) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [slug, name, description, parent, sort, active, featured, seoTitle, seoDescription])
   }
   await audit(me.userId, id ? 'category_updated' : 'category_created', name)
   refresh()
