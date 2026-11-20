@@ -56,25 +56,79 @@ export async function setReviewStatus(form: FormData) {
 
 const CATEGORIES = ['Websites', 'Applications', 'Software & Tools', 'Custom development']
 const KINDS = ['website', 'software', 'service']
+const PRICING = ['One-time', 'Subscription', 'Custom pricing']
 
 /** Create or update a catalogue product. Price changes apply to new orders only; old orders keep what was paid. */
 export async function saveProduct(form: FormData) {
   const me = await assertModule('products', 'write')
   const name = s(form, 'name', 80).trim(), category = s(form, 'category'), kind = s(form, 'kind'), tag = s(form, 'tag', 20).trim()
   const price = Number(s(form, 'price', 9)), active = s(form, 'status') !== 'Hidden'
-  const description = s(form, 'description', 300).trim(), tech = s(form, 'tech', 80).trim(), image = s(form, 'image', 400).trim(), listed = form.get('listed') === 'on'
+  const description = s(form, 'description', 300).trim(), tech = s(form, 'tech', 80).trim(), image = s(form, 'image', 400).trim(), listed = form.get('listed') === 'on', featured = form.get('featured') === 'on', pricing = s(form, 'pricing')
   if (image && !/^https:\/\/\S+$/.test(image)) throw new Error('Image must be an https link')
-  if (!name || !CATEGORIES.includes(category) || !KINDS.includes(kind) || !Number.isInteger(price) || price < 0 || price > 1_000_000) throw new Error('Invalid')
+  if (!name || !CATEGORIES.includes(category) || !KINDS.includes(kind) || !PRICING.includes(pricing) || !Number.isInteger(price) || price < 0 || price > 1_000_000) throw new Error('Invalid')
   const { query } = await db()
   const id = s(form, 'id', 60)
   if (id) {
-    await query(`UPDATE shop_products SET name = $1, category = $2, kind = $3, price = $4, tag = $5, active = $6, description = $7, tech = $8, image = $9, listed = $10 WHERE id = $11`, [name, category, kind, price, tag, active, description, tech, image, listed, id])
+    await query(`UPDATE shop_products SET name = $1, category = $2, kind = $3, price = $4, tag = $5, active = $6, description = $7, tech = $8, image = $9, listed = $10, pricing = $11, featured = $12 WHERE id = $13`, [name, category, kind, price, tag, active, description, tech, image, listed, pricing, featured, id])
   } else {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'product'
-    await query(`INSERT INTO shop_products (id, name, category, kind, price, tag, active, description, tech, image, listed) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT (id) DO NOTHING`, [`${slug}-${Date.now().toString(36)}`, name, category, kind, price, tag, active, description, tech, image, listed])
+    await query(`INSERT INTO shop_products (id, name, category, kind, price, tag, active, description, tech, image, listed, pricing, featured) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ON CONFLICT (id) DO NOTHING`, [`${slug}-${Date.now().toString(36)}`, name, category, kind, price, tag, active, description, tech, image, listed, pricing, featured])
   }
   await audit(me.userId, id ? 'product_updated' : 'product_created', name)
   revalidatePath('/admin/shop', 'layout')
   revalidatePath('/account', 'layout')
   revalidatePath('/product', 'layout')
+}
+
+export type BulkResult = { done: number; skipped: string[] }
+const BULK = { publish: 'active = true', unpublish: 'active = false', feature: 'featured = true', unfeature: 'featured = false', show: 'listed = true', hide: 'listed = false' } as const
+
+/** Bulk change on selected products. Delete only removes products nobody has ordered; the rest are reported back. */
+export async function bulkProducts(ids: string[], op: keyof typeof BULK | 'delete'): Promise<BulkResult> {
+  const me = await assertModule('products', 'write')
+  const list = Array.from(new Set(ids.filter((i) => typeof i === 'string' && i.length <= 60))).slice(0, 200)
+  if (!list.length) return { done: 0, skipped: [] }
+  const { query } = await db()
+  let done = 0
+  const skipped: string[] = []
+  if (op === 'delete') {
+    for (const id of list) {
+      const [used] = await query<{ n: string }>(`SELECT count(*) AS n FROM shop_orders WHERE product_id = $1`, [id])
+      if (Number(used.n) > 0) { skipped.push(id); continue }
+      await query(`DELETE FROM shop_wishlist WHERE product_id = $1`, [id])
+      await query(`DELETE FROM shop_reviews WHERE product_id = $1`, [id])
+      done += (await query(`DELETE FROM shop_products WHERE id = $1 RETURNING id`, [id])).length
+    }
+  } else {
+    if (!(op in BULK)) throw new Error('Invalid')
+    done = (await query(`UPDATE shop_products SET ${BULK[op]} WHERE id = ANY($1::text[]) RETURNING id`, [list])).length
+  }
+  await audit(me.userId, `product_bulk_${op}`, `${done} product(s)`)
+  revalidatePath('/admin/shop', 'layout'); revalidatePath('/account', 'layout'); revalidatePath('/product', 'layout')
+  return { done, skipped }
+}
+
+export type ImportRow = { name: string; category: string; type: string; price: string; pricing: string; description: string; tech: string; status: string }
+const TYPE_TO_KIND: Record<string, string> = { 'ready-made website': 'website', website: 'website', 'software / app': 'software', software: 'software', app: 'software', 'custom project': 'service', service: 'service' }
+
+/** Add products from a CSV the admin uploaded. Rows are validated like the form; bad rows are reported, not silently dropped. */
+export async function importProducts(rows: ImportRow[]): Promise<{ added: number; errors: string[] }> {
+  const me = await assertModule('products', 'write')
+  const { query } = await db()
+  const errors: string[] = []
+  let added = 0
+  for (const [i, r] of rows.slice(0, 200).entries()) {
+    const name = String(r.name ?? '').trim().slice(0, 80), price = Number(String(r.price ?? '').replace(/[₹,\s]/g, ''))
+    const category = CATEGORIES.find((c) => c.toLowerCase() === String(r.category ?? '').trim().toLowerCase())
+    const kind = TYPE_TO_KIND[String(r.type ?? '').trim().toLowerCase()] ?? 'website'
+    const pricing = PRICING.find((p) => p.toLowerCase() === String(r.pricing ?? '').trim().toLowerCase()) ?? 'One-time'
+    if (!name || !category || !Number.isInteger(price) || price < 0 || price > 1_000_000) { errors.push(`Row ${i + 2}: needs a name, one of ${CATEGORIES.join(' / ')} and a whole-number price`); continue }
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'product'
+    const hidden = String(r.status ?? '').trim().toLowerCase() === 'hidden'
+    await query(`INSERT INTO shop_products (id, name, category, kind, price, active, description, tech, listed, pricing) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,$9)`, [`${slug}-${Date.now().toString(36)}${i}`, name, category, kind, price, !hidden, String(r.description ?? '').slice(0, 300), String(r.tech ?? '').slice(0, 80), pricing])
+    added++
+  }
+  await audit(me.userId, 'product_import', `${added} product(s)`)
+  revalidatePath('/admin/shop', 'layout'); revalidatePath('/account', 'layout'); revalidatePath('/product', 'layout')
+  return { added, errors }
 }

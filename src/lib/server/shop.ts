@@ -31,14 +31,14 @@ async function ready() {
 
 export async function products(): Promise<Product[]> {
   const { query } = await ready()
-  return query<Product>(`SELECT id, name, category, kind, price, rating, tag FROM shop_products WHERE active ORDER BY price`)
+  return query<Product>(`SELECT id, name, category, kind, price, rating, CASE WHEN featured AND tag = '' THEN 'Featured' ELSE tag END AS tag FROM shop_products WHERE active ORDER BY featured DESC, price`)
 }
 
 /** Products shown on the public page: on sale (not hidden) and ticked "show on the Products page". */
 export async function listedProducts(): Promise<ListedProduct[]> {
   const { query } = await ready()
   const rows = await query<Product & { description: string; tech: string; image: string }>(
-    `SELECT id, name, category, kind, price, rating, tag, description, tech, image FROM shop_products WHERE active AND listed ORDER BY (id = 'mailora') DESC, price, name`,
+    `SELECT id, name, category, kind, price, rating, CASE WHEN featured AND tag = '' THEN 'Featured' ELSE tag END AS tag, description, tech, image FROM shop_products WHERE active AND listed ORDER BY featured DESC, (id = 'mailora') DESC, price, name`,
   )
   return rows.map((r) => ({ ...r, tech: r.tech.split(',').map((t) => t.trim()).filter(Boolean) }))
 }

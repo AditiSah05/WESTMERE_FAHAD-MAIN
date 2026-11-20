@@ -55,6 +55,9 @@ const statements = [
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS tech text NOT NULL DEFAULT ''`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS image text NOT NULL DEFAULT ''`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS listed boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS pricing text NOT NULL DEFAULT 'One-time'`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS featured boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now()`,
   `CREATE TABLE IF NOT EXISTS shop_orders (
     id bigserial PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,

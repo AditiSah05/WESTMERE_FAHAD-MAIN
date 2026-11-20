@@ -33,7 +33,7 @@ export default function AdminShell({ children, email, role, theme: initial }: { 
       </AnimatePresence>
 
       <div className="min-[1025px]:pl-[252px]">
-        <Topbar onMenu={() => setOpen(true)} email={email} theme={theme} onToggleTheme={toggleTheme} />
+        <Topbar onMenu={() => setOpen(true)} email={email} role={role} theme={theme} onToggleTheme={toggleTheme} />
         <main className="mx-auto w-full max-w-[1440px] px-4 py-8 min-[1025px]:px-8">{children}</main>
       </div>
     </div>
