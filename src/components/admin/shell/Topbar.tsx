@@ -16,12 +16,13 @@ export default function Topbar({ onMenu, email, theme, onToggleTheme }: { onMenu
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-line bg-white/85 px-4 backdrop-blur min-[1025px]:px-8">
       <div className="flex min-w-0 items-center gap-3">
         <button type="button" onClick={onMenu} aria-label="Open menu" className="flex size-9 items-center justify-center rounded-lg border border-line min-[1025px]:hidden"><Menu size={18} /></button>
-        <span className="hidden rounded bg-gold/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#8a6420] min-[480px]:inline">Admin</span>
+        <span className="hidden text-sm font-medium text-gold min-[480px]:inline">Admin</span>
+        <span className="hidden text-sm text-muted min-[480px]:inline">/</span>
         <span className="truncate text-sm font-semibold text-navy-deep">{current?.label ?? 'Admin'}</span>
       </div>
       <div className="flex flex-none items-center gap-2 min-[480px]:gap-2.5">
-        <Link href="/" target="_blank" className="hidden items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-[13px] font-medium text-slate hover:bg-paper sm:flex">
-          View site <ExternalLink size={13} />
+        <Link href="/" target="_blank" className="hidden items-center gap-1.5 rounded-lg border border-gold px-3.5 py-2 text-[13px] font-semibold text-[#8a6420] hover:bg-gold/10 sm:flex">
+          View Website <ExternalLink size={13} />
         </Link>
         <button type="button" onClick={onToggleTheme} aria-pressed={dark} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} title={dark ? 'Light mode' : 'Dark mode'} className="flex size-9 items-center justify-center rounded-lg border border-line text-slate hover:bg-paper">{dark ? <Sun size={17} /> : <Moon size={17} />}</button>
         <Link href="/admin/notifications" aria-label="Notifications" className="relative flex size-9 items-center justify-center rounded-lg border border-line text-slate hover:bg-paper">

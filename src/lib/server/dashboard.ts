@@ -33,6 +33,15 @@ export async function dashboardData() {
 
   const monthly = await query<{ m: string; v: string }>(`SELECT to_char(date_trunc('month', created_at), 'YYYY-MM') AS m, sum(amount) AS v FROM shop_orders WHERE payment_status = 'Paid' AND created_at > date_trunc('month', now()) - interval '11 months' GROUP BY 1`)
   const daily = await query<{ d: string; v: string }>(`SELECT to_char(created_at, 'YYYY-MM-DD') AS d, sum(amount) AS v FROM shop_orders WHERE payment_status = 'Paid' AND created_at > now() - interval '30 days' GROUP BY 1`)
+  const mOrders = await query<{ m: string; v: string }>(`SELECT to_char(date_trunc('month', created_at), 'YYYY-MM') AS m, count(*) AS v FROM shop_orders WHERE created_at > date_trunc('month', now()) - interval '11 months' GROUP BY 1`)
+  const dOrders = await query<{ d: string; v: string }>(`SELECT to_char(created_at, 'YYYY-MM-DD') AS d, count(*) AS v FROM shop_orders WHERE created_at > now() - interval '30 days' GROUP BY 1`)
+  const dCust = await query<{ d: string; v: string }>(`SELECT to_char(created_at, 'YYYY-MM-DD') AS d, count(*) AS v FROM shop_users WHERE created_at > now() - interval '30 days' GROUP BY 1`)
+  const x = await one(`SELECT (SELECT count(*) FROM shop_orders WHERE payment_status = 'Paid') AS paid, (SELECT count(*) FROM shop_orders WHERE payment_status = 'Pending') AS pending, (SELECT count(*) FROM shop_products WHERE active) AS products, (SELECT count(*) FROM shop_tickets WHERE status IN ('Open','In progress')) AS tickets, (SELECT count(*) FROM (SELECT user_id FROM shop_orders WHERE payment_status = 'Paid' GROUP BY user_id HAVING count(*) > 1) r) AS returning`)
+  const recent = await query<{ id: string; customer: string; product: string; amount: number; payment: string; fulfilment: string; at: Date }>(`SELECT o.id::text, COALESCE(NULLIF(u.name, ''), u.email) AS customer, p.name AS product, o.amount, o.payment_status AS payment, o.fulfilment, o.created_at AS at FROM shop_orders o JOIN shop_users u ON u.id = o.user_id JOIN shop_products p ON p.id = o.product_id ORDER BY o.id DESC LIMIT 5`)
+  const [best] = await query<{ name: string; spent: string }>(`SELECT COALESCE(NULLIF(u.name, ''), u.email) AS name, sum(o.amount) AS spent FROM shop_orders o JOIN shop_users u ON u.id = o.user_id WHERE o.payment_status = 'Paid' GROUP BY 1 ORDER BY 2 DESC LIMIT 1`)
+  const mo = new Map(mOrders.map((r) => [r.m, num(r.v)]))
+  const dO = new Map(dOrders.map((r) => [r.d, num(r.v)]))
+  const dC = new Map(dCust.map((r) => [r.d, num(r.v)]))
   const now = new Date()
   const months = Array.from({ length: 12 }, (_, i) => new Date(now.getFullYear(), now.getMonth() - 11 + i, 1))
   const days = Array.from({ length: 30 }, (_, i) => new Date(now.getTime() - (29 - i) * 864e5))
@@ -49,16 +58,20 @@ export async function dashboardData() {
     ORDER BY at DESC LIMIT 8`)
 
   const tasks: Task[] = [
-    [num(open.requests), 'refund/cancellation request', '/admin/shop/requests'],
-    [num(open.urgent), 'high-priority ticket', '/admin/shop/tickets'],
-    [num(open.tickets) - num(open.urgent), 'open ticket', '/admin/shop/tickets'],
-    [num(open.reviews), 'review waiting for approval', '/admin/shop/reviews'],
-    [num(open.to_deliver), 'paid order to deliver', '/admin/shop/orders'],
-    [num(open.on_hold), 'order on hold', '/admin/shop/orders'],
-  ].filter(([n]) => (n as number) > 0).map(([n, label, href]) => ({ text: `${n} ${label}${n === 1 ? '' : 's'}`, href: href as string }))
+    [num(open.requests), 'refund/cancellation request|refund/cancellation requests', '/admin/shop/requests'],
+    [num(open.urgent), 'high-priority ticket|high-priority tickets', '/admin/shop/tickets'],
+    [num(open.tickets) - num(open.urgent), 'open ticket|open tickets', '/admin/shop/tickets'],
+    [num(open.reviews), 'review waiting for approval|reviews waiting for approval', '/admin/shop/reviews'],
+    [num(open.to_deliver), 'paid order to deliver|paid orders to deliver', '/admin/shop/orders'],
+    [num(open.on_hold), 'order on hold|orders on hold', '/admin/shop/orders'],
+  ].filter(([n]) => (n as number) > 0).map(([n, label, href]) => ({ text: `${n} ${(label as string).split('|')[n === 1 ? 0 : 1]}`, href: href as string }))
 
   return {
-    stats: { revenue: num(t.revenue), revenueDelta: delta(num(t.rev30), num(t.rev_prev)), orders: num(t.orders), ordersDelta: delta(num(t.orders30), num(t.orders_prev)), customers: num(c.n), customersDelta: delta(num(c.n30), num(c.prev)), openRequests: num(open.requests) + num(open.tickets) },
+    stats: { revenue: num(t.revenue), revenueDelta: delta(num(t.rev30), num(t.rev_prev)), orders: num(t.orders), ordersDelta: delta(num(t.orders30), num(t.orders_prev)), customers: num(c.n), customersDelta: delta(num(c.n30), num(c.prev)), openRequests: num(open.requests) + num(open.tickets), paid: num(x.paid), pending: num(x.pending), products: num(x.products), tickets: num(x.tickets), returning: num(x.returning), newCustomers: num(c.n30), avgOrder: num(x.paid) ? Math.round(num(t.revenue) / num(x.paid)) : 0, bestCustomer: best ? { name: best.name, spent: num(best.spent) } : null },
+    monthlyOrders: months.map((d) => mo.get(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`) ?? 0),
+    dailyOrders: days.map((d) => dO.get(d.toISOString().slice(0, 10)) ?? 0),
+    dailyCustomers: days.map((d) => dC.get(d.toISOString().slice(0, 10)) ?? 0),
+    recent: recent.map((r) => ({ ...r, at: new Date(r.at).toISOString() })),
     monthLabels: months.map((d) => MONTHS[d.getMonth()]),
     monthly: months.map((d) => mv.get(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`) ?? 0),
     dayLabels: days.map((d) => String(d.getDate())),
