@@ -43,7 +43,7 @@ export default function ImportPanel({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="flex flex-col gap-4 text-sm font-medium text-slate">
-      <p>Upload a CSV with these columns: <b className="text-navy-deep">{HEAD.join(', ')}</b>. Only name, category and price are needed. Category must be Websites, Applications, Software &amp; Tools or Custom development. Up to 200 rows.</p>
+      <p>Upload a CSV with these columns: <b className="text-navy-deep">{HEAD.join(', ')}</b>. Only name, category and price are needed. Category must match one of your categories (see Categories &amp; Collections). Up to 200 rows.</p>
       <button type="button" onClick={sample} className={`${btn.ghost} self-start`}>Download sample CSV</button>
       <input type="file" accept=".csv,text/csv" onChange={(e) => read(e.target.files?.[0])} className="text-sm" />
       {note && <p role="status" className="text-navy-deep">{note}</p>}

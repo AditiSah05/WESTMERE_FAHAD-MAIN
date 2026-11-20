@@ -21,8 +21,8 @@ const sorts = { newest: 'Default', recent: 'Recently added', low: 'Price: low to
 const field = 'rounded-lg border border-line bg-white px-3 py-2 text-sm font-medium text-navy-deep outline-none focus:border-gold'
 const pct = (n: number, t: number) => (t ? `${Math.round((n / t) * 1000) / 10}% of all products` : '')
 
-export default function ProductsView({ rows, write, initialQ = '' }: { rows: Product[]; write: boolean; initialQ?: string }) {
-  const [cat, setCat] = useState('All')
+export default function ProductsView({ rows, write, categories, initialQ = '', initialCat = 'All' }: { rows: Product[]; write: boolean; categories: string[]; initialQ?: string; initialCat?: string }) {
+  const [cat, setCat] = useState(initialCat)
   const [q, setQ] = useState(initialQ)
   const [status, setStatus] = useState('All')
   const [sort, setSort] = useState<keyof typeof sorts>('newest')
@@ -95,7 +95,7 @@ export default function ProductsView({ rows, write, initialQ = '' }: { rows: Pro
       </Card>
       <ProductInsights rows={rows} />
       <Drawer open={edit !== null} title={edit === 'new' ? 'Add New Product' : 'Edit product'} onClose={() => setEdit(null)}>
-        {edit !== null && <ProductForm key={edit === 'new' ? 'new' : edit.id} p={edit === 'new' ? undefined : edit} onDone={() => setEdit(null)} />}
+        {edit !== null && <ProductForm key={edit === 'new' ? 'new' : edit.id} p={edit === 'new' ? undefined : edit} categories={categories} onDone={() => setEdit(null)} />}
       </Drawer>
       <Drawer open={importing} title="Import products" onClose={() => setImporting(false)}>{importing && <ImportPanel onDone={() => setImporting(false)} />}</Drawer>
     </>

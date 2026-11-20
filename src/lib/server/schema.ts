@@ -58,6 +58,22 @@ const statements = [
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS pricing text NOT NULL DEFAULT 'One-time'`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS featured boolean NOT NULL DEFAULT false`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now()`,
+  `CREATE TABLE IF NOT EXISTS shop_categories (
+    id text PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    description text NOT NULL DEFAULT '',
+    parent text REFERENCES shop_categories(id),
+    active boolean NOT NULL DEFAULT true,
+    featured boolean NOT NULL DEFAULT false,
+    sort_order integer NOT NULL DEFAULT 0,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `INSERT INTO shop_categories (id, name, description, sort_order) VALUES
+    ('websites', 'Websites', 'Ready-made website templates and designs.', 1),
+    ('applications', 'Applications', 'Business applications and dashboards.', 2),
+    ('software-tools', 'Software & Tools', 'Software, extensions and productivity tools.', 3),
+    ('custom-development', 'Custom development', 'Custom website and software projects.', 4)
+    ON CONFLICT DO NOTHING`,
   `CREATE TABLE IF NOT EXISTS shop_orders (
     id bigserial PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
