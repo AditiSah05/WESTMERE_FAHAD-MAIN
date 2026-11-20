@@ -17,9 +17,9 @@ const GoogleG = () => (
   </svg>
 )
 
-type Props = { mode: 'login' | 'signup'; google?: boolean; notice?: string }
+type Props = { mode: 'login' | 'signup'; google?: boolean; notice?: string; next?: string }
 
-export default function AuthForm({ mode, google, notice }: Props) {
+export default function AuthForm({ mode, google, notice, next }: Props) {
   const signup = mode === 'signup'
   const [state, action, pending] = useActionState(signup ? customerSignup : customerLogin, undefined)
 
@@ -31,6 +31,7 @@ export default function AuthForm({ mode, google, notice }: Props) {
           <h1 className="mb-1 text-[26px] font-medium tracking-[-0.03em] text-navy-deep">{signup ? 'Create your account' : 'Welcome back'}</h1>
           <p className="mb-6 text-[15px] font-medium text-muted">{signup ? 'Track orders, downloads and licences in one place.' : 'Sign in to your Westmere account.'}</p>
           <div className="flex flex-col gap-4">
+            {next && <input type="hidden" name="next" value={next} />}
             {signup && <label className="flex flex-col gap-1.5"><span className={labelCls}>Name</span><input name="name" required autoComplete="name" maxLength={80} className={input} /></label>}
             <label className="flex flex-col gap-1.5"><span className={labelCls}>Email</span><input name="email" type="email" required autoComplete="username" maxLength={254} className={input} /></label>
             <label className="flex flex-col gap-1.5"><span className={labelCls}>Password</span><input name="password" type="password" required autoComplete={signup ? 'new-password' : 'current-password'} maxLength={256} className={input} /></label>
@@ -46,7 +47,7 @@ export default function AuthForm({ mode, google, notice }: Props) {
           )}
           <p className="mt-5 text-center text-sm font-medium text-muted">
             {signup ? 'Already have an account? ' : 'New here? '}
-            <Link href={signup ? '/account/login' : '/account/signup'} className="text-navy-deep underline-offset-2 hover:underline">{signup ? 'Sign in' : 'Create an account'}</Link>
+            <Link href={`${signup ? '/account/login' : '/account/signup'}${next ? `?next=${encodeURIComponent(next)}` : ''}`} className="text-navy-deep underline-offset-2 hover:underline">{signup ? 'Sign in' : 'Create an account'}</Link>
           </p>
         </form>
       </div>
