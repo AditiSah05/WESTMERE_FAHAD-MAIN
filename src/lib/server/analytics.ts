@@ -1,36 +1,70 @@
 import 'server-only'
+import { type RangeKey } from '@/lib/analytics-ranges'
 import { db } from './schema'
 
 const num = (v: unknown) => Number(v ?? 0)
+const delta = (now: number, before: number) => (before > 0 ? Math.round(((now - before) / before) * 1000) / 10 : undefined)
+
 export type Report = Awaited<ReturnType<typeof analyticsData>>
 
-/** Everything here comes from orders and accounts; the site has no page-view tracking, so no traffic figures. */
-export async function analyticsData() {
-  const { query } = await db()
-  const [t] = await query<Record<string, unknown>>(`SELECT count(*) AS orders, count(*) FILTER (WHERE payment_status IN ('Paid','Partially Refunded','Refunded')) AS paid_ever, count(*) FILTER (WHERE payment_status = 'Paid') AS paid, COALESCE(sum(amount) FILTER (WHERE payment_status = 'Paid'), 0) AS revenue FROM shop_orders`)
-  const [rep] = await query<Record<string, unknown>>(`SELECT count(*) FILTER (WHERE n > 1) AS repeat, count(*) AS buyers FROM (SELECT user_id, count(*) AS n FROM shop_orders WHERE payment_status = 'Paid' GROUP BY user_id) x`)
-  const category = await query<{ name: string; revenue: string }>(`SELECT p.category AS name, sum(o.amount) AS revenue FROM shop_orders o JOIN shop_products p ON p.id = o.product_id WHERE o.payment_status = 'Paid' GROUP BY 1 ORDER BY 2 DESC`)
-  const method = await query<{ label: string; value: string }>(`SELECT method AS label, count(*) AS value FROM shop_orders GROUP BY 1 ORDER BY 2 DESC`)
-  const week = await query<{ w: string; v: string }>(`SELECT to_char(date_trunc('week', created_at), 'YYYY-MM-DD') AS w, sum(amount) AS v FROM shop_orders WHERE payment_status = 'Paid' AND created_at > date_trunc('week', now()) - interval '7 weeks' GROUP BY 1`)
-  const signups = await query<{ m: string; v: string }>(`SELECT to_char(date_trunc('month', created_at), 'YYYY-MM') AS m, count(*) AS v FROM shop_users WHERE created_at > date_trunc('month', now()) - interval '5 months' GROUP BY 1`)
-  const products = await query<{ name: string; orders: string; paid: string; revenue: string }>(`SELECT p.name, count(*) AS orders, count(*) FILTER (WHERE o.payment_status IN ('Paid','Partially Refunded','Refunded')) AS paid, COALESCE(sum(o.amount) FILTER (WHERE o.payment_status = 'Paid'), 0) AS revenue FROM shop_orders o JOIN shop_products p ON p.id = o.product_id GROUP BY p.name ORDER BY 4 DESC`)
+const DAYS: Partial<Record<RangeKey, number>> = { today: 1, '7d': 7, '30d': 30, '90d': 90 }
+const iso = (d: Date) => d.toISOString().slice(0, 10)
 
+/** Everything here comes from orders and accounts; the site has no page-view tracking, so no traffic figures. */
+export async function analyticsData(range: RangeKey) {
+  const { query } = await db()
   const now = new Date()
-  const wk = new Map(week.map((r) => [r.w, num(r.v)]))
-  const monday = (d: Date) => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x }
-  const weeks = Array.from({ length: 8 }, (_, i) => monday(new Date(now.getTime() - (7 - i) * 7 * 864e5)))
-  const key = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+  const since = range === 'all' ? new Date(0) : range === 'year' ? new Date(Date.UTC(now.getUTCFullYear(), 0, 1)) : new Date(today.getTime() - (DAYS[range]! - 1) * 864e5)
+  const prevSince = range === 'all' ? null : new Date(since.getTime() - (now.getTime() - since.getTime()))
+  const end = new Date(now.getTime() + 864e5)
+
+  const totals = async (a: Date, b: Date) => (await query<Record<string, unknown>>(`SELECT count(*) AS orders, count(*) FILTER (WHERE payment_status = 'Paid') AS paid, count(*) FILTER (WHERE payment_status IN ('Paid','Partially Refunded','Refunded')) AS paid_ever, count(*) FILTER (WHERE payment_status = 'Failed') AS failed, count(*) FILTER (WHERE payment_status = 'Pending') AS pending, count(*) FILTER (WHERE payment_status = 'Refunded') AS refunded, COALESCE(sum(amount) FILTER (WHERE payment_status = 'Paid'), 0) AS revenue FROM shop_orders WHERE created_at >= $1 AND created_at < $2`, [a, b]))[0]
+  const users = async (a: Date, b: Date) => num((await query<Record<string, unknown>>(`SELECT count(*) AS n FROM shop_users WHERE created_at >= $1 AND created_at < $2`, [a, b]))[0].n)
+  const t = await totals(since, end)
+  const p = prevSince ? await totals(prevSince, since) : null
+  const newCust = await users(since, end)
+  const prevNew = prevSince ? await users(prevSince, since) : 0
+  const [cust] = await query<Record<string, unknown>>(`SELECT count(*) AS n FROM shop_users`)
+  const [rep] = await query<Record<string, unknown>>(`SELECT count(*) FILTER (WHERE n > 1) AS repeat, count(*) AS buyers FROM (SELECT user_id, count(*) AS n FROM shop_orders WHERE payment_status = 'Paid' GROUP BY user_id) x`)
+
+  const category = await query<{ name: string; revenue: string }>(`SELECT p.category AS name, sum(o.amount) AS revenue FROM shop_orders o JOIN shop_products p ON p.id = o.product_id WHERE o.payment_status = 'Paid' AND o.created_at >= $1 GROUP BY 1 ORDER BY 2 DESC`, [since])
+  const methods = await query<{ label: string; value: string }>(`SELECT method AS label, count(*) AS value FROM shop_orders WHERE created_at >= $1 GROUP BY 1 ORDER BY 2 DESC`, [since])
+  const payStatus = await query<{ label: string; value: string }>(`SELECT payment_status AS label, count(*) AS value FROM shop_orders WHERE created_at >= $1 GROUP BY 1 ORDER BY 2 DESC`, [since])
+  const fulfil = await query<{ label: string; value: string }>(`SELECT fulfilment AS label, count(*) AS value FROM shop_orders WHERE created_at >= $1 GROUP BY 1 ORDER BY 2 DESC`, [since])
+  const products = await query<{ name: string; category: string; orders: string; paid: string; revenue: string }>(`SELECT p.name, p.category, count(*) AS orders, count(*) FILTER (WHERE o.payment_status IN ('Paid','Partially Refunded','Refunded')) AS paid, COALESCE(sum(o.amount) FILTER (WHERE o.payment_status = 'Paid'), 0) AS revenue FROM shop_orders o JOIN shop_products p ON p.id = o.product_id WHERE o.created_at >= $1 GROUP BY p.name, p.category ORDER BY 5 DESC`, [since])
+  const signups = await query<{ m: string; v: string }>(`SELECT to_char(date_trunc('month', created_at), 'YYYY-MM') AS m, count(*) AS v FROM shop_users WHERE created_at > date_trunc('month', now()) - interval '5 months' GROUP BY 1`)
+
+  // Chart: daily points for short ranges (at least a week), monthly for "this year" and "all time".
+  const monthly = range === 'year' || range === 'all'
+  const n = monthly ? (range === 'all' ? 12 : Math.max(2, now.getUTCMonth() + 1)) : Math.max(7, DAYS[range]!)
+  const points = Array.from({ length: n }, (_, i) =>
+    monthly ? new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (n - 1) + i, 1)) : new Date(today.getTime() - (n - 1 - i) * 864e5))
+  const rows = await query<{ k: string; o: string; v: string }>(`SELECT to_char(date_trunc('${monthly ? 'month' : 'day'}', created_at), 'YYYY-MM-DD') AS k, count(*) AS o, COALESCE(sum(amount) FILTER (WHERE payment_status = 'Paid'), 0) AS v FROM shop_orders WHERE created_at >= $1 GROUP BY 1`, [points[0]])
+  const by = new Map(rows.map((r) => [r.k, r]))
+  const months = Array.from({ length: 6 }, (_, i) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 5 + i, 1)))
   const su = new Map(signups.map((r) => [r.m, num(r.v)]))
-  const months = Array.from({ length: 6 }, (_, i) => new Date(now.getFullYear(), now.getMonth() - 5 + i, 1))
 
   return {
-    stats: { orders: num(t.orders), paid: num(t.paid), revenue: num(t.revenue), paidRate: num(t.orders) ? Math.round((num(t.paid_ever) / num(t.orders)) * 1000) / 10 : 0, aov: num(t.paid) ? Math.round(num(t.revenue) / num(t.paid)) : 0, repeatRate: num(rep.buyers) ? Math.round((num(rep.repeat) / num(rep.buyers)) * 100) : 0 },
+    range,
+    stats: {
+      revenue: num(t.revenue), revenueDelta: p ? delta(num(t.revenue), num(p.revenue)) : undefined,
+      orders: num(t.orders), ordersDelta: p ? delta(num(t.orders), num(p.orders)) : undefined,
+      aov: num(t.paid) ? Math.round(num(t.revenue) / num(t.paid)) : 0,
+      customers: num(cust.n), newCustomers: newCust, newDelta: delta(newCust, prevNew),
+      paidRate: num(t.orders) ? Math.round((num(t.paid_ever) / num(t.orders)) * 1000) / 10 : 0,
+      repeatRate: num(rep.buyers) ? Math.round((num(rep.repeat) / num(rep.buyers)) * 1000) / 10 : 0,
+      paid: num(t.paid), failed: num(t.failed), pending: num(t.pending), refunded: num(t.refunded),
+    },
+    labels: points.map((d) => (monthly ? d.toLocaleString('en', { month: 'short', timeZone: 'UTC' }) : `${d.getUTCDate()}/${d.getUTCMonth() + 1}`)),
+    revenueSeries: points.map((d) => num(by.get(iso(d))?.v)),
+    ordersSeries: points.map((d) => num(by.get(iso(d))?.o)),
     category: category.map((r) => ({ name: r.name, revenue: num(r.revenue) })),
-    methods: method.map((r) => ({ label: r.label, value: num(r.value) })),
-    weekLabels: weeks.map((d) => `${d.getDate()}/${d.getMonth() + 1}`),
-    weekly: weeks.map((d) => wk.get(key(d)) ?? 0),
-    monthLabels: months.map((d) => d.toLocaleString('en', { month: 'short' })),
-    signups: months.map((d) => su.get(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`) ?? 0),
-    products: products.map((r) => ({ name: r.name, orders: num(r.orders), paid: num(r.paid), revenue: num(r.revenue), rate: num(r.orders) ? `${Math.round((num(r.paid) / num(r.orders)) * 100)}%` : '—' })),
+    methods: methods.map((r) => ({ label: r.label, value: num(r.value) })),
+    payStatus: payStatus.map((r) => ({ label: r.label, value: num(r.value) })),
+    fulfil: fulfil.map((r) => ({ label: r.label, value: num(r.value) })),
+    signupLabels: months.map((d) => d.toLocaleString('en', { month: 'short', timeZone: 'UTC' })),
+    signups: months.map((d) => su.get(`${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`) ?? 0),
+    products: products.map((r) => ({ name: r.name, category: r.category, orders: num(r.orders), paid: num(r.paid), revenue: num(r.revenue), rate: num(r.orders) ? `${Math.round((num(r.paid) / num(r.orders)) * 100)}%` : '—' })),
   }
 }
