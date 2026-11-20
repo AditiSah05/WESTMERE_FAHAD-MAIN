@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { safeNext } from '@/lib/account/next'
 import { phoneOk } from '@/lib/account/phone'
 import { createCustomerSession, destroyCustomerSession } from '@/lib/server/customer'
 import { fakeVerify, hashPassword, passwordProblem, verifyPassword } from '@/lib/server/password'
@@ -33,7 +34,7 @@ export async function customerLogin(_p: AuthState, form: FormData): Promise<Auth
   if (!valid || !user) return generic
 
   await createCustomerSession(user.id)
-  redirect('/account')
+  redirect(safeNext(form.get('next')) ?? '/account')
 }
 
 export async function customerSignup(_p: AuthState, form: FormData): Promise<AuthState> {
@@ -57,7 +58,7 @@ export async function customerSignup(_p: AuthState, form: FormData): Promise<Aut
   if (!created) return { error: 'An account with this email already exists. Try signing in.' }
   await query(`INSERT INTO shop_profiles (user_id, phone) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET phone = $2`, [created.id, phone])
   await createCustomerSession(created.id)
-  redirect('/account')
+  redirect(safeNext(form.get('next')) ?? '/account')
 }
 
 export async function customerLogout() {

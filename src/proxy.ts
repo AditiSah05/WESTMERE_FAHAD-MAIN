@@ -17,7 +17,10 @@ export function proxy(request: NextRequest) {
     ? pathname === '/account/login' || pathname === '/account/signup' || pathname.startsWith('/account/google')
     : pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
   if (!open && !hasCookie) {
-    return NextResponse.redirect(new URL(`/${area}/login`, request.url))
+    const login = new URL(`/${area}/login`, request.url)
+    // Buying from the website: come back to checkout after sign-in (the login page validates this value).
+    if (pathname === '/account/checkout') login.searchParams.set('next', pathname + request.nextUrl.search)
+    return NextResponse.redirect(login)
   }
 
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
