@@ -1,5 +1,5 @@
 import { notFound, redirect } from 'next/navigation'
-import { decideRequest, setReviewStatus, setTicketStatus } from '@/app/admin/shop-actions'
+import { setReviewStatus, setTicketStatus } from '@/app/admin/shop-actions'
 import PageHeader, { btn } from '@/components/admin/ui/PageHeader'
 import ShopTable, { type Col } from '@/components/admin/shop/ShopTable'
 import { can, shopModule } from '@/lib/admin/permissions'
@@ -14,7 +14,6 @@ const hidden = (n: string, v: string | number | null) => <input type="hidden" na
 const opts = (list: string[]) => list.map((o) => <option key={o}>{o}</option>)
 
 const screens: Record<string, { title: string; subtitle: string; cols: Col[] }> = {
-  requests: { title: 'Refund requests', subtitle: 'Approving updates the order record; return the money in the payment gateway.', cols: [{ key: 'ref', header: 'Order' }, { key: 'customer', header: 'Customer' }, { key: 'kind', header: 'Request' }, { key: 'reason', header: 'Reason', wide: true }, { key: 'payment', header: 'Payment', badge: true }, { key: 'status', header: 'Status', badge: true }, { key: 'date', header: 'Date' }] },
   tickets: { title: 'Customer tickets', subtitle: 'Support requests from customers.', cols: [{ key: 'ref', header: 'Ticket' }, { key: 'customer', header: 'Customer' }, { key: 'subject', header: 'Subject' }, { key: 'message', header: 'Message', wide: true }, { key: 'priority', header: 'Priority', badge: true }, { key: 'status', header: 'Status', badge: true }, { key: 'date', header: 'Date' }] },
   reviews: { title: 'Review queue', subtitle: 'Approve or reject customer reviews.', cols: [{ key: 'product', header: 'Product' }, { key: 'customer', header: 'Customer' }, { key: 'rating', header: 'Rating' }, { key: 'feedback', header: 'Feedback', wide: true }, { key: 'status', header: 'Status', badge: true }] },
   customers: { title: 'Shop customers', subtitle: 'Registered customer accounts.', cols: [{ key: 'name', header: 'Name' }, { key: 'email', header: 'Email' }, { key: 'phone', header: 'Phone' }, { key: 'status', header: 'Status', badge: true }, { key: 'joined', header: 'Joined' }, { key: 'orders', header: 'Orders' }, { key: 'spent', header: 'Paid', money: true }] },
@@ -31,9 +30,6 @@ export default async function Page({ params }: { params: Promise<{ kind: string 
   const rows = await adminLists[kind as keyof typeof adminLists]()
 
   const actions = !write ? undefined : {
-    requests: (r: Record<string, string | number | null>) => r.status !== 'Requested' ? null : (
-      <form action={decideRequest} className="flex gap-1.5">{hidden('id', r.id)}
-        <button name="decision" value="approve" className={mini}>Approve</button><button name="decision" value="reject" className={`${btn.danger} !px-3 !py-1.5 text-xs`}>Reject</button></form>),
     tickets: (r: Record<string, string | number | null>) => (
       <form action={setTicketStatus} className="flex items-center gap-1.5">{hidden('id', r.id)}<select name="status" defaultValue={String(r.status)} className={sel}>{opts(['Open', 'In progress', 'Resolved', 'Closed'])}</select><button type="submit" className={mini}>Save</button></form>),
     reviews: (r: Record<string, string | number | null>) => (

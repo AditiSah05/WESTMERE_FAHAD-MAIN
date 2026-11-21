@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { phoneOk } from '@/lib/account/phone'
+import { REASONS } from '@/lib/refund-shared'
 import { columnsFor, profileGroups } from '@/lib/account/profile-fields'
 import { assertCustomer } from '@/lib/server/customer'
 import { db } from '@/lib/server/schema'
@@ -35,12 +36,15 @@ export async function requestOrderChange(_p: FState, form: FormData): Promise<FS
   const orderId = str(form.get('orderId'), 20)
   const kind = str(form.get('kind'), 20)
   const reason = str(form.get('reason'), 1000)
+  const reasonType = str(form.get('reasonType'), 40)
   if (!reason) return { error: 'Tell us why.' }
+  if (!(REASONS as readonly string[]).includes(reasonType)) return { error: 'Choose a reason.' }
   // Eligibility is decided on the server from the order's real status.
   const option = (await requestable(me.userId)).find((o) => o.id === orderId)
   if (!option || !option.kinds.includes(kind)) return { error: 'This order is not eligible for that request.' }
   const { query } = await db()
-  await query(`INSERT INTO shop_requests (user_id, order_id, kind, reason) VALUES ($1,$2,$3,$4)`, [me.userId, orderId, kind, reason])
+  const [req] = await query<{ id: string }>(`INSERT INTO shop_requests (user_id, order_id, kind, reason, reason_type) VALUES ($1,$2,$3,$4,$5) RETURNING id::text`, [me.userId, orderId, kind, reason, reasonType])
+  await query(`INSERT INTO shop_request_events (request_id, event, note) VALUES ($1,'Request received','Sent by the customer')`, [req.id])
   revalidatePath('/account/orders')
   return { ok: `${kind} request sent. We will review it and email you.` }
 }

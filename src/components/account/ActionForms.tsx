@@ -4,6 +4,7 @@ import { useActionState, useState } from 'react'
 import { requestOrderChange, submitReview } from '@/app/account/more-actions'
 import Card from '@/components/admin/ui/Card'
 import { btn } from '@/components/admin/ui/PageHeader'
+import { REASONS } from '@/lib/refund-shared'
 
 const input = 'w-full rounded-[10px] border border-line bg-[#fafbfe] px-3.5 py-2.5 text-sm font-medium text-navy-deep outline-none focus:border-blue-accent focus:bg-white'
 const label = 'text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]'
@@ -26,7 +27,8 @@ export function OrderRequestForm({ options }: { options: { id: string; label: st
       <form action={action} className="grid gap-4 min-[769px]:grid-cols-2">
         <label className="flex flex-col gap-1.5"><span className={label}>Order</span><select name="orderId" value={id} onChange={(e) => setId(e.target.value)} className={input}>{options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}</select></label>
         <label className="flex flex-col gap-1.5"><span className={label}>Request</span><select name="kind" key={id} className={input}>{kinds.map((k) => <option key={k}>{k}</option>)}</select></label>
-        <label className="flex flex-col gap-1.5 min-[769px]:col-span-2"><span className={label}>Reason</span><textarea name="reason" required rows={3} maxLength={1000} className={input} /></label>
+        <label className="flex flex-col gap-1.5 min-[769px]:col-span-2"><span className={label}>Reason</span><select name="reasonType" defaultValue="Other" className={input}>{REASONS.map((r) => <option key={r}>{r}</option>)}</select></label>
+        <label className="flex flex-col gap-1.5 min-[769px]:col-span-2"><span className={label}>Tell us more</span><textarea name="reason" required rows={3} maxLength={1000} className={input} /></label>
         <div className="flex flex-col gap-3 min-[769px]:col-span-2"><Msg s={state} /><div><button type="submit" disabled={pending} className={`${btn.ghost} disabled:opacity-70`}>{pending ? 'Sending…' : 'Send request'}</button></div></div>
       </form>
     </Card>

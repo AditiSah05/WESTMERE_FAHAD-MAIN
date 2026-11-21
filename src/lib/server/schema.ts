@@ -267,6 +267,18 @@ const statements = [
   `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS manual boolean NOT NULL DEFAULT false`,
   `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS note text NOT NULL DEFAULT ''`,
   `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS payment_ref text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS reason_type text NOT NULL DEFAULT 'Other'`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS refund_amount integer`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS admin_note text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS refund_ref text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now()`,
+  `CREATE TABLE IF NOT EXISTS shop_request_events (
+    id bigserial PRIMARY KEY,
+    request_id bigint NOT NULL REFERENCES shop_requests(id) ON DELETE CASCADE,
+    event text NOT NULL,
+    note text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
 ]
 
 const globalForSchema = globalThis as unknown as { __wmSchema?: Promise<void> }
