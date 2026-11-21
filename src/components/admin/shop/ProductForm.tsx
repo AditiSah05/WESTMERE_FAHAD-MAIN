@@ -6,21 +6,20 @@ import { btn } from '../ui/PageHeader'
 
 export type Product = { id: string; name: string; category: string; kind: string; price: number; tag: string; description: string; tech: string; image: string; pricing: string; featured: boolean; added: string; on_page: string; status: string; sold: number; revenue: number }
 
-const CATEGORIES = ['Websites', 'Applications', 'Software & Tools', 'Custom development']
 export const PRICING = ['One-time', 'Subscription', 'Custom pricing']
 const KINDS = [['website', 'Ready-made website'], ['software', 'Software / app'], ['service', 'Custom project']]
 const input = 'w-full rounded-lg border border-line bg-white px-3 py-2 text-sm font-medium text-navy-deep outline-none focus:border-gold'
 const lab = 'flex flex-col gap-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]'
 
 /** Add or edit one product. Price changes apply to new orders only; old orders keep what was paid. */
-export default function ProductForm({ p, onDone }: { p?: Product; onDone: () => void }) {
+export default function ProductForm({ p, categories, onDone }: { p?: Product; categories: string[]; onDone: () => void }) {
   const [pending, start] = useTransition()
   return (
     <form action={(fd) => start(async () => { await saveProduct(fd); onDone() })} className="flex flex-col gap-4">
       {p && <input type="hidden" name="id" value={p.id} />}
       <label className={lab}>Name<input name="name" required maxLength={80} defaultValue={p?.name} className={input} /></label>
       <div className="grid grid-cols-2 gap-3">
-        <label className={lab}>Category<select name="category" defaultValue={p?.category ?? CATEGORIES[0]} className={input}>{CATEGORIES.map((c) => <option key={c}>{c}</option>)}</select></label>
+        <label className={lab}>Category<select name="category" defaultValue={p?.category ?? categories[0]} className={input}>{(p && !categories.includes(p.category) ? [p.category, ...categories] : categories).map((c) => <option key={c}>{c}</option>)}</select></label>
         <label className={lab}>Type<select name="kind" defaultValue={p?.kind ?? 'website'} className={input}>{KINDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
         <label className={lab}>Price (₹)<input name="price" type="number" min={0} max={1000000} step={1} required defaultValue={p?.price} className={input} /></label>
         <label className={lab}>Pricing model<select name="pricing" defaultValue={p?.pricing ?? 'One-time'} className={input}>{PRICING.map((m) => <option key={m}>{m}</option>)}</select></label>

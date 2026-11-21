@@ -22,7 +22,7 @@ export default function Topbar({ onMenu, email, role, theme, onToggleTheme }: { 
         <span className="hidden text-sm text-muted min-[480px]:inline">/</span>
         <span className="truncate text-sm font-semibold text-navy-deep">{current?.label ?? 'Admin'}</span>
       </div>
-      <div className="flex min-w-0 flex-1 justify-end min-[900px]:justify-center"><GlobalSearch role={role} /></div>
+      <div className="flex min-w-0 flex-1 justify-end pl-2 min-[900px]:justify-center"><GlobalSearch role={role} /></div>
       <div className="flex flex-none items-center gap-2 min-[480px]:gap-2.5">
         <Link href="/" target="_blank" className="hidden items-center gap-1.5 rounded-lg border border-gold px-3.5 py-2 text-[13px] font-semibold text-[#8a6420] hover:bg-gold/10 sm:flex">
           View Website <ExternalLink size={13} />
