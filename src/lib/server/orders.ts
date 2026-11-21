@@ -22,7 +22,7 @@ export async function ordersOverview() {
   const paid = (l: Order[]) => l.filter((o) => o.payment === 'Paid')
   const sum = (l: Order[]) => l.reduce((a, o) => a + o.amount, 0)
   const cur = all.filter((o) => inRange(o, 0, 30)), prev = all.filter((o) => inRange(o, 30, 60))
-  const [rq] = await query<{ n: number; amount: number }>(`SELECT count(*)::int AS n, COALESCE(sum(o.amount), 0)::int AS amount FROM shop_requests r JOIN shop_orders o ON o.id = r.order_id WHERE r.status = 'Requested'`)
+  const [rq] = await query<{ n: number; amount: number }>(`SELECT count(*)::int AS n, COALESCE(sum(o.amount), 0)::int AS amount FROM shop_requests r JOIN shop_orders o ON o.id = r.order_id WHERE r.status IN ('Requested','Under Investigation')`)
   const [f] = await query<{ downloads: number; licenses: number }>(`SELECT (SELECT count(*) FROM shop_downloads WHERE status = 'Success')::int AS downloads, (SELECT count(*) FROM shop_licenses)::int AS licenses`)
   const requests = await query<{ id: string; orderId: string; customer: string; amount: number; ts: number }>(`SELECT r.id::text, r.order_id::text AS "orderId", COALESCE(NULLIF(u.name, ''), u.email) AS customer, o.amount, (extract(epoch FROM r.created_at) * 1000)::bigint AS ts FROM shop_requests r JOIN shop_orders o ON o.id = r.order_id JOIN shop_users u ON u.id = r.user_id ORDER BY r.id DESC LIMIT 5`)
 

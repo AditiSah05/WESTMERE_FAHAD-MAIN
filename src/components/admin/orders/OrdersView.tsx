@@ -49,11 +49,13 @@ export default function OrdersView({ o, customers, products, write, initialQ = '
 
   const shown = useMemo(() => {
     const t = TABS.find((x) => x[0] === tab)![2]
-    const needle = q.trim().toLowerCase().replace(/^#/, '').replace(/^wm-/, '')
+    const raw = q.trim().toLowerCase()
+    const wm = /^#?wm-(\d+)$/.exec(raw)?.[1]
+    const needle = wm ? '' : raw
     const list = o.orders.filter((x) => t(x) && (pay === 'All' || x.payment === pay) && (ful === 'All' || x.fulfilment === ful) && (type === 'All' || x.type === type) && (method === 'All' || x.method === method)
       && (date === 'all' || x.ts >= (date === 'year' ? yearStart : Date.now() - Number(date) * 864e5))
       && (amount === 'all' || (amount === 'low' ? x.amount < 1000 : amount === 'mid' ? x.amount >= 1000 && x.amount <= 5000 : x.amount > 5000))
-      && (!needle || `${x.id} ${x.customer} ${x.email} ${x.product} ${x.paymentRef}`.toLowerCase().includes(needle)))
+      && (wm ? x.id === wm : !needle || `${x.id} ${x.customer} ${x.email} ${x.product} ${x.paymentRef}`.toLowerCase().includes(needle)))
     return list.sort(sort === 'new' ? (a, b) => b.ts - a.ts : sort === 'old' ? (a, b) => a.ts - b.ts : sort === 'high' ? (a, b) => b.amount - a.amount : (a, b) => a.amount - b.amount)
   }, [o.orders, tab, q, pay, ful, type, method, date, amount, sort, yearStart])
   const pages = Math.max(1, Math.ceil(shown.length / per))

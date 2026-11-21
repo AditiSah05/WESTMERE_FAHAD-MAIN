@@ -24,7 +24,7 @@ export async function dashboardData() {
     FROM shop_orders`)
   const c = await one(`SELECT count(*) AS n, count(*) FILTER (WHERE created_at > now() - interval '30 days') AS n30, count(*) FILTER (WHERE created_at <= now() - interval '30 days' AND created_at > now() - interval '60 days') AS prev FROM shop_users`)
   const open = await one(`SELECT
-    (SELECT count(*) FROM shop_requests WHERE status = 'Requested') AS requests,
+    (SELECT count(*) FROM shop_requests WHERE status IN ('Requested','Under Investigation')) AS requests,
     (SELECT count(*) FROM shop_tickets WHERE status IN ('Open','In progress')) AS tickets,
     (SELECT count(*) FROM shop_tickets WHERE status IN ('Open','In progress') AND priority = 'High') AS urgent,
     (SELECT count(*) FROM shop_reviews WHERE status = 'Pending') AS reviews,

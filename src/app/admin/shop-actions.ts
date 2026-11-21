@@ -15,19 +15,6 @@ const REVIEW = ['Pending', 'Published', 'Rejected']
 const s = (f: FormData, k: string, max = 60) => { const v = f.get(k); return typeof v === 'string' ? v.slice(0, max) : '' }
 const done = () => revalidatePath('/admin/shop', 'layout')
 
-/** Approving only updates our records; moving the money back is done in the payment gateway. */
-export async function decideRequest(form: FormData) {
-  const me = await assertModule('orders', 'write')
-  const id = Number(s(form, 'id', 12)), approve = s(form, 'decision') === 'approve'
-  const { tx } = await db()
-  await tx(async (q) => {
-    const [r] = await q<{ order_id: string; kind: string }>(`UPDATE shop_requests SET status = $1 WHERE id = $2 AND status = 'Requested' RETURNING order_id, kind`, [approve ? 'Approved' : 'Rejected', id])
-    if (r && approve) await q(`UPDATE shop_orders SET fulfilment = 'Cancelled', payment_status = CASE WHEN payment_status = 'Paid' THEN 'Refunded' ELSE payment_status END WHERE id = $1`, [r.order_id])
-  })
-  await audit(me.userId, approve ? 'request_approved' : 'request_rejected', `request ${id}`)
-  done()
-}
-
 export async function setTicketStatus(form: FormData) {
   const me = await assertModule('support', 'write')
   const id = Number(s(form, 'id', 12)), status = s(form, 'status')

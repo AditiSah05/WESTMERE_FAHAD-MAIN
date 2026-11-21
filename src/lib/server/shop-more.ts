@@ -18,7 +18,7 @@ export async function profile(userId: string): Promise<Record<string, string | b
 /** Orders that still allow a request, with the kind allowed by status. */
 export async function requestable(userId: string) {
   const { query } = await db()
-  const open = new Set((await query<{ order_id: string }>(`SELECT order_id::text FROM shop_requests WHERE user_id = $1 AND status = 'Requested'`, [userId])).map((r) => r.order_id))
+  const open = new Set((await query<{ order_id: string }>(`SELECT order_id::text FROM shop_requests WHERE user_id = $1 AND status IN ('Requested','Under Investigation','Approved','Processing','Failed')`, [userId])).map((r) => r.order_id))
   return (await orders(userId)).filter((o) => !open.has(o.id)).flatMap((o) => {
     if (o.payment_status === 'Paid') return [{ id: o.id, label: `#WM-${o.id} · ${o.name}`, kinds: o.fulfilment === 'Delivered' ? ['Refund'] : ['Cancellation', 'Refund'] }]
     if (o.fulfilment === 'Awaiting Payment' || o.fulfilment === 'Processing') return [{ id: o.id, label: `#WM-${o.id} · ${o.name}`, kinds: ['Cancellation'] }]
