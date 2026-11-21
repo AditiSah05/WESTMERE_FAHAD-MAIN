@@ -264,6 +264,9 @@ const statements = [
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_type text NOT NULL DEFAULT 'Single Device'`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_max integer NOT NULL DEFAULT 1`,
   `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_days integer NOT NULL DEFAULT 365`,
+  `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS manual boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS note text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS payment_ref text NOT NULL DEFAULT ''`,
 ]
 
 const globalForSchema = globalThis as unknown as { __wmSchema?: Promise<void> }
