@@ -171,6 +171,61 @@ const statements = [
     value jsonb NOT NULL,
     updated_at timestamptz NOT NULL DEFAULT now()
   )`,
+  `CREATE TABLE IF NOT EXISTS shop_licenses (
+    id bigserial PRIMARY KEY,
+    license_key text NOT NULL UNIQUE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    order_id bigint REFERENCES shop_orders(id),
+    license_type text NOT NULL DEFAULT 'Single Device',
+    max_activations integer NOT NULL DEFAULT 1,
+    revoked boolean NOT NULL DEFAULT false,
+    expires_at timestamptz,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_license_activations (
+    id bigserial PRIMARY KEY,
+    license_id bigint NOT NULL REFERENCES shop_licenses(id) ON DELETE CASCADE,
+    device text NOT NULL,
+    ip text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (license_id, device)
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_license_events (
+    id bigserial PRIMARY KEY,
+    license_id bigint NOT NULL REFERENCES shop_licenses(id) ON DELETE CASCADE,
+    event text NOT NULL,
+    note text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_packages (
+    id bigserial PRIMARY KEY,
+    product_id text NOT NULL REFERENCES shop_products(id) ON DELETE CASCADE,
+    name text NOT NULL,
+    format text NOT NULL DEFAULT 'ZIP',
+    file_url text NOT NULL,
+    size text NOT NULL DEFAULT '',
+    availability text NOT NULL DEFAULT 'After purchase',
+    published boolean NOT NULL DEFAULT true,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_package_versions (
+    id bigserial PRIMARY KEY,
+    package_id bigint NOT NULL REFERENCES shop_packages(id) ON DELETE CASCADE,
+    version text NOT NULL,
+    notes text NOT NULL DEFAULT '',
+    release_date date NOT NULL DEFAULT current_date,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_downloads (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    package_id bigint NOT NULL REFERENCES shop_packages(id) ON DELETE CASCADE,
+    version text NOT NULL DEFAULT '',
+    status text NOT NULL,
+    ip text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
 ]
 
 const globalForSchema = globalThis as unknown as { __wmSchema?: Promise<void> }

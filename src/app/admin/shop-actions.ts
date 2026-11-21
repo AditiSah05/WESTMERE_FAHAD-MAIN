@@ -93,7 +93,7 @@ export async function bulkProducts(ids: string[], op: keyof typeof BULK | 'delet
   const skipped: string[] = []
   if (op === 'delete') {
     for (const id of list) {
-      const [used] = await query<{ n: string }>(`SELECT count(*) AS n FROM shop_orders WHERE product_id = $1`, [id])
+      const [used] = await query<{ n: string }>(`SELECT (SELECT count(*) FROM shop_orders WHERE product_id = $1) + (SELECT count(*) FROM shop_licenses WHERE product_id = $1) AS n`, [id])
       if (Number(used.n) > 0) { skipped.push(id); continue }
       await query(`DELETE FROM shop_wishlist WHERE product_id = $1`, [id])
       await query(`DELETE FROM shop_reviews WHERE product_id = $1`, [id])

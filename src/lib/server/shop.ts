@@ -1,6 +1,6 @@
 import 'server-only'
-import { createHash } from 'node:crypto'
 import type { Row } from '@/lib/admin/types'
+import { customerLicenses } from './licenses'
 import { db } from './schema'
 
 export type Product = { id: string; name: string; category: string; kind: 'website' | 'software' | 'service'; price: number; rating: string; tag: string }
@@ -54,7 +54,6 @@ const orderRows = (userId: string) =>
 
 /** Only paid AND delivered orders unlock product access. */
 const owned = (os: O[]) => os.filter((o) => o.payment_status === 'Paid' && o.fulfilment === 'Delivered' && o.kind !== 'service')
-const key = (o: O) => 'WM-' + createHash('sha256').update(`licence:${o.id}`).digest('hex').slice(0, 12).toUpperCase().replace(/(.{4})(?=.)/g, '$1-')
 
 export async function counts(userId: string) {
   const os = await orderRows(userId)
@@ -64,7 +63,7 @@ export async function counts(userId: string) {
 /** Real rows per tab for the sections backed by the database. null = section still shows demo data. */
 export async function loadSection(slug: string, userId: string): Promise<Record<string, Row[]> | null> {
   const { query } = await ready()
-  const os = slug === 'orders' || slug === 'my-products' || slug === 'downloads' || slug === 'licenses' ? await orderRows(userId) : []
+  const os = slug === 'orders' || slug === 'my-products' || slug === 'licenses' ? await orderRows(userId) : []
   const order = (o: O): Row => ({ id: o.id, orderId: `#WM-${o.id}`, product: o.name, amount: o.amount, paymentStatus: o.payment_status, fulfilment: o.fulfilment, method: o.method, date: o.date })
   switch (slug) {
     case 'orders':
@@ -74,10 +73,8 @@ export async function loadSection(slug: string, userId: string): Promise<Record<
       }
     case 'my-products':
       return { owned: owned(os).map((o) => ({ id: o.id, name: o.name, type: o.kind === 'website' ? 'Website' : 'Software', version: '1.0.0', access: 'Active', update: 'Up to date' })) }
-    case 'downloads':
-      return { files: owned(os).map((o) => ({ id: o.id, file: `${o.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-1.0.0.zip`, product: o.name, version: '1.0.0', size: '—', status: 'Ready' })) }
     case 'licenses':
-      return { keys: owned(os).map((o) => ({ id: o.id, key: key(o), product: o.name, type: 'Single user', status: 'Active', seats: '0 / 1', expires: '—' })) }
+      return { keys: (await customerLicenses(userId)).map((l) => ({ id: l.id, key: l.key, product: l.product, type: l.type, status: l.state, seats: `${l.used} / ${l.max}`, expires: l.expires ?? 'Lifetime' })) }
     case 'wishlist':
       return { saved: (await query<{ id: string; name: string; price: number }>(`SELECT p.id, p.name, p.price FROM shop_wishlist w JOIN shop_products p ON p.id = w.product_id WHERE w.user_id = $1`, [userId])).map((r) => ({ ...r, availability: 'Available' })) }
     case 'support':
