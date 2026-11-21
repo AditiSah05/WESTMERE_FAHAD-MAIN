@@ -7,17 +7,18 @@ const th = 'px-3 py-3 text-left text-[11px] font-bold uppercase tracking-[0.1em]
 const maskKey = (k: string) => k.replace(/^(WM-\w{4})-\w{4}-(\w{4})$/, '$1-••••-$2')
 const field = 'rounded-lg border border-line bg-white px-2 py-1 text-sm font-medium text-navy-deep'
 
-type Props = { rows: License[]; total: number; page: number; pages: number; per: number; onPage: (n: number) => void; onPer: (n: number) => void; onView: (l: License) => void }
+type Props = { rows: License[]; selected?: Set<string>; onToggle?: (id: string) => void; onToggleAll?: () => void; total: number; page: number; pages: number; per: number; onPage: (n: number) => void; onPer: (n: number) => void; onView: (l: License) => void }
 
-export default function LicenseTable({ rows, total, page, pages, per, onPage, onPer, onView }: Props) {
+export default function LicenseTable({ rows, selected, onToggle, onToggleAll, total, page, pages, per, onPage, onPer, onView }: Props) {
   return (
     <>
       {!rows.length ? <p className="p-8 text-center text-sm font-medium text-muted">No licenses match these filters.</p> : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-sm">
-            <thead><tr className="border-b border-line bg-[#fafbfe]"><th className={th}>License key</th><th className={th}>Product</th><th className={th}>Customer</th><th className={th}>Type</th><th className={th}>Activations</th><th className={th}>Status</th><th className={th}>Created</th><th className={th}>Expires</th><th className={th}>Actions</th></tr></thead>
+            <thead><tr className="border-b border-line bg-[#fafbfe]">{onToggle && <th className="w-10 px-3 py-3"><input type="checkbox" checked={rows.length > 0 && rows.every((l) => selected?.has(l.id))} onChange={onToggleAll} aria-label="Select all" className="size-4" /></th>}<th className={th}>License key</th><th className={th}>Product</th><th className={th}>Customer</th><th className={th}>Type</th><th className={th}>Activations</th><th className={th}>Status</th><th className={th}>Created</th><th className={th}>Expires</th><th className={th}>Actions</th></tr></thead>
             <tbody>{rows.map((l) => (
               <tr key={l.id} className="border-b border-line/60 font-medium text-navy-deep last:border-0">
+                {onToggle && <td className="px-3 py-3"><input type="checkbox" checked={!!selected?.has(l.id)} onChange={() => onToggle(l.id)} aria-label={`Select ${l.key}`} className="size-4" /></td>}
                 <td className="whitespace-nowrap px-3 py-3 font-mono text-[13px]">{maskKey(l.key)}</td>
                 <td className="px-3 py-3">{l.product}</td>
                 <td className="px-3 py-3"><p className="font-semibold">{l.customer}</p><p className="text-xs text-muted">{l.email}</p></td>

@@ -14,7 +14,9 @@ import PageHeader, { btn } from '../ui/PageHeader'
 import StatCard from '../ui/StatCard'
 import { ActivityCard, ExpiryCard } from './LicenseCharts'
 import { GenerateForm, LicenseDetail } from './LicenseDrawers'
+import BulkLicenseBar from './BulkLicenseBar'
 import LicenseTable from './LicenseTable'
+import RemindersCard from './RemindersCard'
 import { ActivationsTable, HistoryTable } from './LogTables'
 import { PackageForm, VersionForm } from './PackageForms'
 import { DownloadActivity, PackagesCard, VersionsCard } from './PackagesSection'
@@ -24,6 +26,8 @@ type Pkgs = Awaited<ReturnType<typeof packagesData>>
 type Logs = { activations: { id: string; key: string; product: string; device: string; ip: string; at: string }[]; history: { id: string; key: string; product: string; event: string; note: string; at: string }[] }
 type Props = { o: Overview; logs: Logs; pk: Pkgs; customers: { id: string; name: string; email: string }[]; products: { id: string; name: string }[]; write: boolean }
 const field = 'rounded-lg border border-line bg-white px-3 py-2 text-sm font-medium text-navy-deep outline-none focus:border-gold'
+const EXPIRY = { All: 'Expiry: Any', soon7: 'Within 7 days', soon30: 'Within 30 days', soon90: 'Within 90 days', past: 'Already expired', life: 'Lifetime' } as const
+const inExpiry = (l: License, f: string) => f === 'All' || (f === 'life' ? l.expires === null : f === 'past' ? l.state === 'Expired' : l.daysLeft !== null && l.daysLeft >= 0 && l.state !== 'Expired' && l.state !== 'Revoked' && l.daysLeft <= Number(f.slice(4)))
 const delta = (n: number, b: number) => (b > 0 ? Math.round(((n - b) / b) * 1000) / 10 : undefined)
 
 export default function LicensesView({ o, logs, pk, customers, products, write }: Props) {
@@ -32,6 +36,8 @@ export default function LicensesView({ o, logs, pk, customers, products, write }
   const [q, setQ] = useState('')
   const [product, setProduct] = useState('All')
   const [type, setType] = useState('All')
+  const [expiry, setExpiry] = useState('All')
+  const [sel, setSel] = useState<Set<string>>(new Set())
   const [per, setPer] = useState(10)
   const [page, setPage] = useState(1)
   const [gen, setGen] = useState(false)
@@ -44,12 +50,16 @@ export default function LicensesView({ o, logs, pk, customers, products, write }
 
   const shown = useMemo(() => o.licenses.filter((l) =>
     (tab === 'all' || (tab === 'active' && l.state === 'Active') || (tab === 'pending' && l.state === 'Pending') || (tab === 'expired' && l.state === 'Expired') || (tab === 'revoked' && l.state === 'Revoked') || (tab === 'expiring' && (l.state === 'Active' || l.state === 'Pending') && l.daysLeft !== null && l.daysLeft >= 0 && l.daysLeft <= 30))
-    && (product === 'All' || l.productId === product) && (type === 'All' || l.type === type) && `${l.key} ${l.product} ${l.customer} ${l.email}`.toLowerCase().includes(q.trim().toLowerCase())), [o.licenses, tab, product, type, q])
+    && (product === 'All' || l.productId === product) && (type === 'All' || l.type === type) && inExpiry(l, expiry) && `${l.key} ${l.product} ${l.customer} ${l.email}`.toLowerCase().includes(q.trim().toLowerCase())), [o.licenses, tab, product, type, expiry, q])
   const pages = Math.max(1, Math.ceil(shown.length / per))
   const cur = Math.min(page, pages)
   const reset = <T,>(set: (v: T) => void) => (v: T) => { set(v); setPage(1) }
-  const clear = () => { setQ(''); setProduct('All'); setType('All'); setPage(1) }
-  const exportCsv = () => downloadCsv('licenses', [c('key', 'License key'), c('product', 'Product'), c('customer', 'Customer'), c('email', 'Email'), c('type', 'Type'), c('act', 'Activations'), c('state', 'Status'), c('created', 'Created'), c('expires', 'Expires')], shown.map((l) => ({ id: l.id, key: l.key, product: l.product, customer: l.customer, email: l.email, type: l.type, act: `${l.used}/${l.max}`, state: l.state, created: l.created, expires: l.expires ?? 'Lifetime' })))
+  const clear = () => { setQ(''); setProduct('All'); setType('All'); setExpiry('All'); setPage(1) }
+  const visible = shown.slice((cur - 1) * per, cur * per)
+  const toggle = (id: string) => setSel((x) => { const n = new Set(x); if (!n.delete(id)) n.add(id); return n })
+  const toggleAll = () => setSel((x) => (visible.every((l) => x.has(l.id)) ? new Set([...x].filter((i) => !visible.some((l) => l.id === i))) : new Set([...x, ...visible.map((l) => l.id)])))
+  const exportRows = (list: License[]) => downloadCsv('licenses', [c('key', 'License key'), c('product', 'Product'), c('customer', 'Customer'), c('email', 'Email'), c('type', 'Type'), c('act', 'Activations'), c('state', 'Status'), c('created', 'Created'), c('expires', 'Expires')], list.map((l) => ({ id: l.id, key: l.key, product: l.product, customer: l.customer, email: l.email, type: l.type, act: `${l.used}/${l.max}`, state: l.state, created: l.created, expires: l.expires ?? 'Lifetime' })))
+  const exportCsv = () => exportRows(shown)
 
   return (
     <>
@@ -72,16 +82,19 @@ export default function LicensesView({ o, logs, pk, customers, products, write }
             <label className="relative min-w-[200px] flex-1"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" /><input value={q} onChange={(e) => reset(setQ)(e.target.value)} placeholder="Search by license key, product or customer…" className={`${field} w-full pl-9`} /></label>
             <select value={product} onChange={(e) => reset(setProduct)(e.target.value)} aria-label="Product" className={field}><option value="All">Product: All</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
             <select value={type} onChange={(e) => reset(setType)(e.target.value)} aria-label="License type" className={field}><option value="All">License type: All</option>{LICENSE_TYPES.map((t) => <option key={t}>{t}</option>)}</select>
+            <select value={expiry} onChange={(e) => reset(setExpiry)(e.target.value)} aria-label="Expiry" className={field}>{Object.entries(EXPIRY).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
             <button type="button" onClick={clear} className="text-[13px] font-semibold text-gold hover:underline">Clear Filters</button>
           </div>
         )}
-        {isList ? <LicenseTable rows={shown.slice((cur - 1) * per, cur * per)} total={shown.length} page={cur} pages={pages} per={per} onPage={setPage} onPer={(n) => { setPer(n); setPage(1) }} onView={setView} />
+        {isList && write && sel.size > 0 && <BulkLicenseBar ids={[...sel]} onDone={() => setSel(new Set())} onExport={() => exportRows(o.licenses.filter((l) => sel.has(l.id)))} />}
+        {isList ? <LicenseTable rows={visible} selected={sel} onToggle={write ? toggle : undefined} onToggleAll={toggleAll} total={shown.length} page={cur} pages={pages} per={per} onPage={setPage} onPer={(n) => { setPer(n); setPage(1) }} onView={setView} />
           : tab === 'activations' ? <ActivationsTable rows={logs.activations} /> : <HistoryTable rows={logs.history} />}
       </Card>
       <div className="mt-4 grid grid-cols-1 gap-4 min-[1181px]:grid-cols-5">
         <div className="min-[1181px]:col-span-3"><ActivityCard dayLabels={o.dayLabels} activations={o.activations} created={o.created} /></div>
-        <div className="min-[1181px]:col-span-2"><ExpiryCard expiring7={s.expiring7} expiring30={s.expiring30} expired={s.expired} lifetime={s.lifetime} live={s.active} /></div>
+        <div className="min-[1181px]:col-span-2"><ExpiryCard expiring7={s.expiring7} expiring30={s.expiring30} expired={s.expired} lifetime={s.lifetime} live={s.active} renewed={o.renewed30} /></div>
       </div>
+      <RemindersCard rows={o.reminders} write={write} />
       <div className="mt-4 grid grid-cols-1 gap-4 min-[1181px]:grid-cols-5">
         <PackagesCard rows={pk.packages} write={write} onAdd={() => setPkg('new')} onEdit={setPkg} onDelete={(p) => { if (window.confirm(`Delete the package “${p.name}”? Its download history is removed too.`)) start(async () => { await deletePackage(p.id) }) }} />
         <DownloadActivity rows={pk.downloads} />

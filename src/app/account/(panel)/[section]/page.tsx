@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { OrderRequestForm, ReviewForm } from '@/components/account/ActionForms'
 import DownloadsPanel from '@/components/account/DownloadsPanel'
+import LicenseNotice from '@/components/account/LicenseNotice'
 import ProfileEditor from '@/components/account/ProfileEditor'
 import { profileGroups } from '@/lib/account/profile-fields'
 import ProductGrid from '@/components/account/ProductGrid'
@@ -42,6 +43,7 @@ export default async function Page({ params }: Params) {
   const tabs = real ? config.tabs.filter((t) => t.key in real).map((t) => ({ ...t, rows: real[t.key] as typeof t.rows })) : config.tabs
   return (
     <>
+      {s.slug === 'licenses' && <LicenseNotice userId={c.userId} />}
       {s.slug === 'support' && <TicketForm />}
       {s.slug === 'orders' && <OrderRequestForm options={await requestable(c.userId)} />}
       {s.slug === 'my-products' && <ReviewsOpen userId={c.userId} />}

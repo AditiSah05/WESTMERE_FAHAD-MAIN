@@ -22,7 +22,7 @@ export function ActivityCard({ dayLabels, activations, created }: Props) {
   )
 }
 
-export function ExpiryCard({ expiring7, expiring30, expired, lifetime, live }: { expiring7: number; expiring30: number; expired: number; lifetime: number; live: number }) {
+export function ExpiryCard({ expiring7, expiring30, expired, lifetime, live, renewed }: { expiring7: number; expiring30: number; expired: number; lifetime: number; live: number; renewed: number }) {
   const later = Math.max(0, live - expiring30 - lifetime)
   const parts = [{ label: 'Within 7 days', value: expiring7, color: '#ef4444' }, { label: '8 to 30 days', value: Math.max(0, expiring30 - expiring7), color: '#c4943d' }, { label: 'Later', value: later, color: '#10b981' }, { label: 'Lifetime', value: lifetime, color: '#2563eb' }].filter((p) => p.value > 0)
   return (
@@ -31,7 +31,7 @@ export function ExpiryCard({ expiring7, expiring30, expired, lifetime, live }: {
       <p className="mb-3 text-[13px] font-medium text-muted">Active licenses by time left.</p>
       {!parts.length ? <p className="text-sm font-medium text-muted">No active licenses yet.</p> : <Donut parts={parts} center={String(expiring30)} />}
       <ul className="mt-3 flex flex-col gap-1.5 text-sm font-medium text-navy-deep">
-        <li className="flex justify-between"><span>Expiring in 7 days</span><b>{expiring7}</b></li><li className="flex justify-between"><span>Expiring in 30 days</span><b>{expiring30}</b></li><li className="flex justify-between"><span>Already expired</span><b>{expired}</b></li>
+        <li className="flex justify-between"><span>Expiring in 7 days</span><b>{expiring7}</b></li><li className="flex justify-between"><span>Expiring in 30 days</span><b>{expiring30}</b></li><li className="flex justify-between"><span>Already expired</span><b>{expired}</b></li><li className="flex justify-between"><span>Renewed (last 30 days)</span><b>{renewed}</b></li>
       </ul>
     </Card>
   )

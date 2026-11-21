@@ -98,3 +98,51 @@ export async function getLicenseDetail(id: string) {
   const { licenseDetail } = await import('@/lib/server/licenses')
   return licenseDetail(String(id).slice(0, 20))
 }
+
+type Q = Awaited<ReturnType<typeof db>>['query']
+const OPS = ['revoke', 'restore', 'renew', 'extend30'] as const
+export type BulkOp = (typeof OPS)[number]
+
+async function extendBy(query: Q, id: string, days: number, label: 'Renewed' | 'Expiry extended') {
+  const [l] = await query<{ key: string }>(`UPDATE shop_licenses SET expires_at = GREATEST(expires_at, now()) + $1 * interval '1 day' WHERE id::text = $2 AND expires_at IS NOT NULL RETURNING license_key AS key`, [days, id])
+  if (l) await event(query, id, label, `+${days} days`)
+  return !!l
+}
+
+/** One term more (default one year) from the later of today and the current expiry. Lifetime licenses have nothing to renew. */
+export async function renewLicense(id: string, days = 365) {
+  const me = await assertModule('licenses', 'write')
+  if (!Number.isInteger(days) || days < 1 || days > 3650) throw new Error('Invalid')
+  const { query } = await db()
+  if (await extendBy(query, String(id).slice(0, 20), days, 'Renewed')) await audit(me.userId, 'license_renewed', `#${id} +${days}d`)
+  refresh()
+}
+
+/** Same action on many licenses. Returns how many changed so the page can say what happened. */
+export async function bulkLicenses(ids: string[], op: BulkOp): Promise<{ done: number; skipped: number }> {
+  const me = await assertModule('licenses', 'write')
+  if (!(OPS as readonly string[]).includes(op)) throw new Error('Invalid')
+  const list = Array.from(new Set(ids.filter((i) => typeof i === 'string' && /^\d{1,12}$/.test(i)))).slice(0, 200)
+  const { query } = await db()
+  let done = 0
+  for (const id of list) {
+    if (op === 'revoke' || op === 'restore') {
+      const r = await query(`UPDATE shop_licenses SET revoked = $1 WHERE id::text = $2 AND revoked <> $1 RETURNING id`, [op === 'revoke', id])
+      if (r.length) { await event(query, id, op === 'revoke' ? 'Revoked' : 'Restored', 'Bulk action'); done++ }
+    } else if (await extendBy(query, id, op === 'renew' ? 365 : 30, op === 'renew' ? 'Renewed' : 'Expiry extended')) done++
+  }
+  await audit(me.userId, `license_bulk_${op}`, `${done} of ${list.length}`)
+  refresh()
+  return { done, skipped: list.length - done }
+}
+
+/** The team records that they contacted the customer. Nothing is sent from here. */
+export async function markReminderSent(id: string, stage: string) {
+  const me = await assertModule('licenses', 'write')
+  if (!['30-day', '7-day', '1-day'].includes(stage)) throw new Error('Invalid')
+  const { query } = await db()
+  if (!(await query(`SELECT 1 FROM shop_licenses WHERE id::text = $1`, [String(id).slice(0, 20)])).length) return
+  await event(query, id, `Reminder ${stage}`, 'Marked as sent by the team')
+  await audit(me.userId, 'license_reminder', `#${id} ${stage}`)
+  refresh()
+}

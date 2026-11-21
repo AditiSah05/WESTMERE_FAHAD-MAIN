@@ -2,7 +2,7 @@
 
 import { Check, Copy } from 'lucide-react'
 import { useEffect, useState, useTransition } from 'react'
-import { extendLicense, generateLicense, getLicenseDetail, setLicenseRevoked } from '@/app/admin/license-actions'
+import { extendLicense, generateLicense, getLicenseDetail, renewLicense, setLicenseRevoked } from '@/app/admin/license-actions'
 import { LICENSE_TYPES } from '@/lib/license-shared'
 import type { License } from '@/lib/server/licenses'
 import { btn } from '../ui/PageHeader'
@@ -46,7 +46,7 @@ export function LicenseDetail({ l, write, onDone }: { l: License; write: boolean
       {write && (
         <div className="flex flex-wrap gap-2">
           <button type="button" disabled={pending} onClick={() => start(async () => { await setLicenseRevoked(l.id, l.state !== 'Revoked'); onDone() })} className={l.state === 'Revoked' ? btn.ghost : btn.danger}>{l.state === 'Revoked' ? 'Restore license' : 'Revoke license'}</button>
-          {l.expires && <><button type="button" disabled={pending} onClick={() => start(async () => { await extendLicense(l.id, 30); onDone() })} className={btn.ghost}>Extend 30 days</button><button type="button" disabled={pending} onClick={() => start(async () => { await extendLicense(l.id, 365); onDone() })} className={btn.ghost}>Extend 1 year</button></>}
+          {l.expires && <><button type="button" disabled={pending} onClick={() => start(async () => { await renewLicense(l.id, 365); onDone() })} className={btn.gold}>Renew for 1 year</button><button type="button" disabled={pending} onClick={() => start(async () => { await extendLicense(l.id, 30); onDone() })} className={btn.ghost}>Extend 30 days</button></>}
         </div>
       )}
       <div><h3 className="mb-1 text-sm font-semibold text-navy-deep">Activated devices</h3>{!d ? <p className="text-sm text-muted">Loading…</p> : !d.activations.length ? <p className="text-sm font-medium text-muted">Not activated yet.</p> : <ul className="text-sm font-medium text-navy-deep">{d.activations.map((a) => <li key={a.at + a.device} className="flex justify-between border-b border-line/60 py-1.5"><span>{a.device}</span><span className="text-muted">{a.at}</span></li>)}</ul>}</div>

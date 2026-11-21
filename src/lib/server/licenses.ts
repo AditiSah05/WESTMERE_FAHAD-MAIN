@@ -1,5 +1,6 @@
 import 'server-only'
-import type { LicenseState } from '@/lib/license-shared'
+import { randomBytes } from 'node:crypto'
+import { makeKey, type LicenseState } from '@/lib/license-shared'
 import { db } from './schema'
 
 export type License = { id: string; key: string; productId: string; product: string; customer: string; email: string; type: string; max: number; used: number; state: LicenseState; created: string; expires: string | null; daysLeft: number | null; orderId: string | null }
@@ -30,6 +31,8 @@ export async function licenseOverview() {
   const made = new Map((await query<{ d: string; n: number }>(`SELECT to_char(created_at, 'YYYY-MM-DD') AS d, count(*)::int AS n FROM shop_licenses WHERE created_at > now() - interval '30 days' GROUP BY 1`)).map((r) => [r.d, r.n]))
   return {
     licenses: all,
+    renewed30: await renewedThisPeriod(),
+    reminders: await remindersDue(all),
     stats: {
       total: all.length, active: live.length, activated: live.filter((l) => l.used > 0).length, pending: all.filter((l) => l.state === 'Pending').length,
       expiring30: soon(30).length, expiring7: soon(7).length, expired: all.filter((l) => l.state === 'Expired').length, revoked: all.filter((l) => l.state === 'Revoked').length,
@@ -90,3 +93,34 @@ export async function customerDownloads(userId: string) {
 }
 
 export const customerLicenses = (userId: string) => listLicenses('WHERE l.user_id = $1', [userId])
+
+/** Issue the license for a paid, delivered order when its product has "license on delivery" turned on. Safe to call twice. */
+export async function issueLicenseForOrder(orderId: number): Promise<string | null> {
+  const { query } = await db()
+  const [o] = await query<{ user_id: string; product_id: string; payment_status: string; fulfilment: string; on: boolean; type: string; max: number; days: number }>(
+    `SELECT o.user_id, o.product_id, o.payment_status, o.fulfilment, p.license_on_delivery AS on, p.license_type AS type, p.license_max AS max, p.license_days AS days FROM shop_orders o JOIN shop_products p ON p.id = o.product_id WHERE o.id = $1`, [orderId])
+  if (!o || !o.on || o.fulfilment !== 'Delivered' || (o.payment_status !== 'Paid' && o.payment_status !== 'Partially Refunded')) return null
+  if ((await query(`SELECT 1 FROM shop_licenses WHERE order_id = $1`, [orderId])).length) return null
+  const key = makeKey(randomBytes(12))
+  const [row] = await query<{ id: string }>(`INSERT INTO shop_licenses (license_key, product_id, user_id, order_id, license_type, max_activations, expires_at) VALUES ($1,$2,$3,$4,$5,$6, CASE WHEN $7::int > 0 THEN now() + $7::int * interval '1 day' ELSE NULL END) RETURNING id::text`, [key, o.product_id, o.user_id, orderId, o.type, o.max, o.days])
+  await query(`INSERT INTO shop_license_events (license_id, event, note) VALUES ($1, 'Created', $2)`, [row.id, `Issued automatically when order #WM-${orderId} was delivered`])
+  return key
+}
+
+export const REMINDER_STAGES = ['30-day', '7-day', '1-day'] as const
+export type ReminderStage = (typeof REMINDER_STAGES)[number]
+export type Reminder = { license: License; stage: ReminderStage; sent: boolean }
+const stageFor = (days: number): ReminderStage => (days <= 1 ? '1-day' : days <= 7 ? '7-day' : '30-day')
+
+/** Licenses that need a renewal reminder now. Nothing is sent from here; "sent" is what the team recorded. */
+export async function remindersDue(all: License[]): Promise<Reminder[]> {
+  const due = all.filter((l) => (l.state === 'Active' || l.state === 'Pending') && l.daysLeft !== null && l.daysLeft >= 0 && l.daysLeft <= 30)
+  if (!due.length) return []
+  const marks = await (await db()).query<{ license_id: string; event: string }>(`SELECT license_id::text, event FROM shop_license_events WHERE event LIKE 'Reminder %' AND license_id::text = ANY($1::text[])`, [due.map((l) => l.id)])
+  return due.sort((a, b) => (a.daysLeft ?? 0) - (b.daysLeft ?? 0)).map((l) => { const stage = stageFor(l.daysLeft ?? 30); return { license: l, stage, sent: marks.some((m) => m.license_id === l.id && m.event === `Reminder ${stage}`) } })
+}
+
+export async function renewedThisPeriod() {
+  const [r] = await (await db()).query<{ n: number }>(`SELECT count(DISTINCT license_id)::int AS n FROM shop_license_events WHERE event = 'Renewed' AND created_at > now() - interval '30 days'`)
+  return r.n
+}

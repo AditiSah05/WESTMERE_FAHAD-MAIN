@@ -226,6 +226,10 @@ const statements = [
     ip text NOT NULL DEFAULT '',
     created_at timestamptz NOT NULL DEFAULT now()
   )`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_on_delivery boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_type text NOT NULL DEFAULT 'Single Device'`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_max integer NOT NULL DEFAULT 1`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_days integer NOT NULL DEFAULT 365`,
 ]
 
 const globalForSchema = globalThis as unknown as { __wmSchema?: Promise<void> }
