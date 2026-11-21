@@ -272,6 +272,12 @@ const statements = [
   `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS admin_note text NOT NULL DEFAULT ''`,
   `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS refund_ref text NOT NULL DEFAULT ''`,
   `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now()`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS cust_id text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS last_login_at timestamptz`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS email_verified boolean NOT NULL DEFAULT true`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS subscription_tier text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS internal_notes text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS tags text NOT NULL DEFAULT ''`,
   `CREATE TABLE IF NOT EXISTS shop_request_events (
     id bigserial PRIMARY KEY,
     request_id bigint NOT NULL REFERENCES shop_requests(id) ON DELETE CASCADE,

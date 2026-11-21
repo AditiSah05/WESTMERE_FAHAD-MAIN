@@ -22,6 +22,7 @@ const screens: Record<string, { title: string; subtitle: string; cols: Col[] }> 
 export default async function Page({ params }: { params: Promise<{ kind: string }> }) {
   const { kind } = await params
   if (kind === 'orders') redirect('/admin/orders')
+  if (kind === 'customers') redirect('/admin/shop/customers')
   const screen = screens[kind]
   const module = shopModule[kind]
   if (!screen || !module) notFound()
