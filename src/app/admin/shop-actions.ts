@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { LICENSE_TYPES } from '@/lib/license-shared'
 import { assertModule } from '@/lib/server/auth'
+import { categoryExists, categoryNames } from '@/lib/server/categories'
 import { issueLicenseForOrder } from '@/lib/server/licenses'
 import { db } from '@/lib/server/schema'
 import { audit } from '@/lib/server/session'
@@ -58,7 +59,6 @@ export async function setReviewStatus(form: FormData) {
   done()
 }
 
-const CATEGORIES = ['Websites', 'Applications', 'Software & Tools', 'Custom development']
 const KINDS = ['website', 'software', 'service']
 const PRICING = ['One-time', 'Subscription', 'Custom pricing']
 
@@ -71,7 +71,7 @@ export async function saveProduct(form: FormData) {
   const licenseOn = form.get('licenseOn') === 'on', licenseType = s(form, 'licenseType'), licenseMax = Number(s(form, 'licenseMax', 3)), licenseDays = Number(s(form, 'licenseDays', 4))
   if (licenseOn && (!(LICENSE_TYPES as readonly string[]).includes(licenseType) || !Number.isInteger(licenseMax) || licenseMax < 1 || licenseMax > 500 || !Number.isInteger(licenseDays) || licenseDays < 0 || licenseDays > 3650)) throw new Error('Invalid license settings')
   if (image && !/^https:\/\/\S+$/.test(image)) throw new Error('Image must be an https link')
-  if (!name || !CATEGORIES.includes(category) || !KINDS.includes(kind) || !PRICING.includes(pricing) || !Number.isInteger(price) || price < 0 || price > 1_000_000) throw new Error('Invalid')
+  if (!name || !(await categoryExists(category)) || !KINDS.includes(kind) || !PRICING.includes(pricing) || !Number.isInteger(price) || price < 0 || price > 1_000_000) throw new Error('Invalid')
   const { query } = await db()
   const id = s(form, 'id', 60)
   if (id) {
@@ -123,12 +123,13 @@ export async function importProducts(rows: ImportRow[]): Promise<{ added: number
   const { query } = await db()
   const errors: string[] = []
   let added = 0
+  const names = await categoryNames()
   for (const [i, r] of rows.slice(0, 200).entries()) {
     const name = String(r.name ?? '').trim().slice(0, 80), price = Number(String(r.price ?? '').replace(/[₹,\s]/g, ''))
-    const category = CATEGORIES.find((c) => c.toLowerCase() === String(r.category ?? '').trim().toLowerCase())
+    const category = names.find((c) => c.toLowerCase() === String(r.category ?? '').trim().toLowerCase())
     const kind = TYPE_TO_KIND[String(r.type ?? '').trim().toLowerCase()] ?? 'website'
     const pricing = PRICING.find((p) => p.toLowerCase() === String(r.pricing ?? '').trim().toLowerCase()) ?? 'One-time'
-    if (!name || !category || !Number.isInteger(price) || price < 0 || price > 1_000_000) { errors.push(`Row ${i + 2}: needs a name, one of ${CATEGORIES.join(' / ')} and a whole-number price`); continue }
+    if (!name || !category || !Number.isInteger(price) || price < 0 || price > 1_000_000) { errors.push(`Row ${i + 2}: needs a name, one of ${names.join(' / ')} and a whole-number price`); continue }
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'product'
     const hidden = String(r.status ?? '').trim().toLowerCase() === 'hidden'
     await query(`INSERT INTO shop_products (id, name, category, kind, price, active, description, tech, listed, pricing) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,$9)`, [`${slug}-${Date.now().toString(36)}${i}`, name, category, kind, price, !hidden, String(r.description ?? '').slice(0, 300), String(r.tech ?? '').slice(0, 80), pricing])
