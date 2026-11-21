@@ -2,9 +2,10 @@
 
 import { useTransition } from 'react'
 import { saveProduct } from '@/app/admin/shop-actions'
+import { LICENSE_TYPES } from '@/lib/license-shared'
 import { btn } from '../ui/PageHeader'
 
-export type Product = { id: string; name: string; category: string; kind: string; price: number; tag: string; description: string; tech: string; image: string; pricing: string; featured: boolean; added: string; on_page: string; status: string; sold: number; revenue: number }
+export type Product = { id: string; name: string; category: string; kind: string; price: number; tag: string; description: string; tech: string; image: string; pricing: string; featured: boolean; licenseOn: boolean; licenseType: string; licenseMax: number; licenseDays: number; added: string; on_page: string; status: string; sold: number; revenue: number }
 
 export const PRICING = ['One-time', 'Subscription', 'Custom pricing']
 const KINDS = [['website', 'Ready-made website'], ['software', 'Software / app'], ['service', 'Custom project']]
@@ -29,6 +30,16 @@ export default function ProductForm({ p, categories, onDone }: { p?: Product; ca
       <label className={lab}>Description<textarea name="description" maxLength={300} rows={3} defaultValue={p?.description} placeholder="Short description shown on the Products page" className={input} /></label>
       <label className={lab}>Tech<input name="tech" maxLength={80} defaultValue={p?.tech} placeholder="React, Node" className={input} /></label>
       <label className={lab}>Cover image link<input name="image" type="url" maxLength={400} defaultValue={p?.image} placeholder="https://… (optional)" className={input} /></label>
+      <fieldset className="flex flex-col gap-3 rounded-lg border border-line p-3">
+        <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]">License</legend>
+        <label className="flex items-center gap-2 text-sm font-semibold text-navy-deep"><input type="checkbox" name="licenseOn" defaultChecked={p?.licenseOn} className="size-4" />Issue a license automatically when an order is delivered</label>
+        <div className="grid grid-cols-3 gap-3">
+          <label className={lab}>Type<select name="licenseType" defaultValue={p?.licenseType ?? 'Single Device'} className={input}>{LICENSE_TYPES.map((t) => <option key={t}>{t}</option>)}</select></label>
+          <label className={lab}>Activations<input name="licenseMax" type="number" min={1} max={500} defaultValue={p?.licenseMax ?? 1} className={input} /></label>
+          <label className={lab}>Term (days)<input name="licenseDays" type="number" min={0} max={3650} defaultValue={p?.licenseDays ?? 365} className={input} /></label>
+        </div>
+        <p className="text-xs font-medium text-muted">Term 0 means lifetime. Only applies to paid, delivered orders and only once per order.</p>
+      </fieldset>
       <label className="flex items-center gap-2 text-sm font-semibold text-navy-deep"><input type="checkbox" name="featured" defaultChecked={p?.featured} className="size-4" />Featured (shown first, with a Featured badge)</label>
       <label className="flex items-center gap-2 text-sm font-semibold text-navy-deep"><input type="checkbox" name="listed" defaultChecked={p ? p.on_page === 'Shown' : true} className="size-4" />Show on the public Products page</label>
       <button type="submit" disabled={pending} className={`${btn.gold} justify-center disabled:opacity-70`}>{pending ? 'Saving…' : p ? 'Save changes' : 'Add product'}</button>

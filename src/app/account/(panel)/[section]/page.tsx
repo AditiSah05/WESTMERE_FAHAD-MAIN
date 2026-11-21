@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { OrderRequestForm, ReviewForm } from '@/components/account/ActionForms'
+import DownloadsPanel from '@/components/account/DownloadsPanel'
+import LicenseNotice from '@/components/account/LicenseNotice'
 import ProfileEditor from '@/components/account/ProfileEditor'
 import { profileGroups } from '@/lib/account/profile-fields'
 import ProductGrid from '@/components/account/ProductGrid'
@@ -8,6 +10,7 @@ import TicketForm from '@/components/account/TicketForm'
 import ModuleView from '@/components/admin/ModuleView'
 import { bySlug, sections } from '@/lib/account/sections'
 import { requireCustomer } from '@/lib/server/customer'
+import { customerDownloads } from '@/lib/server/licenses'
 import { loadSection, products, wishlistIds } from '@/lib/server/shop'
 import { loadMore, profile, requestRows, requestable, reviewable } from '@/lib/server/shop-more'
 
@@ -30,6 +33,7 @@ export default async function Page({ params }: Params) {
   if (!s?.slug) notFound()
   const c = await requireCustomer()
   if (s.details) return <ProfileEditor slug={s.slug} {...profileGroups[s.slug]} values={await profile(c.userId)} />
+  if (s.slug === 'downloads') return <DownloadsPanel d={await customerDownloads(c.userId)} />
   if (s.slug === 'products') return <ProductGrid items={await products()} saved={await wishlistIds(c.userId)} />
 
   // Sections with a loader show this customer's own rows; the rest still show demo data.
@@ -39,6 +43,7 @@ export default async function Page({ params }: Params) {
   const tabs = real ? config.tabs.filter((t) => t.key in real).map((t) => ({ ...t, rows: real[t.key] as typeof t.rows })) : config.tabs
   return (
     <>
+      {s.slug === 'licenses' && <LicenseNotice userId={c.userId} />}
       {s.slug === 'support' && <TicketForm />}
       {s.slug === 'orders' && <OrderRequestForm options={await requestable(c.userId)} />}
       {s.slug === 'my-products' && <ReviewsOpen userId={c.userId} />}
