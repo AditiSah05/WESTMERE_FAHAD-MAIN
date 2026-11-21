@@ -11,7 +11,7 @@ export default function RecentOrders({ items }: { items: Dash['recent'] }) {
     <Card className="p-5">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-[-0.02em] text-navy-deep">Recent Orders</h2>
-        <Link href="/admin/shop/orders" className="text-[13px] font-semibold text-gold hover:underline">View All Orders →</Link>
+        <Link href="/admin/orders" className="text-[13px] font-semibold text-gold hover:underline">View All Orders →</Link>
       </div>
       {!items.length ? <p className="text-sm font-medium text-muted">Orders will show up here.</p> : (
         <div className="overflow-x-auto">

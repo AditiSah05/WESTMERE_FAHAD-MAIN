@@ -20,7 +20,6 @@ export const navGroups: NavGroup[] = [
     title: 'Sales',
     items: [
       { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-      { href: '/admin/shop/orders', label: 'Customer orders', icon: ShoppingCart },
       { href: '/admin/shop/requests', label: 'Refund requests', icon: RefreshCcw },
       { href: '/admin/shop/customers', label: 'Shop customers', icon: Users },
       { href: '/admin/customers', label: 'Customers / CRM', icon: Users },

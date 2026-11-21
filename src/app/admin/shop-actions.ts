@@ -15,19 +15,6 @@ const REVIEW = ['Pending', 'Published', 'Rejected']
 const s = (f: FormData, k: string, max = 60) => { const v = f.get(k); return typeof v === 'string' ? v.slice(0, max) : '' }
 const done = () => revalidatePath('/admin/shop', 'layout')
 
-export async function setOrderStatus(form: FormData) {
-  const me = await assertModule('orders', 'write')
-  const id = Number(s(form, 'id', 12)), payment = s(form, 'payment'), fulfilment = s(form, 'fulfilment')
-  if (!Number.isInteger(id) || !PAYMENT.includes(payment) || !FULFILMENT.includes(fulfilment)) throw new Error('Invalid')
-  // Protected access is granted only after a verified payment.
-  if (fulfilment === 'Delivered' && payment !== 'Paid' && payment !== 'Partially Refunded') throw new Error('Cannot deliver an unpaid order')
-  await (await db()).query(`UPDATE shop_orders SET payment_status = $1, fulfilment = $2 WHERE id = $3`, [payment, fulfilment, id])
-  await audit(me.userId, 'order_status', `#WM-${id}: ${payment} / ${fulfilment}`)
-  const license = await issueLicenseForOrder(id)
-  if (license) await audit(me.userId, 'license_auto_created', `${license} for order #WM-${id}`)
-  done()
-}
-
 /** Approving only updates our records; moving the money back is done in the payment gateway. */
 export async function decideRequest(form: FormData) {
   const me = await assertModule('orders', 'write')

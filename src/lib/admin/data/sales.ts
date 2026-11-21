@@ -13,38 +13,6 @@ const orderRows = [
   { orderId: '#WM-1042', customer: 'Dev Patel', product: 'E-commerce Storefront Kit', amount: 2000, paymentStatus: 'Paid', fulfilment: 'Ready for Delivery', method: 'UPI', date: '2026-10-16' },
   { orderId: '#WM-1041', customer: 'Isha Verma', product: 'SEO Dashboard App', amount: 1999, paymentStatus: 'Paid', fulfilment: 'Delivered', method: 'UPI', date: '2026-10-15' },
 ]
-const cols = [c('orderId', 'Order', 'mono'), c('customer', 'Customer'), c('product', 'Product'), c('amount', 'Amount', 'money', 'right'), c('paymentStatus', 'Payment', 'status'), c('fulfilment', 'Fulfilment', 'status'), c('date', 'Date', 'date')]
-const fields = [
-  f('orderId', 'Order ID', 'text', { readOnly: true }), f('customer', 'Customer'), f('product', 'Product'), f('amount', 'Amount (₹)', 'number'),
-  select('paymentStatus', 'Payment status', ['Pending', 'Paid', 'Failed', 'Partially Refunded', 'Refunded']),
-  select('fulfilment', 'Fulfilment status', ['Awaiting Payment', 'Processing', 'Ready for Delivery', 'Delivered', 'On Hold', 'Cancelled']), f('method', 'Payment method'),
-]
-const view = (key: string, label: string, k: string, value: string): TabConfig =>
-  tab({ key, label, source: 'all', columns: cols, rows: orderRows, fields, filter: { key: k, value } })
-
-export const orders: ModuleConfig = {
-  title: 'Orders',
-  subtitle: 'Payment and delivery are tracked separately. Failed payments are kept, never deleted.',
-  tabs: [
-    tab({ key: 'all', label: 'All orders', source: 'all', columns: cols, rows: orderRows, fields }),
-    view('pending', 'Pending', 'paymentStatus', 'Pending'), view('paid', 'Paid', 'paymentStatus', 'Paid'),
-    view('processing', 'Processing', 'fulfilment', 'Processing'), view('delivered', 'Delivered', 'fulfilment', 'Delivered'),
-    view('cancelled', 'Cancelled', 'fulfilment', 'Cancelled'), view('refunded', 'Refunded', 'paymentStatus', 'Refunded'),
-    view('failed', 'Failed payments', 'paymentStatus', 'Failed'),
-    tab({
-      key: 'tracking', label: 'Delivery tracking',
-      columns: [c('orderId', 'Order', 'mono'), c('item', 'Delivery'), c('stage', 'Stage', 'status'), c('updated', 'Updated', 'date'), c('note', 'Note')],
-      fields: [f('orderId', 'Order'), f('item', 'Delivery'), select('stage', 'Stage', ['Processing', 'Ready for Delivery', 'Delivered', 'On Hold']), f('note', 'Note', 'textarea')],
-      rows: [
-        { orderId: '#WM-1049', item: 'Licence + download link', stage: 'Delivered', updated: '2026-10-22', note: 'Emailed to customer' },
-        { orderId: '#WM-1048', item: 'Source code ZIP', stage: 'Processing', updated: '2026-10-22', note: 'Preparing build' },
-        { orderId: '#WM-1043', item: 'Source code ZIP', stage: 'Ready for Delivery', updated: '2026-10-17', note: 'Awaiting customer domain' },
-        { orderId: '#WM-1045', item: 'Custom project kickoff', stage: 'On Hold', updated: '2026-10-19', note: 'Scope change requested' },
-      ],
-    }),
-  ],
-}
-
 const customerRows = [
   { name: 'Aarav Mehta', email: 'aarav@example.com', phone: '+91 98765 43210', segment: 'VIP', orders: 7, spent: 9890, status: 'Active', joined: '2025-11-02' },
   { name: 'Zoya Khan', email: 'zoya@example.com', phone: '+91 98220 11002', segment: 'New', orders: 1, spent: 1999, status: 'Active', joined: '2026-10-22' },

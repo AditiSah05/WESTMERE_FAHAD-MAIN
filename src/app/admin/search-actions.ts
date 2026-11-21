@@ -27,7 +27,7 @@ export async function searchAdmin(raw: string): Promise<Hit[]> {
     const id = /^#?(?:wm-)?(\d{1,9})$/i.exec(q)?.[1]
     const rows = await query<{ id: string; email: string; product: string; amount: number }>(
       `SELECT o.id::text AS id, u.email, p.name AS product, o.amount FROM shop_orders o JOIN shop_users u ON u.id = o.user_id JOIN shop_products p ON p.id = o.product_id WHERE ($2::bigint IS NOT NULL AND o.id = $2::bigint) OR u.email ILIKE $1 OR p.name ILIKE $1 ORDER BY o.id DESC LIMIT 5`, [like, id ?? null])
-    for (const r of rows) out.push({ group: 'Orders', title: `#WM-${r.id}`, detail: `${r.product} · ${r.email} · ₹${r.amount.toLocaleString('en-IN')}`, href: '/admin/shop/orders' })
+    for (const r of rows) out.push({ group: 'Orders', title: `#WM-${r.id}`, detail: `${r.product} · ${r.email} · ₹${r.amount.toLocaleString('en-IN')}`, href: `/admin/orders?q=WM-${r.id}` })
   }
   return out
 }

@@ -62,8 +62,8 @@ export async function dashboardData() {
     [num(open.urgent), 'high-priority ticket|high-priority tickets', '/admin/shop/tickets'],
     [num(open.tickets) - num(open.urgent), 'open ticket|open tickets', '/admin/shop/tickets'],
     [num(open.reviews), 'review waiting for approval|reviews waiting for approval', '/admin/shop/reviews'],
-    [num(open.to_deliver), 'paid order to deliver|paid orders to deliver', '/admin/shop/orders'],
-    [num(open.on_hold), 'order on hold|orders on hold', '/admin/shop/orders'],
+    [num(open.to_deliver), 'paid order to deliver|paid orders to deliver', '/admin/orders'],
+    [num(open.on_hold), 'order on hold|orders on hold', '/admin/orders'],
   ].filter(([n]) => (n as number) > 0).map(([n, label, href]) => ({ text: `${n} ${(label as string).split('|')[n === 1 ? 0 : 1]}`, href: href as string }))
 
   return {
