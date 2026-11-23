@@ -4,6 +4,7 @@ import { Lock } from 'lucide-react'
 import { useActionState } from 'react'
 import { login } from '@/app/admin/actions'
 import Logo from '@/components/ui/Logo'
+import PasswordInput from '@/components/ui/PasswordInput'
 
 const input = 'w-full rounded-[10px] border border-line bg-[#fafbfe] px-3.5 py-3 text-[15px] font-medium text-navy-deep outline-none transition placeholder:font-normal placeholder:text-[#a0aec0] focus:border-blue-accent focus:bg-white focus:shadow-[0_0_0_4px_rgba(74,123,247,0.08)]'
 
@@ -24,7 +25,7 @@ export default function LoginForm() {
             </label>
             <label className="flex flex-col gap-1.5">
               <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]">Password</span>
-              <input name="password" type="password" required autoComplete="current-password" maxLength={256} className={input} />
+              <PasswordInput name="password" required autoComplete="current-password" maxLength={256} className={input} />
             </label>
             {state?.error && <p role="alert" className="rounded-lg bg-[#ef4444]/10 px-3 py-2.5 text-sm font-medium text-[#b91c1c]">{state.error}</p>}
             <button type="submit" disabled={pending} className="rounded-lg bg-gold px-4 py-3 text-[15px] font-medium text-white shadow-[0_0_0_1px_#a87a2b,inset_0_1.4px_1px_rgba(255,255,255,0.25)] hover:bg-[#b3862f] disabled:opacity-70">
