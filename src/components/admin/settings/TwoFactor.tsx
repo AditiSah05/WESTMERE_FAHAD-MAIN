@@ -6,6 +6,7 @@ import { beginTotpSetup, confirmTotpSetup, disableTotp, regenerateRecoveryCodes,
 import { cn } from '@/lib/cn'
 import Card from '../ui/Card'
 import { btn } from '../ui/PageHeader'
+import PasswordInput from '@/components/ui/PasswordInput'
 
 const input = 'w-full rounded-[10px] border border-line bg-[#fafbfe] px-3.5 py-2.5 text-sm font-medium text-navy-deep outline-none focus:border-blue-accent focus:bg-white'
 const label = 'text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]'
@@ -23,7 +24,7 @@ function Reauth({ title, action, cta }: { title: string; action: (p: MfaState, f
   return (
     <form action={run} className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
       <h3 className="text-sm font-medium text-navy-deep">{title}</h3>
-      <label className="flex flex-col gap-1.5"><span className={label}>Password</span><input name="password" type="password" required autoComplete="current-password" className={input} /></label>
+      <label className="flex flex-col gap-1.5"><span className={label}>Password</span><PasswordInput name="password" required autoComplete="current-password" className={input} /></label>
       <label className="flex flex-col gap-1.5"><span className={label}>Authenticator code</span><input name="code" required inputMode="numeric" autoComplete="one-time-code" maxLength={8} className={input} /></label>
       <Msg s={state} />
       <button type="submit" disabled={pending} className={cn(btn.gold, 'justify-center disabled:opacity-70')}>{pending ? 'Working…' : cta}</button>

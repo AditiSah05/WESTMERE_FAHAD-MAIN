@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useActionState } from 'react'
 import { customerLogin, customerSignup } from '@/app/account/actions'
 import Logo from '@/components/ui/Logo'
+import PasswordInput from '@/components/ui/PasswordInput'
 
 const input = 'w-full rounded-[10px] border border-line bg-[#fafbfe] px-3.5 py-3 text-[15px] font-medium text-navy-deep outline-none transition focus:border-blue-accent focus:bg-white focus:shadow-[0_0_0_4px_rgba(74,123,247,0.08)]'
 const labelCls = 'text-[11px] font-bold uppercase tracking-[0.1em] text-[#718096]'
@@ -34,7 +35,7 @@ export default function AuthForm({ mode, google, notice, next }: Props) {
             {next && <input type="hidden" name="next" value={next} />}
             {signup && <label className="flex flex-col gap-1.5"><span className={labelCls}>Name</span><input name="name" required autoComplete="name" maxLength={80} className={input} /></label>}
             <label className="flex flex-col gap-1.5"><span className={labelCls}>Email</span><input name="email" type="email" required autoComplete="username" maxLength={254} className={input} /></label>
-            <label className="flex flex-col gap-1.5"><span className={labelCls}>Password</span><input name="password" type="password" required autoComplete={signup ? 'new-password' : 'current-password'} maxLength={256} className={input} /></label>
+            <label className="flex flex-col gap-1.5"><span className={labelCls}>Password</span><PasswordInput name="password" required autoComplete={signup ? 'new-password' : 'current-password'} maxLength={256} className={input} /></label>
             {signup && <label className="flex flex-col gap-1.5"><span className={labelCls}>Mobile number</span><input name="phone" type="tel" required autoComplete="tel" placeholder="+91 98765 43210" maxLength={20} className={input} /></label>}
             {(state?.error ?? notice) && <p role="alert" className="rounded-lg bg-[#ef4444]/10 px-3 py-2.5 text-sm font-medium text-[#b91c1c]">{state?.error ?? notice}</p>}
             <button type="submit" disabled={pending} className="rounded-lg bg-gold px-4 py-3 text-[15px] font-medium text-white shadow-[0_0_0_1px_#a87a2b,inset_0_1.4px_1px_rgba(255,255,255,0.25)] hover:bg-[#b3862f] disabled:opacity-70">{pending ? 'Please wait…' : signup ? 'Create account' : 'Sign in'}</button>

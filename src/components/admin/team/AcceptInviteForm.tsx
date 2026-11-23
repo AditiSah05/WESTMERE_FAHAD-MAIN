@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { acceptInvite } from '@/app/admin/team-actions'
 import Logo from '@/components/ui/Logo'
+import PasswordInput from '@/components/ui/PasswordInput'
 
 const input = 'w-full rounded-[10px] border border-line bg-[#fafbfe] px-3.5 py-3 text-[15px] font-medium text-navy-deep outline-none focus:border-blue-accent focus:bg-white'
 
@@ -24,8 +25,8 @@ export default function AcceptInviteForm({ token, email }: { token: string; emai
               <h1 className="text-[24px] font-medium tracking-[-0.03em] text-navy-deep">Join the Westmere admin</h1>
               <p className="-mt-2 text-[15px] font-medium text-muted">Creating an account for {email}.</p>
               <input name="name" required maxLength={80} placeholder="Your name" autoComplete="name" className={input} />
-              <input name="password" type="password" required minLength={12} maxLength={128} placeholder="Password (12+ characters)" autoComplete="new-password" className={input} />
-              <input name="confirm" type="password" required maxLength={128} placeholder="Confirm password" autoComplete="new-password" className={input} />
+              <PasswordInput name="password" required minLength={12} maxLength={128} placeholder="Password (12+ characters)" autoComplete="new-password" className={input} />
+              <PasswordInput name="confirm" required maxLength={128} placeholder="Confirm password" autoComplete="new-password" className={input} />
               {state?.error && <p role="alert" className="rounded-lg bg-[#ef4444]/10 px-3 py-2.5 text-sm font-medium text-[#b91c1c]">{state.error}</p>}
               <button type="submit" disabled={pending} className="rounded-lg bg-gold px-4 py-3 text-[15px] font-medium text-white hover:bg-[#b3862f] disabled:opacity-70">{pending ? 'Creating…' : 'Create account'}</button>
             </form>
