@@ -6,14 +6,14 @@ const Brand = ({ children }: { children: ReactNode }) => (
   <div className="flex items-center justify-center gap-1 opacity-75 min-[810px]:gap-1.5">{children}</div>
 )
 
-/** "Trusted by" row: dashed rules around the label, six logos in a 3x2 grid. */
+/** "Trusted by" row: dashed rules around the label, six logos in one row. */
 export default function BrandLogos() {
   return (
-    <div className="flex w-full flex-col items-center gap-[clamp(28px,4.5vh,44px)]">
-      <p className="flex w-full items-center gap-2 whitespace-nowrap text-xs font-semibold uppercase leading-none tracking-[0.15em] text-slate before:flex-1 before:border-t before:border-dashed before:border-[#cbd5e1] after:flex-1 after:border-t after:border-dashed after:border-[#cbd5e1]">
+    <div className="flex w-full flex-col items-center gap-[clamp(18px,2.8vh,26px)]">
+      <p className="text-center text-[11px] font-semibold uppercase leading-none tracking-[0.25em] text-[#8591a5] min-[810px]:text-xs">
         TRUSTED BY FORWARD-THINKING BRANDS
       </p>
-      <div className="grid grid-cols-3 items-center justify-items-center gap-x-2 gap-y-[22px] min-[810px]:grid-cols-[repeat(3,170px)] min-[810px]:gap-x-0 min-[810px]:gap-y-[clamp(20px,3.5vh,32px)]">
+      <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-5 min-[810px]:flex-nowrap">
         <Brand><span className="text-[15px] font-bold tracking-[-0.5px] text-[#635bff] min-[810px]:text-xl">stripe</span></Brand>
         <Brand>
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="16" height="16" rx="3" stroke="#2D2D2D" strokeWidth="1.5" /><text x="5" y="13.5" fontFamily="Inter, sans-serif" fontSize="11" fontWeight="700" fill="#2D2D2D">N</text></svg>
