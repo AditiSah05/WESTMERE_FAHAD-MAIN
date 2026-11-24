@@ -1,0 +1,69 @@
+'use server'
+
+import { isModule, type ModuleKey } from '@/lib/admin/permissions'
+import { assertModule } from '@/lib/server/auth'
+import { db } from '@/lib/server/schema'
+import { audit } from '@/lib/server/session'
+import { clearRows, replaceRows, selectRows, tableFor } from '@/lib/server/tables'
+import type { Row } from '@/lib/admin/types'
+
+const KEY = /^[a-z0-9-]{1,40}:[a-z0-9-]{1,40}$/
+const MAX_ROWS = 500
+const MAX_BYTES = 500_000
+
+function validKey(key: unknown): key is string {
+  return typeof key === 'string' && KEY.test(key)
+}
+
+/** The screen a storage key belongs to ("orders:all" -> orders); unknown screens are rejected. */
+function moduleOf(key: unknown): ModuleKey {
+  if (!validKey(key)) throw new Error('Invalid key')
+  const m = key.split(':')[0]
+  if (!isModule(m)) throw new Error('Invalid key')
+  return m
+}
+
+function sanitize(rows: unknown): Row[] {
+  if (!Array.isArray(rows) || rows.length > MAX_ROWS) throw new Error('Invalid rows')
+  const seen = new Set<string>()
+  const out = rows.map((r) => {
+    if (!r || typeof r !== 'object' || Array.isArray(r)) throw new Error('Invalid row')
+    const entries = Object.entries(r as Record<string, unknown>)
+    const clean: Record<string, string | number | boolean> = {}
+    for (const [k, v] of entries) {
+      if (k.length > 60) throw new Error('Invalid field')
+      if (typeof v === 'string') clean[k] = v.slice(0, 5000)
+      else if (typeof v === 'number' && Number.isFinite(v)) clean[k] = v
+      else if (typeof v === 'boolean') clean[k] = v
+    }
+    const id = clean.id
+    if (typeof id !== 'string' || !id || id.length > 64 || seen.has(id)) throw new Error('Invalid id')
+    seen.add(id)
+    return clean as Row
+  })
+  if (JSON.stringify(out).length > MAX_BYTES) throw new Error('Too large')
+  return out
+}
+
+/** Stored rows for a screen, or null when nothing was saved yet (caller shows its seed data). */
+export async function loadRecords(key: string): Promise<Row[] | null> {
+  await assertModule(moduleOf(key), 'read')
+  const rows = await selectRows(await tableFor(key))
+  return rows.length ? rows : null
+}
+
+/** Replaces all rows of a screen atomically, in that screen's own table. */
+export async function writeRecords(key: string, rows: Row[]): Promise<void> {
+  const admin = await assertModule(moduleOf(key), 'write')
+  const clean = sanitize(rows)
+  const table = await tableFor(key)
+  const { tx } = await db()
+  await tx((q) => replaceRows(q, table, clean))
+  await audit(admin.userId, 'records_saved', `${key} (${clean.length})`)
+}
+
+export async function resetRecords(key: string): Promise<void> {
+  const admin = await assertModule(moduleOf(key), 'write')
+  await clearRows(await tableFor(key))
+  await audit(admin.userId, 'records_reset', key)
+}

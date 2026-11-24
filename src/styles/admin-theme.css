@@ -1,0 +1,60 @@
+/*
+ * Admin dark mode. Everything here is scoped to [data-admin-theme="dark"], which only the admin panel sets,
+ * so the public site and the customer area are never touched. Unlayered rules win over Tailwind's layered
+ * utilities, so no !important is needed. Brand colours (gold, blue, status greens/reds) are kept.
+ *
+ *   page #0b1426 · surface #111d35 · raised #16243f · line #243454
+ *   text #e6ecf8 · secondary #a9b6cf · muted #8d9bb6
+ */
+html:has([data-admin-theme='dark']) { background: #0b1426; color-scheme: dark; }
+
+/* the root element carries the page colour itself */
+[data-admin-theme='dark'] { color-scheme: dark; color: #a9b6cf; background-color: #0b1426; }
+
+/* surfaces */
+[data-admin-theme='dark'] .bg-paper { background-color: #0b1426; }
+[data-admin-theme='dark'] .bg-white,
+[data-admin-theme='dark'] [class*='bg-white/'] { background-color: #111d35; }
+[data-admin-theme='dark'] .bg-mist,
+[data-admin-theme='dark'] .bg-sky,
+[data-admin-theme='dark'] .bg-\[\#fafbfe\],
+[data-admin-theme='dark'] [class*='hover:bg-paper']:hover { background-color: #16243f; }
+[data-admin-theme='dark'] .bg-line,
+[data-admin-theme='dark'] .bg-\[\#cbd5e1\] { background-color: #243454; }
+[data-admin-theme='dark'] .bg-navy-deep { background-color: #2a4170; }
+[data-admin-theme='dark'] .bg-navy-deep\/30 { background-color: rgb(3 8 20 / 0.6); }
+
+/* lines */
+[data-admin-theme='dark'] [class*='border-line'] { border-color: #243454; }
+[data-admin-theme='dark'] .divide-line > :not(:last-child) { border-color: #243454; }
+
+/* text */
+[data-admin-theme='dark'] .text-navy-deep,
+[data-admin-theme='dark'] .text-ink,
+[data-admin-theme='dark'] [class*='hover:text-navy-deep']:hover { color: #e6ecf8; }
+[data-admin-theme='dark'] .text-navy { color: #d6e0f4; }
+[data-admin-theme='dark'] .text-slate,
+[data-admin-theme='dark'] .text-\[\#4a5568\],
+[data-admin-theme='dark'] .text-\[\#475569\] { color: #a9b6cf; }
+[data-admin-theme='dark'] .text-muted,
+[data-admin-theme='dark'] .text-\[\#718096\],
+[data-admin-theme='dark'] .text-\[\#94a3b8\] { color: #8d9bb6; }
+[data-admin-theme='dark'] .text-\[\#a0aec0\],
+[data-admin-theme='dark'] .text-\[\#cbd5e1\] { color: #6b7c9c; }
+[data-admin-theme='dark'] .text-\[\#b91c1c\] { color: #fca5a5; }
+[data-admin-theme='dark'] .text-\[\#047857\] { color: #6ee7b7; }
+[data-admin-theme='dark'] .text-\[\#8a6420\] { color: #e3b866; }
+[data-admin-theme='dark'] input::placeholder,
+[data-admin-theme='dark'] textarea::placeholder { color: #6b7c9c; }
+
+/* charts (SVG presentation attributes are overridden by these rules) */
+[data-admin-theme='dark'] svg [stroke='#e2e8f0'] { stroke: #243454; }
+[data-admin-theme='dark'] svg [stroke='#eef2f9'] { stroke: #1d2c4a; }
+[data-admin-theme='dark'] svg text[fill='#718096'] { fill: #8d9bb6; }
+[data-admin-theme='dark'] svg text[fill='#0f1b33'] { fill: #e6ecf8; }
+[data-admin-theme='dark'] svg circle[fill='#fff'] { fill: #111d35; }
+
+/* logo: the wordmark and its three-bar E are near-black, so lighten them; round the white mark tile */
+[data-admin-theme='dark'] a[aria-label='Westmere home'] span { color: #e6ecf8; }
+[data-admin-theme='dark'] a[aria-label='Westmere home'] .bg-\[\#0a1128\] { background-color: #e6ecf8; }
+[data-admin-theme='dark'] a[aria-label='Westmere home'] img { border-radius: 6px; }

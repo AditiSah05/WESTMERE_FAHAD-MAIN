@@ -1,0 +1,303 @@
+import 'server-only'
+import { getDb } from './db'
+
+// Order matters: tables first, then idempotent column additions for databases created by earlier versions.
+const statements = [
+  `CREATE TABLE IF NOT EXISTS admin_users (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    email text NOT NULL UNIQUE,
+    password_hash text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    password_changed_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS name text NOT NULL DEFAULT ''`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'owner'`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'active'`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS totp_secret text`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS totp_enabled boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS totp_last_step bigint NOT NULL DEFAULT 0`,
+  `CREATE TABLE IF NOT EXISTS admin_sessions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE,
+    token_hash text NOT NULL UNIQUE,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    last_seen_at timestamptz NOT NULL DEFAULT now(),
+    expires_at timestamptz NOT NULL,
+    ip text,
+    user_agent text
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_users (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    email text NOT NULL UNIQUE,
+    name text NOT NULL DEFAULT '',
+    password_hash text NOT NULL,
+    status text NOT NULL DEFAULT 'active',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_sessions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    token_hash text NOT NULL UNIQUE,
+    last_seen_at timestamptz NOT NULL DEFAULT now(),
+    expires_at timestamptz NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_products (
+    id text PRIMARY KEY,
+    name text NOT NULL,
+    category text NOT NULL,
+    kind text NOT NULL,
+    price integer NOT NULL,
+    rating text NOT NULL DEFAULT '',
+    tag text NOT NULL DEFAULT ''
+  )`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS description text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS tech text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS image text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS listed boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS pricing text NOT NULL DEFAULT 'One-time'`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS featured boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now()`,
+  `CREATE TABLE IF NOT EXISTS shop_categories (
+    id text PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    description text NOT NULL DEFAULT '',
+    parent text REFERENCES shop_categories(id),
+    active boolean NOT NULL DEFAULT true,
+    featured boolean NOT NULL DEFAULT false,
+    sort_order integer NOT NULL DEFAULT 0,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS seo_title text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS seo_description text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_categories ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now()`,
+  `CREATE TABLE IF NOT EXISTS shop_collections (
+    id text PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    description text NOT NULL DEFAULT '',
+    active boolean NOT NULL DEFAULT true,
+    featured boolean NOT NULL DEFAULT false,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_collection_products (
+    collection_id text NOT NULL REFERENCES shop_collections(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id) ON DELETE CASCADE,
+    position integer NOT NULL DEFAULT 0,
+    PRIMARY KEY (collection_id, product_id)
+  )`,
+  `INSERT INTO shop_categories (id, name, description, sort_order) VALUES
+    ('websites', 'Websites', 'Ready-made website templates and designs.', 1),
+    ('applications', 'Applications', 'Business applications and dashboards.', 2),
+    ('software-tools', 'Software & Tools', 'Software, extensions and productivity tools.', 3),
+    ('custom-development', 'Custom development', 'Custom website and software projects.', 4)
+    ON CONFLICT DO NOTHING`,
+  `CREATE TABLE IF NOT EXISTS shop_orders (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    amount integer NOT NULL,
+    payment_status text NOT NULL,
+    fulfilment text NOT NULL,
+    method text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_wishlist (
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    PRIMARY KEY (user_id, product_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_tickets (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    subject text NOT NULL,
+    type text NOT NULL,
+    priority text NOT NULL,
+    message text NOT NULL,
+    status text NOT NULL DEFAULT 'Open',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_profiles (
+    user_id uuid PRIMARY KEY REFERENCES shop_users(id) ON DELETE CASCADE,
+    phone text NOT NULL DEFAULT '',
+    company text NOT NULL DEFAULT '',
+    address text NOT NULL DEFAULT '',
+    country text NOT NULL DEFAULT 'India',
+    state text NOT NULL DEFAULT '',
+    postal text NOT NULL DEFAULT '',
+    gstin text NOT NULL DEFAULT '',
+    notify_email boolean NOT NULL DEFAULT true,
+    marketing boolean NOT NULL DEFAULT false
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_requests (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    order_id bigint NOT NULL REFERENCES shop_orders(id),
+    kind text NOT NULL,
+    reason text NOT NULL,
+    status text NOT NULL DEFAULT 'Requested',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_reviews (
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    rating integer NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    feedback text NOT NULL DEFAULT '',
+    status text NOT NULL DEFAULT 'Pending',
+    PRIMARY KEY (user_id, product_id)
+  )`,
+  `CREATE TABLE IF NOT EXISTS login_attempts (
+    id bigserial PRIMARY KEY,
+    email text NOT NULL,
+    ip text NOT NULL,
+    success boolean NOT NULL,
+    at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS login_attempts_email_at ON login_attempts (email, at)`,
+  `CREATE INDEX IF NOT EXISTS login_attempts_ip_at ON login_attempts (ip, at)`,
+  `CREATE TABLE IF NOT EXISTS admin_invites (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    email text NOT NULL,
+    role text NOT NULL,
+    token_hash text NOT NULL UNIQUE,
+    created_by uuid REFERENCES admin_users(id) ON DELETE SET NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    expires_at timestamptz NOT NULL,
+    used_at timestamptz
+  )`,
+  `CREATE TABLE IF NOT EXISTS admin_recovery_codes (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE,
+    code_hash text NOT NULL,
+    used_at timestamptz
+  )`,
+  `CREATE TABLE IF NOT EXISTS admin_challenges (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL REFERENCES admin_users(id) ON DELETE CASCADE,
+    token_hash text NOT NULL UNIQUE,
+    expires_at timestamptz NOT NULL,
+    attempts int NOT NULL DEFAULT 0
+  )`,
+  `CREATE TABLE IF NOT EXISTS admin_audit (
+    id bigserial PRIMARY KEY,
+    user_id uuid,
+    action text NOT NULL,
+    detail text,
+    ip text,
+    at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS admin_audit_at ON admin_audit (at DESC)`,
+  `CREATE TABLE IF NOT EXISTS site_ratings (
+    id bigserial PRIMARY KEY,
+    score smallint NOT NULL CHECK (score BETWEEN 1 AND 5),
+    ip_hash text,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE INDEX IF NOT EXISTS site_ratings_created ON site_ratings (created_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS site_media (
+    slot text PRIMARY KEY,
+    mime text NOT NULL,
+    data bytea NOT NULL,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS site_content (
+    key text PRIMARY KEY,
+    value jsonb NOT NULL,
+    updated_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_licenses (
+    id bigserial PRIMARY KEY,
+    license_key text NOT NULL UNIQUE,
+    product_id text NOT NULL REFERENCES shop_products(id),
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    order_id bigint REFERENCES shop_orders(id),
+    license_type text NOT NULL DEFAULT 'Single Device',
+    max_activations integer NOT NULL DEFAULT 1,
+    revoked boolean NOT NULL DEFAULT false,
+    expires_at timestamptz,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_license_activations (
+    id bigserial PRIMARY KEY,
+    license_id bigint NOT NULL REFERENCES shop_licenses(id) ON DELETE CASCADE,
+    device text NOT NULL,
+    ip text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (license_id, device)
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_license_events (
+    id bigserial PRIMARY KEY,
+    license_id bigint NOT NULL REFERENCES shop_licenses(id) ON DELETE CASCADE,
+    event text NOT NULL,
+    note text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_packages (
+    id bigserial PRIMARY KEY,
+    product_id text NOT NULL REFERENCES shop_products(id) ON DELETE CASCADE,
+    name text NOT NULL,
+    format text NOT NULL DEFAULT 'ZIP',
+    file_url text NOT NULL,
+    size text NOT NULL DEFAULT '',
+    availability text NOT NULL DEFAULT 'After purchase',
+    published boolean NOT NULL DEFAULT true,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_package_versions (
+    id bigserial PRIMARY KEY,
+    package_id bigint NOT NULL REFERENCES shop_packages(id) ON DELETE CASCADE,
+    version text NOT NULL,
+    notes text NOT NULL DEFAULT '',
+    release_date date NOT NULL DEFAULT current_date,
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `CREATE TABLE IF NOT EXISTS shop_downloads (
+    id bigserial PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES shop_users(id) ON DELETE CASCADE,
+    package_id bigint NOT NULL REFERENCES shop_packages(id) ON DELETE CASCADE,
+    version text NOT NULL DEFAULT '',
+    status text NOT NULL,
+    ip text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_on_delivery boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_type text NOT NULL DEFAULT 'Single Device'`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_max integer NOT NULL DEFAULT 1`,
+  `ALTER TABLE shop_products ADD COLUMN IF NOT EXISTS license_days integer NOT NULL DEFAULT 365`,
+  `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS manual boolean NOT NULL DEFAULT false`,
+  `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS note text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_orders ADD COLUMN IF NOT EXISTS payment_ref text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS reason_type text NOT NULL DEFAULT 'Other'`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS refund_amount integer`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS admin_note text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS refund_ref text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_requests ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now()`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS cust_id text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS last_login_at timestamptz`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS email_verified boolean NOT NULL DEFAULT true`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS subscription_tier text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS internal_notes text NOT NULL DEFAULT ''`,
+  `ALTER TABLE shop_users ADD COLUMN IF NOT EXISTS tags text NOT NULL DEFAULT ''`,
+  `CREATE TABLE IF NOT EXISTS shop_request_events (
+    id bigserial PRIMARY KEY,
+    request_id bigint NOT NULL REFERENCES shop_requests(id) ON DELETE CASCADE,
+    event text NOT NULL,
+    note text NOT NULL DEFAULT '',
+    created_at timestamptz NOT NULL DEFAULT now()
+  )`,
+]
+
+const globalForSchema = globalThis as unknown as { __wmSchema?: Promise<void> }
+
+/** Idempotent; runs once per server process before the first query. Entity tables are added by `entities.ts`. */
+export function ensureSchema() {
+  return (globalForSchema.__wmSchema ??= (async () => {
+    const { query } = await getDb()
+    for (const s of statements) await query(s)
+  })())
+}
+
+export async function db() {
+  await ensureSchema()
+  return getDb()
+}

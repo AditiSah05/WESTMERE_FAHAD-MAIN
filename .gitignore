@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.next
+tsconfig.tsbuildinfo
+.data/
+
+# Vercel project link
+.vercel
+.env*
