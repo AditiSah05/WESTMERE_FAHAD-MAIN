@@ -21,7 +21,10 @@ const rings: Record<'left' | 'right', Ring[]> = {
 }
 const CENTER = { left: -4, right: 104 }
 
-/** Decorative arcs on both sides with the tech tiles floating on them. Hidden on small screens. */
+// One full turn takes 120s (180s for the dashed rings). Class names are written out so Tailwind can see them.
+const still = 'motion-reduce:animate-none'
+
+/** Decorative rings on both sides with the tech tiles riding around them. Hidden on small screens. */
 export default function HeroCircles() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] hidden overflow-hidden min-[810px]:block">
@@ -29,20 +32,31 @@ export default function HeroCircles() {
         rings[side].map((ring) => (
           <div
             key={`${side}${ring.r}`}
-            className="absolute top-1/2 aspect-square -translate-y-1/2 rounded-full"
+            // The dashed ring slowly spins, so its dashes visibly travel; left clockwise, right the other way.
+            className={`absolute top-1/2 aspect-square -translate-y-1/2 rounded-full ${ring.dashed ? `animate-[heroOrbit_180s_linear_infinite] ${side === 'right' ? '[animation-direction:reverse]' : ''} ${still}` : ''}`}
             style={{ width: `${ring.r * 2}vw`, left: `${CENTER[side] - ring.r}vw`, border: `${ring.dashed ? 1.5 : 1}px ${ring.dashed ? 'dashed' : 'solid'} ${ring.border}`, background: ring.fill }}
           />
         )),
       )}
-      {heroIcons.map((t) => (
-        <div
-          key={t.name}
-          className={`absolute flex size-[49px] items-center justify-center rounded-xl border border-white/70 bg-white shadow-soft motion-reduce:animate-none ${t.x > 15 && t.x < 85 ? 'max-[1099px]:hidden' : ''}`}
-          style={{ left: `${t.x}%`, top: `${t.y}%`, transform: 'translate(-50%, -50%)', animation: `heroFloat ${t.dur}s ease-in-out ${t.delay}s infinite alternate` }}
-        >
-          {t.node}
-        </div>
-      ))}
+      {(['left', 'right'] as const).map((side) => {
+        const dir = side === 'right' ? '[animation-direction:reverse]' : ''
+        return (
+          <div key={side} className={`absolute top-1/2 size-0 animate-[heroOrbit_120s_linear_infinite] ${dir} ${still}`} style={{ left: `${CENTER[side]}vw` }}>
+            {heroIcons.filter((t) => t.side === side).map((t) => (
+              <div key={t.name} className="absolute left-0 top-0 size-0" style={{ transform: `rotate(${t.a}deg)` }}>
+                <div className={`absolute top-0 size-0 ${t.inner ? 'max-[1099px]:hidden' : ''}`} style={{ left: `${t.r}vw` }}>
+                  {/* Two counter-rotations keep each tile upright while its ring turns. */}
+                  <div style={{ transform: `rotate(${-t.a}deg)` }}>
+                    <div className={`-ml-[24.5px] -mt-[24.5px] flex size-[49px] animate-[heroCounter_120s_linear_infinite] items-center justify-center rounded-xl border border-white/70 bg-white shadow-soft ${dir} ${still}`}>
+                      {t.node}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      })}
     </div>
   )
 }
