@@ -1,5 +1,5 @@
 export const siteConfig = {
-  url: 'https://westmere.agency',
+  url: 'https://westmere.io',
   title: 'Westmere | Growth & Creative Agency - Design, Tech & Strategy',
   description:
     'Westmere is a premium growth & creative agency building high-performance websites, bespoke mobile apps, and design systems that scale your business revenue.',
