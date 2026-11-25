@@ -56,4 +56,4 @@
 
 @keyframes svcMarquee { to { transform: translateX(-50%); } }
 
-@keyframes heroFloat { from { transform: translate(-50%, -50%); } to { transform: translate(-50%, calc(-50% - 10px)); } }
+
