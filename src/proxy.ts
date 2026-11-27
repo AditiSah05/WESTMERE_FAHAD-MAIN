@@ -34,6 +34,8 @@ export function proxy(request: NextRequest) {
     ? pathname === '/account/login' || pathname === '/account/signup' || pathname.startsWith('/account/google')
     : pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
   if (!open && !hasCookie) {
+    // With a secret sign-in path, never reveal it: signed-out visitors to /admin get a plain 404.
+    if (area === 'admin' && adminLoginSlug) return NextResponse.rewrite(new URL('/__not-found', request.url), { status: 404 })
     const login = new URL(area === 'admin' ? ADMIN_LOGIN : '/account/login', request.url)
     // Buying from the website: come back to checkout after sign-in (the login page validates this value).
     if (pathname === '/account/checkout') login.searchParams.set('next', pathname + request.nextUrl.search)
@@ -68,5 +70,5 @@ export function proxy(request: NextRequest) {
 }
 
 // The secret sign-in path comes from an env var and matchers must be constants, so run on every page route
-// (static files and API routes excluded) and return early for anything that is not admin or account.
-export const config = { matcher: ['/((?!_next/|api/|media/|.*\\..*).*)'] }
+// (static files and API routes excluded; admin and account always listed so dotted paths still pass through) and return early for anything that is not admin or account.
+export const config = { matcher: ['/admin/:path*', '/account/:path*', '/((?!_next/|api/|media/|.*\\..*).*)'] }
