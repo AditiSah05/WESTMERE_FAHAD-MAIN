@@ -21,13 +21,24 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: siteConfig.title, description: siteConfig.description },
 }
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Organization', '@id': `${siteConfig.url}/#organization`, name: 'Westmere', url: siteConfig.url, logo: `${siteConfig.url}/icon.png`, description: siteConfig.description },
+    { '@type': 'WebSite', '@id': `${siteConfig.url}/#website`, url: siteConfig.url, name: 'Westmere', publisher: { '@id': `${siteConfig.url}/#organization` } },
+  ],
+}
+
 export const viewport: Viewport = { themeColor: '#f8f9fc' }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const fonts = [geist, inter, playfair, caveat].map((f) => f.variable).join(' ')
   return (
     <html lang="en" className={fonts}>
-      <body>{children}</body>
+      <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {children}
+      </body>
     </html>
   )
 }
