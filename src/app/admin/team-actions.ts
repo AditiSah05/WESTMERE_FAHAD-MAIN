@@ -4,6 +4,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { ADMIN_LOGIN } from '@/lib/admin/loginPath'
 import { isRole, type Role } from '@/lib/admin/permissions'
 import { assertModule } from '@/lib/server/auth'
 import { hashPassword, passwordProblem } from '@/lib/server/password'
@@ -124,5 +125,5 @@ export async function acceptInvite(token: string, _p: TeamState, form: FormData)
   })
   if (result) return result
   await audit(null, 'invite_accepted')
-  redirect('/admin/login')
+  redirect(ADMIN_LOGIN)
 }

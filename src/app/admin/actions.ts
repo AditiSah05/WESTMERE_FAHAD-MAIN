@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { assertAdmin } from '@/lib/server/auth'
 import { fakeVerify, hashPassword, passwordProblem, verifyPassword } from '@/lib/server/password'
 import { db } from '@/lib/server/schema'
+import { ADMIN_LOGIN } from '@/lib/admin/loginPath'
 import { startChallenge } from '@/lib/server/mfa'
 import { audit, clientInfo, createSession, destroySession, revokeOtherSessions } from '@/lib/server/session'
 import { isLocked, recordAttempt } from '@/lib/server/throttle'
@@ -33,7 +34,7 @@ export async function login(_prev: FormState, form: FormData): Promise<FormState
 
   if (user.totp_enabled) {
     await startChallenge(user.id)
-    redirect('/admin/login/verify')
+    redirect(`${ADMIN_LOGIN}/verify`)
   }
   await createSession(user.id)
   await audit(user.id, 'login')
@@ -44,7 +45,7 @@ export async function logout() {
   const admin = await assertAdmin().catch(() => null)
   await destroySession()
   if (admin) await audit(admin.userId, 'logout')
-  redirect('/admin/login')
+  redirect(ADMIN_LOGIN)
 }
 
 export async function changePassword(_prev: FormState, form: FormData): Promise<FormState> {

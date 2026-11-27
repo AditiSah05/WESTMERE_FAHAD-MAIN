@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   keywords: siteConfig.keywords,
   robots: { index: true, follow: true },
   alternates: { canonical: '/' },
-  icons: { icon: '/favicon.svg' },
   openGraph: {
     type: 'website',
     url: '/',
