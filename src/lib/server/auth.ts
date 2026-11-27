@@ -2,12 +2,13 @@ import 'server-only'
 import { redirect } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import { can, type Access, type ModuleKey } from '@/lib/admin/permissions'
+import { ADMIN_LOGIN } from '@/lib/admin/loginPath'
 import { getAdmin, type Admin } from './session'
 
 /** For pages/layouts: send anonymous visitors to the login screen. */
 export async function requireAdmin(): Promise<Admin> {
   const admin = await getAdmin()
-  if (!admin) redirect('/admin/login')
+  if (!admin) redirect(ADMIN_LOGIN)
   return admin
 }
 

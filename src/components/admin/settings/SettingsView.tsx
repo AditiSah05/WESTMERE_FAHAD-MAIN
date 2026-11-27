@@ -20,7 +20,7 @@ function Section({ keyName }: { keyName: string }) {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    loadRecords(storage).then((r) => r?.[0] && setValue(r[0])).catch(() => (window.location.href = '/admin/login'))
+    loadRecords(storage).then((r) => r?.[0] && setValue(r[0])).catch(() => (window.location.href = '/admin'))
   }, [storage])
 
   const save = async () => {
@@ -29,7 +29,7 @@ function Section({ keyName }: { keyName: string }) {
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {
-      window.location.href = '/admin/login'
+      window.location.href = '/admin'
     }
   }
 

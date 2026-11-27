@@ -3,7 +3,7 @@ import { loadRecords, resetRecords, writeRecords } from '@/app/admin/records'
 import type { Row } from './types'
 
 const toLogin = () => {
-  window.location.href = '/admin/login'
+  window.location.href = '/admin'
 }
 
 /**

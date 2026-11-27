@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { ADMIN_LOGIN, adminLoginSlug } from '@/lib/admin/loginPath'
 
 const ADMIN = ['__Host-wm_admin', 'wm_admin']
 const CUSTOMER = ['__Host-wm_customer', 'wm_customer']
@@ -10,14 +11,30 @@ const CUSTOMER = ['__Host-wm_customer', 'wm_customer']
  *  - per-request CSP nonce, no-store caching and clickjacking protection for admin pages
  */
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const area = pathname.startsWith('/account') ? 'account' : 'admin'
+  let { pathname } = request.nextUrl
+  let rewriteTo: string | null = null
+
+  if (adminLoginSlug) {
+    const secret = `/${adminLoginSlug}`
+    if (pathname === secret || pathname.startsWith(`${secret}/`)) {
+      // The secret sign-in address serves the normal login screens.
+      pathname = `/admin/login${pathname.slice(secret.length)}`
+      rewriteTo = pathname + request.nextUrl.search
+    } else if (pathname === '/admin/login' || pathname.startsWith('/admin/login/')) {
+      // The default address is switched off: answer as if the page does not exist.
+      return NextResponse.rewrite(new URL('/__not-found', request.url), { status: 404 })
+    }
+  }
+
+  const area = pathname.startsWith('/account') ? 'account' : pathname.startsWith('/admin') ? 'admin' : null
+  if (!area) return NextResponse.next()
+
   const hasCookie = (area === 'account' ? CUSTOMER : ADMIN).some((c) => request.cookies.has(c))
   const open = area === 'account'
     ? pathname === '/account/login' || pathname === '/account/signup' || pathname.startsWith('/account/google')
     : pathname === '/admin/login' || pathname.startsWith('/admin/login/') || pathname.startsWith('/admin/invite/')
   if (!open && !hasCookie) {
-    const login = new URL(`/${area}/login`, request.url)
+    const login = new URL(area === 'admin' ? ADMIN_LOGIN : '/account/login', request.url)
     // Buying from the website: come back to checkout after sign-in (the login page validates this value).
     if (pathname === '/account/checkout') login.searchParams.set('next', pathname + request.nextUrl.search)
     return NextResponse.redirect(login)
@@ -42,11 +59,14 @@ export function proxy(request: NextRequest) {
   const headers = new Headers(request.headers)
   headers.set('x-nonce', nonce)
   headers.set('Content-Security-Policy', csp)
-  const response = NextResponse.next({ request: { headers } })
+  const init = { request: { headers } }
+  const response = rewriteTo ? NextResponse.rewrite(new URL(rewriteTo, request.url), init) : NextResponse.next(init)
   response.headers.set('Content-Security-Policy', csp)
   response.headers.set('Cache-Control', 'no-store')
   response.headers.set('X-Frame-Options', 'DENY')
   return response
 }
 
-export const config = { matcher: ['/admin/:path*', '/account/:path*'] }
+// The secret sign-in path comes from an env var and matchers must be constants, so run on every page route
+// (static files and API routes excluded) and return early for anything that is not admin or account.
+export const config = { matcher: ['/((?!_next/|api/|media/|.*\\..*).*)'] }
